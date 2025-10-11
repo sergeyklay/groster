@@ -1,0 +1,34 @@
+# Please do not use this ignore file to define platform specific files.
+#
+# For these purposes create a global .gitignore file, which is a list of rules
+# for ignoring files in every Git repository on your workstation.
+#
+# https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
+
+# Virtual Environments.
+/.venv
+
+# Application and docker compose environment variables.
+.env
+
+# Ruff (Python linter) cache.
+/.ruff_cache
+
+# Prettier (for pre-commit hooks).
+/node_modules
+
+# Pytest cache.
+.pytest_cache
+
+# Python cache.
+__pycache__
+*.py[cod]
+
+# Code coverage stuff.
+/coverage
+
+# Build directory.
+/build
+
+# Local storage for the data.
+/data
