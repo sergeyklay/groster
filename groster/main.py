@@ -218,7 +218,7 @@ def fetch_guild_roster(
 
 
 def fetch_character_achievements(
-    character_info: tuple[str, str, str, str, str],
+    character_info: tuple[str, str, str, str, str, str],
     locale: str = "en_US",
 ) -> dict | None:
     """
@@ -231,7 +231,7 @@ def fetch_character_achievements(
     Returns:
         A dictionary with processed achievement data or None on failure.
     """
-    api_token, region, realm, name, char_id = character_info
+    api_token, region, realm, guild_slug, name, char_id = character_info
     url = f"https://{region}.api.blizzard.com/profile/wow/character/{realm}/{name.lower()}/achievements"
     headers = {"Authorization": f"Bearer {api_token}"}
     params = {"namespace": f"profile-{region}", "locale": locale}
@@ -241,6 +241,17 @@ def fetch_character_achievements(
         response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         data = response.json()
+
+        char_path = DATA_PATH / region / realm / name.lower()
+        char_path.mkdir(parents=True, exist_ok=True)
+        file_path = char_path / "achievements.json"
+
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            logger.debug("Saved achievements.json for %s", name)
+        except OSError as e:
+            logger.error("Failed to write achievements file for %s: %s", name, e)
 
         return {
             "id": char_id,
@@ -269,7 +280,12 @@ def fetch_character_achievements(
 
 
 def process_achievements(
-    api_token: str, region: str, data: dict, output_filename: str, max_workers: int = 50
+    api_token: str,
+    region: str,
+    guild_slug: str,
+    data: dict,
+    output_filename: str,
+    max_workers: int = 50,
 ):
     """
     Concurrently fetches achievement data for all guild members and saves to CSV.
@@ -289,15 +305,11 @@ def process_achievements(
         realm = character.get("realm", {}).get("slug")
         char_id = character.get("id")
         if name and realm and char_id:
-            tasks.append((api_token, region, realm, name, char_id))
-
-    all_achievements = []
+            tasks.append((api_token, region, realm, guild_slug, name, char_id))
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         results = executor.map(fetch_character_achievements, tasks)
-        for result in results:
-            if result:
-                all_achievements.append(result)
+        all_achievements = [result for result in results if result]
 
     if not all_achievements:
         logger.warning("No achievement data could be fetched for any member.")
@@ -411,7 +423,9 @@ def main():
         exit(1)
 
     achievements_file = _data_path(args.region, args.realm, args.guild, "achievements")
-    process_achievements(access_token, args.region, roster_data, str(achievements_file))
+    process_achievements(
+        access_token, args.region, args.guild, roster_data, str(achievements_file)
+    )
 
     alts_file = _data_path(args.region, args.realm, args.guild, "alts")
     generate_alts_file(
