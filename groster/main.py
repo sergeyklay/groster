@@ -358,7 +358,7 @@ def main():
         exit(1)
 
     ranks_map = create_rank_mapping()
-    ranks_csv_path = DATA_PATH / "ranks.csv"
+    ranks_csv_path = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-ranks.csv"
     if not ranks_csv_path.exists():
         logger.info("Creating ranks file: %s", ranks_csv_path)
         try:
@@ -388,7 +388,7 @@ def main():
         return
 
     roster_file = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-roster.csv"
-    profiles_file = DATA_PATH / "profiles.csv"
+    profiles_file = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-profiles.csv"
 
     process_roster_to_csv(roster_data, str(roster_file))
     process_profiles(args.region, roster_data, str(profiles_file))
