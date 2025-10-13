@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pandas as pd
@@ -211,6 +212,105 @@ def fetch_guild_roster(
     return None
 
 
+def fetch_character_achievements(
+    character_info: tuple[str, str, str, str, str],
+    locale: str = "en_US",
+) -> dict | None:
+    """
+    Fetches the achievement summary for a single character.
+
+    Args:
+        character_info: A tuple containing (api_token, region, realm, name, id).
+        locale: The locale for the API request (e.g., 'en_US')
+
+    Returns:
+        A dictionary with processed achievement data or None on failure.
+    """
+    api_token, region, realm, name, char_id = character_info
+    url = f"https://{region}.api.blizzard.com/profile/wow/character/{realm}/{name.lower()}/achievements"
+    headers = {"Authorization": f"Bearer {api_token}"}
+    params = {"namespace": f"profile-{region}", "locale": locale}
+
+    logger.info("Fetching achievements for character: %s", name)
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "id": char_id,
+            "name": name,
+            "total_quantity": data.get("total_quantity", 0),
+            "total_points": data.get("total_points", 0),
+        }
+    except requests.exceptions.HTTPError as http_err:
+        if http_err.response.status_code in [403, 404]:
+            logger.warning(
+                "Could not fetch achievements for %s (profile private or not found).",
+                name,
+            )
+        else:
+            logger.error("HTTP error for character %s: %s", name, http_err)
+
+        return {
+            "id": char_id,
+            "name": name,
+            "total_quantity": "N/A",
+            "total_points": "N/A",
+        }
+    except requests.exceptions.RequestException as err:
+        logger.error("Request failed for character %s: %s", name, err)
+        return
+
+
+def process_achievements(
+    api_token: str, region: str, data: dict, output_filename: str, max_workers: int = 50
+):
+    """
+    Concurrently fetches achievement data for all guild members and saves to CSV.
+    """
+    members = data.get("members", [])
+    if not members:
+        return
+
+    logger.info(
+        "Processing achievements for %d guild members concurrently", len(members)
+    )
+
+    tasks = []
+    for member in members:
+        character = member.get("character", {})
+        name = character.get("name")
+        realm = character.get("realm", {}).get("slug")
+        char_id = character.get("id")
+        if name and realm and char_id:
+            tasks.append((api_token, region, realm, name, char_id))
+
+    all_achievements = []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = executor.map(fetch_character_achievements, tasks)
+        for result in results:
+            if result:
+                all_achievements.append(result)
+
+    if not all_achievements:
+        logger.warning("No achievement data could be fetched for any member.")
+        return
+
+    try:
+        df = pd.DataFrame(all_achievements)
+        cols = ["id", "name"] + [col for col in df.columns if col not in ["id", "name"]]
+        df = df[cols]
+        df.to_csv(output_filename, index=False, encoding="utf-8")
+        logger.info(
+            "Successfully created achievements CSV: %s",
+            Path(output_filename).resolve(),
+        )
+    except Exception as e:
+        logger.exception("An error occurred during achievements processing: %s", e)
+
+
 def process_profiles(region: str, data: dict, output_filename: str):
     """Process profile for each character."""
     members = data.get("members", [])
@@ -320,12 +420,19 @@ def process_roster_to_csv(
         logger.exception("An error occurred during data processing: %s", e)
 
 
+def _data_path(region: str, realm: str, guild: str, file: str) -> Path:
+    return DATA_PATH / f"{region}-{realm}-{guild}-{file}.csv"
+
+
 def main():
     """Main entry point for the application."""
     args = parse_arguments()
 
     setup_logging()
     load_dotenv()
+
+    DATA_PATH.mkdir(parents=True, exist_ok=True)
+    CACHE_PATH.mkdir(parents=True, exist_ok=True)
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
@@ -361,18 +468,19 @@ def main():
         exit(1)
 
     ranks_map = create_rank_mapping()
-    ranks_csv_path = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-ranks.csv"
-    if not ranks_csv_path.exists():
-        logger.info("Creating ranks file: %s", ranks_csv_path)
+    ranks_file = _data_path(args.region, args.realm, args.guild, "ranks")
+
+    if not ranks_file.exists():
+        logger.info("Creating ranks file: %s", ranks_file)
         try:
             ranks_data = [rank._asdict() for rank in ranks_map.values()]
             df = pd.DataFrame(ranks_data)
-            df.to_csv(ranks_csv_path, index=False, encoding="utf-8")
-            logger.info("Successfully created ranks file: %s", ranks_csv_path.resolve())
+            df.to_csv(ranks_file, index=False, encoding="utf-8")
+            logger.info("Successfully created ranks file: %s", ranks_file.resolve())
         except OSError as e:
             logger.error("Failed to write ranks file: %s", e)
     else:
-        logger.info("Ranks file already exists: %s", ranks_csv_path)
+        logger.info("Ranks file already exists: %s", ranks_file)
 
     roster_data = fetch_guild_roster(
         access_token, args.region, args.realm, args.guild, args.locale
@@ -381,8 +489,8 @@ def main():
         logger.error("No data fetched from the API. Exiting")
         exit(1)
 
-    DATA_PATH.mkdir(parents=True, exist_ok=True)
-    CACHE_PATH.mkdir(parents=True, exist_ok=True)
+    achievements_file = _data_path(args.region, args.realm, args.guild, "achievements")
+    process_achievements(access_token, args.region, roster_data, str(achievements_file))
 
     roster_hash = calculate_hash(roster_data)
     hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
@@ -390,10 +498,10 @@ def main():
         logger.info("Roster has not changed since last fetch. Exiting")
         return
 
-    roster_file = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-roster.csv"
-    profiles_file = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-profiles.csv"
-
+    roster_file = _data_path(args.region, args.realm, args.guild, "roster")
     process_roster_to_csv(roster_data, str(roster_file))
+
+    profiles_file = _data_path(args.region, args.realm, args.guild, "profiles")
     process_profiles(args.region, roster_data, str(profiles_file))
 
 
