@@ -8,17 +8,13 @@ version = "0.1.0"
 description = "WoW Guild Roster"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "pandas>=2.3.3",
-    "python-dotenv>=1.1.1",
-    "requests>=2.32.5",
-]
+dependencies = ["pandas>=2.3.3", "python-dotenv>=1.1.1", "requests>=2.32.5"]
 
 [project.scripts]
 groster = "groster.main:main"
 
 [dependency-groups]
-dev = ["ruff>=0.14.0"]
+dev = ["chardet>=5.2.0", "ruff>=0.14.0"]
 
 [tool.uv]
 package = true

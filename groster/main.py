@@ -9,7 +9,8 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 
-from groster.constants import CACHE_PATH, DATA_PATH, GUILD_RANKS
+from groster.constants import CACHE_PATH, DATA_PATH
+from groster.ranks import create_rank_mapping
 
 logger = logging.getLogger(__name__)
 
@@ -29,39 +30,51 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Fetch and process a WoW guild roster from the Battle.net API."
     )
+
+    parser.add_argument(
+        "--region",
+        type=str,
+        default="eu",
+        help="The region for the API request (e.g., 'eu').",
+    )
+
     parser.add_argument(
         "--realm",
         type=str,
         required=True,
         help="The slug of the realm (e.g., 'terokkar').",
     )
+
     parser.add_argument(
         "--guild",
         type=str,
         required=True,
         help="The slug of the guild (e.g., 'darq-side-of-the-moon').",
     )
+
     parser.add_argument(
         "--locale",
         type=str,
         default="en_US",
         help="The locale for the API request (e.g., 'en_US').",
     )
+
     return parser.parse_args()
 
 
-def get_access_token(client_id: str, client_secret: str) -> str | None:
+def get_access_token(region: str, client_id: str, client_secret: str) -> str | None:
     """
     Obtains an OAuth access token using the Client Credentials flow.
 
     Args:
+        region: The Battle.net region (e.g., 'eu').
         client_id: Your Battle.net application client ID.
         client_secret: Your Battle.net application client secret.
 
     Returns:
         The access token string or None if the request fails.
     """
-    url = "https://eu.battle.net/oauth/token"
+    url = f"https://{region}.battle.net/oauth/token"
     data = {"grant_type": "client_credentials"}
     auth = (client_id, client_secret)
 
@@ -88,6 +101,7 @@ def get_access_token(client_id: str, client_secret: str) -> str | None:
 
 def get_static_data_mappings(
     endpoint_url: str,
+    region: str,
     token: str,
     data_key: str,
     cache_filename: str,
@@ -98,6 +112,7 @@ def get_static_data_mappings(
 
     Args:
         endpoint_url: The API URL for the static data index.
+        region: The Battle.net region (e.g., 'eu').
         token: The OAuth access token.
         data_key: The key in the JSON response that holds the list of items.
         cache_filename: The local file to use for caching the data.
@@ -123,8 +138,7 @@ def get_static_data_mappings(
 
     logger.info("Fetching %s from API and creating cache", data_key)
     headers = {"Authorization": f"Bearer {token}"}
-    # Note the 'static-eu' namespace for static data
-    params = {"namespace": "static-eu", "locale": locale}
+    params = {"namespace": f"static-{region}", "locale": locale}
 
     try:
         response = requests.get(endpoint_url, headers=headers, params=params)
@@ -148,27 +162,9 @@ def get_static_data_mappings(
         return None
 
 
-def process_guild_ranks(token: str, realm_slug: str, guild_slug: str, locale: str):
-    """Creates a CSV file with default guild rank names if it doesn't exist."""
-    cache_filename = "guild-ranks.csv"
-    cache_path = DATA_PATH / cache_filename
-    if cache_path.exists():
-        logger.info("Guild ranks for '%s' are already cached", guild_slug)
-        return
-
-    logger.info("Creating default guild ranks file: %s", cache_path)
-
-    try:
-        ranks_data = [rank._asdict() for rank in GUILD_RANKS.values()]
-        df = pd.DataFrame(ranks_data)
-        df.to_csv(cache_path, index=False, encoding="utf-8")
-        logger.info("Successfully created default ranks CSV: %s", cache_path.resolve())
-    except OSError as e:
-        logger.error("Failed to write default ranks file: %s", e)
-
-
 def fetch_guild_roster(
     api_token: str,
+    region: str,
     realm_slug: str,
     guild_slug: str,
     locale: str = "en_US",
@@ -178,6 +174,7 @@ def fetch_guild_roster(
 
     Args:
         api_token: The OAuth 2.0 bearer token.
+        region: The Battle.net region (e.g., 'eu').
         realm_slug: The slug of the realm (e.g., 'terokkar').
         guild_slug: The slug of the guild (e.g., 'darq-side-of-the-moon').
         locale: The locale for the API request (e.g., 'en_US')
@@ -185,10 +182,10 @@ def fetch_guild_roster(
     Returns:
         A dictionary with the guild roster data or None if the request fails.
     """
-    url = f"https://eu.api.blizzard.com/data/wow/guild/{realm_slug}/{guild_slug}/roster"
+    url = f"https://{region}.api.blizzard.com/data/wow/guild/{realm_slug}/{guild_slug}/roster"
     headers = {"Authorization": f"Bearer {api_token}"}
 
-    params = {"namespace": "profile-eu", "locale": locale}
+    params = {"namespace": f"profile-{region}", "locale": locale}
 
     logger.info("Requesting guild roster from Battle.net API")
     logger.debug("API endpoint: %s", url)
@@ -211,7 +208,7 @@ def fetch_guild_roster(
     return None
 
 
-def process_profiles(data: dict, output_filename: str):
+def process_profiles(region: str, data: dict, output_filename: str):
     """Process profile for each character."""
     members = data.get("members", [])
     if not members:
@@ -230,9 +227,9 @@ def process_profiles(data: dict, output_filename: str):
             {
                 "id": character.get("id"),
                 "name": name,
-                "rio_link": f"https://raider.io/characters/eu/{realm}/{name.lower()}",
-                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/eu/{realm}/{name.lower()}",
-                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/eu/eu/{realm}/{name.lower()}",
+                "rio_link": f"https://raider.io/characters/{region}/{realm}/{name.lower()}",
+                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{region}/{realm}/{name.lower()}",
+                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{region}/{realm}/{name.lower()}",
             }
         )
 
@@ -336,19 +333,21 @@ def main():
         )
         exit(1)
 
-    access_token = get_access_token(client_id, client_secret)  # type: ignore
+    access_token = get_access_token(args.region, client_id, client_secret)  # type: ignore
     if not access_token:
         logger.error("Failed to obtain access token. Exiting.")
         exit(1)
 
     class_map = get_static_data_mappings(
-        "https://eu.api.blizzard.com/data/wow/playable-class/index",
+        f"https://{args.region}.api.blizzard.com/data/wow/playable-class/index",
+        args.region,
         access_token,
         "classes",
         "classes.csv",
     )
     race_map = get_static_data_mappings(
-        "https://eu.api.blizzard.com/data/wow/playable-race/index",
+        f"https://{args.region}.api.blizzard.com/data/wow/playable-race/index",
+        args.region,
         access_token,
         "races",
         "races.csv",
@@ -358,9 +357,23 @@ def main():
         logger.error("Failed to get necessary class/race data. Exiting.")
         exit(1)
 
-    process_guild_ranks(access_token, args.realm, args.guild, args.locale)
+    ranks_map = create_rank_mapping()
+    ranks_csv_path = DATA_PATH / "ranks.csv"
+    if not ranks_csv_path.exists():
+        logger.info("Creating ranks file: %s", ranks_csv_path)
+        try:
+            ranks_data = [rank._asdict() for rank in ranks_map.values()]
+            df = pd.DataFrame(ranks_data)
+            df.to_csv(ranks_csv_path, index=False, encoding="utf-8")
+            logger.info("Successfully created ranks file: %s", ranks_csv_path.resolve())
+        except OSError as e:
+            logger.error("Failed to write ranks file: %s", e)
+    else:
+        logger.info("Ranks file already exists: %s", ranks_csv_path)
 
-    roster_data = fetch_guild_roster(access_token, args.realm, args.guild, args.locale)
+    roster_data = fetch_guild_roster(
+        access_token, args.region, args.realm, args.guild, args.locale
+    )
     if not roster_data:
         logger.error("No data fetched from the API. Exiting")
         exit(1)
@@ -369,16 +382,16 @@ def main():
     CACHE_PATH.mkdir(parents=True, exist_ok=True)
 
     roster_hash = calculate_hash(roster_data)
-    hash_file = CACHE_PATH / f"{args.realm}-{args.guild}.hash"
+    hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
     if not has_roster_changed(roster_hash, hash_file):
         logger.info("Roster has not changed since last fetch. Exiting")
         return
 
-    roster_file = DATA_PATH / f"{args.realm}-{args.guild}-roster.csv"
+    roster_file = DATA_PATH / f"{args.region}-{args.realm}-{args.guild}-roster.csv"
     profiles_file = DATA_PATH / "profiles.csv"
 
     process_roster_to_csv(roster_data, str(roster_file))
-    process_profiles(roster_data, str(profiles_file))
+    process_profiles(args.region, roster_data, str(profiles_file))
 
 
 if __name__ == "__main__":
