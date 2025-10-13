@@ -9,10 +9,13 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 
-from groster.constants import CACHE_PATH, DATA_PATH
 from groster.ranks import create_rank_mapping
 
 logger = logging.getLogger(__name__)
+
+
+DATA_PATH = Path().cwd() / "data"
+CACHE_PATH = Path().cwd() / "cache"
 
 
 def setup_logging():
