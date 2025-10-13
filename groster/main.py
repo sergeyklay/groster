@@ -10,6 +10,11 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 
+from groster.characters import (
+    generate_alts_file,
+    process_profiles,
+    process_roster_to_csv,
+)
 from groster.ranks import create_rank_mapping
 
 logger = logging.getLogger(__name__)
@@ -311,41 +316,6 @@ def process_achievements(
         logger.exception("An error occurred during achievements processing: %s", e)
 
 
-def process_profiles(region: str, data: dict, output_filename: str):
-    """Process profile for each character."""
-    members = data.get("members", [])
-    if not members:
-        return
-
-    logger.info("Processing %d guild members for profile links", len(members))
-    links_data = []
-    for member in members:
-        character = member.get("character", {})
-        name = character.get("name")
-        realm = character.get("realm", {}).get("slug")
-        if not name or not realm:
-            continue
-
-        links_data.append(
-            {
-                "id": character.get("id"),
-                "name": name,
-                "rio_link": f"https://raider.io/characters/{region}/{realm}/{name.lower()}",
-                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{region}/{realm}/{name.lower()}",
-                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{region}/{realm}/{name.lower()}",
-            }
-        )
-
-    try:
-        df = pd.DataFrame(links_data)
-        df.to_csv(output_filename, index=False, encoding="utf-8")
-        logger.info(
-            "Successfully created links CSV: %s", Path(output_filename).resolve()
-        )
-    except Exception as e:
-        logger.exception("An error occurred during links processing: %s", e)
-
-
 def calculate_hash(data: dict) -> str:
     """Calculate a SHA256 hash of a dictionary."""
     encoded_data = json.dumps(data, sort_keys=True, separators=(",", ":")).encode(
@@ -369,55 +339,6 @@ def has_roster_changed(new_hash: str, hash_file: Path) -> bool:
     logger.info("Roster data has changed. Reprocessing and updating hash")
     hash_file.write_text(new_hash)
     return True
-
-
-def process_roster_to_csv(
-    data: dict,
-    output_filename: str,
-):
-    """
-    Processes guild roster data from a dictionary and saves it to a CSV file.
-
-    Args:
-        data: The dictionary loaded from the API's JSON response.
-        output_filename: The name of the CSV file to create.
-    """
-    # Extract the list of members from the data.
-    members = data.get("members", [])
-    if not members:
-        logger.warning("No members found in roster data. Exiting.")
-        return
-
-    logger.info("Processing %d guild members", len(members))
-
-    processed_data = []
-    for member in members:
-        character = member.get("character", {})
-
-        # Note: For class and race, we extract the ID.
-        # A future function could resolve these IDs to names via another API call.
-        processed_data.append(
-            {
-                "id": character.get("id"),
-                "name": character.get("name"),
-                "realm": character.get("realm", {}).get("slug"),
-                "level": character.get("level"),
-                "class_id": character.get("playable_class", {}).get("id"),
-                "race_id": character.get("playable_race", {}).get("id"),
-                "rank": member.get("rank"),
-            }
-        )
-
-    try:
-        df = pd.DataFrame(processed_data)
-        df.to_csv(output_filename, index=False, encoding="utf-8")
-        logger.info(
-            "Successfully created CSV file: %s", Path(output_filename).resolve()
-        )
-    except OSError as e:
-        logger.error("Failed to write CSV file '%s': %s", output_filename, e)
-    except Exception as e:
-        logger.exception("An error occurred during data processing: %s", e)
 
 
 def _data_path(region: str, realm: str, guild: str, file: str) -> Path:
@@ -491,6 +412,11 @@ def main():
 
     achievements_file = _data_path(args.region, args.realm, args.guild, "achievements")
     process_achievements(access_token, args.region, roster_data, str(achievements_file))
+
+    alts_file = _data_path(args.region, args.realm, args.guild, "alts")
+    generate_alts_file(
+        access_token, args.region, roster_data, str(alts_file), args.locale
+    )
 
     roster_hash = calculate_hash(roster_data)
     hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
