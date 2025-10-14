@@ -164,11 +164,9 @@ def identify_alts(
     if not members:
         return
 
-    logger.info(
-        "Layer 1: Fetching summaries for %d members for initial grouping",
-        len(members),
-    )
-    tasks = [
+    logger.info("Fetching summaries for %d members for initial grouping", len(members))
+
+    summary_tasks = [
         (
             api_token,
             region,
@@ -179,121 +177,106 @@ def identify_alts(
         )
         for member in members
     ]
+    fingerprint_tasks = [
+        (
+            api_token,
+            region,
+            member["character"]["realm"]["slug"],
+            member["character"]["name"],
+            locale,
+        )
+        for member in members
+    ]
 
     with ThreadPoolExecutor(max_workers=50) as executor:
         pet_summaries = {
-            r["name"]: r for r in executor.map(_fetch_pets_summary, tasks) if r
+            r["name"]: r for r in executor.map(_fetch_pets_summary, summary_tasks) if r
         }
         mount_summaries = {
-            r["name"]: r for r in executor.map(_fetch_mounts_summary, tasks) if r
+            r["name"]: r
+            for r in executor.map(_fetch_mounts_summary, summary_tasks)
+            if r
+        }
+        fingerprints_data = {
+            r["name"]: r
+            for r in executor.map(_fetch_achievement_fingerprint, fingerprint_tasks)
+            if r
         }
 
-    summaries = []
+    all_char_data = []
     for member in members:
         char_info = member.get("character", {})
         name = char_info.get("name")
         if not name:
-            logger.warning("Skipping member with missing name: %s", char_info)
             continue
 
-        pet_data = pet_summaries.get(name, {})
-        mount_data = mount_summaries.get(name, {})
-
-        char_id = char_info.get("id")
-        realm = char_info.get("realm", {}).get("slug")
-        if not (char_id and realm):
-            logger.warning("Skipping member with incomplete data: %s", name)
-            continue
-
-        summaries.append(
+        all_char_data.append(
             {
-                "id": char_id,
+                "id": char_info.get("id"),
                 "name": name,
-                "realm": realm,
-                "pets": pet_data.get("pets", 0),
-                "mounts": mount_data.get("mounts", 0),
+                "realm": char_info.get("realm", {}).get("slug"),
+                "pets": pet_summaries.get(name, {}).get("pets", 0),
+                "mounts": mount_summaries.get(name, {}).get("mounts", 0),
+                "fingerprint": fingerprints_data.get(name, {}).get(
+                    "fingerprint", tuple()
+                ),
+                "timestamps": fingerprints_data.get(name, {}).get("timestamps", {}),
             }
         )
 
-    df_summaries = pd.DataFrame(summaries)
-    grouped_by_stats = df_summaries.groupby(["mounts", "pets"])
+    # Group characters by clustering based on fingerprints and stats
+    groups = []
+    unmatched_chars = list(all_char_data)
 
-    final_alt_groups = []
-    unidentified_chars = []
+    while unmatched_chars:
+        base_char = unmatched_chars.pop(0)
+        base_fp = set(base_char["fingerprint"])
+        # Use a more reliable fallback key based on pets only
+        base_stats_key = f"pets_{base_char['pets']}"
 
-    for _, group in grouped_by_stats:
-        group_list = group.to_dict("records")
-        if len(group_list) > 1:
-            final_alt_groups.append(group_list)
-        else:
-            unidentified_chars.append(group_list[0])
+        current_group = [base_char]
+        remaining_chars = []
 
-    if unidentified_chars:
-        logger.info(
-            "Layer 2: Fetching fingerprints for %d unidentified characters",
-            len(unidentified_chars),
-        )
+        for char_to_compare in unmatched_chars:
+            compare_fp = set(char_to_compare["fingerprint"])
+            compare_stats_key = f"pets_{char_to_compare['pets']}"
 
-        fingerprint_tasks = [
-            (api_token, region, char["realm"], char["name"], locale)
-            for char in unidentified_chars
-        ]
-        with ThreadPoolExecutor(max_workers=20) as executor:
-            fingerprints_data = [
-                r
-                for r in executor.map(_fetch_achievement_fingerprint, fingerprint_tasks)
-                if r
-            ]
+            # Primary grouping: Check if fingerprints are subsets of each other
+            # This handles cases where one character is missing some achievements
+            is_subset = base_fp.issubset(compare_fp) or compare_fp.issubset(base_fp)
 
-        # Combine summaries with fingerprint data
-        for fp_data in fingerprints_data:
-            summary_data = next(
-                (c for c in unidentified_chars if c["name"] == fp_data["name"]), None
-            )
-            if summary_data:
-                fp_data.update(summary_data)
+            # Condition to group:
+            # - They have a strong fingerprint overlap (at least 3 achievements and subset logic)
+            # - OR their fingerprints are too short, but their pet counts match
+            if len(base_fp) >= 3 and len(compare_fp) >= 3 and is_subset:
+                current_group.append(char_to_compare)
+            elif base_stats_key == compare_stats_key:
+                current_group.append(char_to_compare)
+            else:
+                remaining_chars.append(char_to_compare)
 
-        if fingerprints_data:
-            df_fingerprints = pd.DataFrame(fingerprints_data)
-            df_fingerprints["fingerprint_str"] = df_fingerprints["fingerprint"].astype(
-                str
-            )
-
-            for fp_str, group in df_fingerprints[
-                df_fingerprints["fingerprint_str"] != "()"
-            ].groupby("fingerprint_str"):
-                if len(group) > 1 and len(group.iloc[0]["fingerprint"]) >= 3:
-                    final_alt_groups.append(group.to_dict("records"))
-                else:  # Add singles back to be processed individually
-                    for char_dict in group.to_dict("records"):
-                        final_alt_groups.append([char_dict])
+        groups.append(current_group)
+        unmatched_chars = remaining_chars
 
     main_character_map = {}
-    processed_chars = set()
-
-    for group in final_alt_groups:
-        main_name = _find_main_in_group(group)
-        for char in group:
+    for group_list in groups:
+        main_name = _find_main_in_group(group_list)
+        for char in group_list:
             main_character_map[char["name"]] = main_name
-            processed_chars.add(char["name"])
-
-    for summary in summaries:
-        if summary["name"] not in processed_chars:
-            main_character_map[summary["name"]] = summary["name"]
 
     alts_data = [
         {
-            "id": summary["id"],
-            "name": (char_name := summary["name"]),
+            "id": char["id"],
+            "name": (char_name := char["name"]),
             "alt": char_name != main_character_map.get(char_name, char_name),
             "main": main_character_map.get(char_name, char_name),
         }
-        for summary in summaries
+        for char in all_char_data
     ]
 
     try:
-        df = pd.DataFrame(alts_data).sort_values(by=["main", "name"])
-        df.to_csv(output_filename, index=False, encoding="utf-8")
+        df_alts = pd.DataFrame(alts_data).sort_values(by=["main", "name"])
+        df_alts.to_csv(output_filename, index=False, encoding="utf-8")
         logger.info(
             "Successfully created alts CSV: %s", Path(output_filename).resolve()
         )
