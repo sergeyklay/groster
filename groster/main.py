@@ -242,6 +242,109 @@ def _data_path(region: str, realm: str, guild: str, file: str) -> Path:
     return DATA_PATH / f"{region}-{realm}-{guild}-{file}.csv"
 
 
+def generate_dashboard(region: str, realm: str, guild: str):
+    """
+    Generates a consolidated dashboard.csv by merging all other data files.
+    """
+    logger.info("Generating consolidated dashboard...")
+
+    try:
+        # Define paths to all source CSV files
+        roster_file = DATA_PATH / f"{region}-{realm}-{guild}-roster.csv"
+        profiles_file = DATA_PATH / f"{region}-{realm}-{guild}-profiles.csv"
+        alts_file = DATA_PATH / f"{region}-{realm}-{guild}-alts.csv"
+        achievements_file = DATA_PATH / f"{region}-{realm}-{guild}-achievements.csv"
+
+        # Paths to static mapping files
+        classes_file = DATA_PATH / "classes.csv"
+        races_file = DATA_PATH / "races.csv"
+        ranks_file = DATA_PATH / f"{region}-{realm}-{guild}-ranks.csv"
+
+        # Read all necessary files into pandas DataFrames
+        df_roster = pd.read_csv(roster_file)
+        df_profiles = pd.read_csv(profiles_file)
+        df_alts = pd.read_csv(alts_file)
+        df_achievements = pd.read_csv(
+            achievements_file,
+            usecols=[
+                "id",
+                "name",
+                "total_quantity",
+                "total_points",
+            ],
+        )
+
+        df_classes = pd.read_csv(classes_file).rename(
+            columns={"id": "class_id", "name": "Class"}
+        )
+        df_races = pd.read_csv(races_file).rename(
+            columns={"id": "race_id", "name": "Race"}
+        )
+        df_ranks = pd.read_csv(ranks_file).rename(
+            columns={"id": "rank", "name": "Rank"}
+        )
+
+        # Merge the main data files
+        dashboard_df = pd.merge(df_roster, df_profiles, on=["id", "name"])
+        dashboard_df = pd.merge(dashboard_df, df_alts, on=["id", "name"])
+        dashboard_df = pd.merge(
+            dashboard_df, df_achievements, on=["id", "name"], how="left"
+        )
+
+        # Map IDs to names
+        dashboard_df = pd.merge(dashboard_df, df_classes, on="class_id", how="left")
+        dashboard_df = pd.merge(dashboard_df, df_races, on="race_id", how="left")
+        dashboard_df = pd.merge(dashboard_df, df_ranks, on="rank", how="left")
+
+        # Rename columns to match the desired output
+        dashboard_df = dashboard_df.rename(
+            columns={
+                "name": "Name",
+                "realm": "Realm",
+                "level": "Level",
+                "total_quantity": "AQ",
+                "total_points": "AP",
+                "alt": "Alt?",
+                "main": "Main",
+                "rio_link": "Raider.io",
+                "armory_link": "Armory",
+                "warcraft_logs_link": "Logs",
+            }
+        )
+
+        # Select and order the final columns
+        final_columns = [
+            "Name",
+            "Realm",
+            "Level",
+            "Class",
+            "Race",
+            "Rank",
+            "AQ",
+            "AP",
+            "Alt?",
+            "Main",
+            "Raider.io",
+            "Armory",
+            "Logs",
+        ]
+        dashboard_df = dashboard_df[final_columns]
+
+        # Save the final dashboard file
+        dashboard_file = DATA_PATH / f"{region}-{realm}-{guild}-dashboard.csv"
+        dashboard_df.to_csv(dashboard_file, index=False, encoding="utf-8")
+        logger.info("Successfully created dashboard CSV: %s", dashboard_file.resolve())
+
+    except FileNotFoundError as e:
+        logger.error(
+            "Failed to generate dashboard: a source CSV file is missing. %s", e
+        )
+    except Exception as e:
+        logger.exception(
+            "An unexpected error occurred during dashboard generation: %s", e
+        )
+
+
 def main():
     """Main entry point for the application."""
     args = parse_arguments()
@@ -308,24 +411,25 @@ def main():
 
     roster_hash = calculate_hash(roster_data)
     hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
-    if not has_roster_changed(roster_hash, hash_file):
-        logger.info("Roster has not changed since last fetch. Exiting")
-        return
+    if has_roster_changed(roster_hash, hash_file):
+        roster_file = _data_path(args.region, args.realm, args.guild, "roster")
+        process_roster_to_csv(roster_data, str(roster_file))
 
-    roster_file = _data_path(args.region, args.realm, args.guild, "roster")
-    process_roster_to_csv(roster_data, str(roster_file))
+        profiles_file = _data_path(args.region, args.realm, args.guild, "profiles")
+        process_profiles(args.region, roster_data, str(profiles_file))
 
-    profiles_file = _data_path(args.region, args.realm, args.guild, "profiles")
-    process_profiles(args.region, roster_data, str(profiles_file))
+        alts_file = _data_path(args.region, args.realm, args.guild, "alts")
+        identify_alts(
+            access_token,
+            args.region,
+            roster_data,
+            str(alts_file),
+            args.locale,
+        )
+    else:
+        logger.info("Roster has not changed since last fetch. Skipping")
 
-    alts_file = _data_path(args.region, args.realm, args.guild, "alts")
-    identify_alts(
-        access_token,
-        args.region,
-        roster_data,
-        str(alts_file),
-        args.locale,
-    )
+    generate_dashboard(args.region, args.realm, args.guild)
 
 
 if __name__ == "__main__":
