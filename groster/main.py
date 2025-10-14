@@ -547,8 +547,8 @@ def main():
 
     # Generate summary report
     end_time = time.time()
-    time_fiff = end_time - start_time
-    summary_report(str(alts_file), time_fiff)
+    time_diff = end_time - start_time
+    summary_report(str(alts_file), time_diff)
 
 
 if __name__ == "__main__":
