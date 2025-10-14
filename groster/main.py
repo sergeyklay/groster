@@ -444,8 +444,13 @@ def summary_report(alts_file: str, time_diff: float):
         print(f"Alts found: {total_alts}")
         print(f"Main characters: {total_mains}")
         print("=" * 50)
-    except (FileNotFoundError, pd.errors.EmptyDataError, KeyError) as e:
-        logger.exception("Failed to generate summary report: %s", e)
+    except (
+        FileNotFoundError,
+        pd.errors.EmptyDataError,
+        pd.errors.ParserError,
+        KeyError,
+    ):
+        logger.exception("Failed to generate summary report")
         print(f"\nProcessing completed in {time_diff:.2f} seconds")
 
 
