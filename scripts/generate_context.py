@@ -45,8 +45,9 @@ ADDITIONAL_EXCLUDE_FILES = [
     "CODEOWNERS",
     "context.md",
     "defaults.mk",
+    "groster.code-workspace",
+    "LICENSE",
     "Makefile",
-    "pse.code-workspace",
 ]
 
 ADDITIONAL_EXCLUDE_EXTENSIONS = [

@@ -7,6 +7,7 @@ import pandas as pd
 import requests
 
 from groster.constants import (
+    ALT_SIMILARITY_THRESHOLD,
     DATA_PATH,
     FINGERPRINT_ACHIEVEMENT_IDS,
     LEVEL_10_ACHIEVEMENT_ID,
@@ -231,26 +232,30 @@ def identify_alts(
     while unmatched_chars:
         base_char = unmatched_chars.pop(0)
         base_fp = set(base_char["fingerprint"])
-        # Use a more reliable fallback key based on pets only
-        base_stats_key = f"pets_{base_char['pets']}"
 
         current_group = [base_char]
         remaining_chars = []
 
         for char_to_compare in unmatched_chars:
             compare_fp = set(char_to_compare["fingerprint"])
-            compare_stats_key = f"pets_{char_to_compare['pets']}"
 
-            # Primary grouping: Check if fingerprints are subsets of each other
-            # This handles cases where one character is missing some achievements
-            is_subset = base_fp.issubset(compare_fp) or compare_fp.issubset(base_fp)
+            # Skip comparison if either fingerprint is too small to be reliable
+            if len(base_fp) < 3 or len(compare_fp) < 3:
+                remaining_chars.append(char_to_compare)
+                continue
 
-            # Condition to group:
-            # - They have a strong fingerprint overlap (at least 3 achievements and subset logic)
-            # - OR their fingerprints are too short, but their pet counts match
-            if len(base_fp) >= 3 and len(compare_fp) >= 3 and is_subset:
-                current_group.append(char_to_compare)
-            elif base_stats_key == compare_stats_key:
+            # Calculate Jaccard Similarity
+            intersection_size = len(base_fp.intersection(compare_fp))
+            union_size = len(base_fp.union(compare_fp))
+
+            # Avoid division by zero, though union_size should be > 0 here
+            if union_size == 0:
+                similarity = 1.0
+            else:
+                similarity = intersection_size / union_size
+
+            # If similarity is high, group them
+            if similarity >= ALT_SIMILARITY_THRESHOLD:
                 current_group.append(char_to_compare)
             else:
                 remaining_chars.append(char_to_compare)
@@ -260,6 +265,8 @@ def identify_alts(
 
     main_character_map = {}
     for group_list in groups:
+        if not group_list:
+            continue
         main_name = _find_main_in_group(group_list)
         for char in group_list:
             main_character_map[char["name"]] = main_name

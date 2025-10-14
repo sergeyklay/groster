@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -54,7 +55,6 @@ def parse_arguments():
     parser.add_argument(
         "--guild",
         type=str,
-        required=True,
         help="The slug of the guild (e.g., 'darq-side-of-the-moon').",
     )
 
@@ -433,8 +433,30 @@ def debug_character_info(region: str, realm: str, names: list[str]):
     logger.info("--- Character Debug Finished ---")
 
 
+def summary_report(alts_file: str, time_diff: float):
+    try:
+        alts_df = pd.read_csv(alts_file)
+        total_alts = alts_df["alt"].sum()
+        total_mains = len(alts_df["main"].unique())
+
+        print("\n" + "=" * 50)
+        print(f"Processing completed in {time_diff:.2f} seconds")
+        print(f"Alts found: {total_alts}")
+        print(f"Main characters: {total_mains}")
+        print("=" * 50)
+    except (
+        FileNotFoundError,
+        pd.errors.EmptyDataError,
+        pd.errors.ParserError,
+        KeyError,
+    ):
+        logger.exception("Failed to generate summary report")
+        print(f"\nProcessing completed in {time_diff:.2f} seconds")
+
+
 def main():
     """Main entry point for the application."""
+    start_time = time.time()
     args = parse_arguments()
 
     setup_logging()
@@ -447,6 +469,10 @@ def main():
         char_names = [name.strip() for name in args.debug_chars.split(",")]
         debug_character_info(args.region, args.realm, char_names)
         exit(0)
+
+    if not args.guild:
+        logger.error("Guild name must be provided via --guild argument.")
+        exit(1)
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
@@ -523,6 +549,11 @@ def main():
     )
 
     generate_dashboard(args.region, args.realm, args.guild)
+
+    # Generate summary report
+    end_time = time.time()
+    time_diff = end_time - start_time
+    summary_report(str(alts_file), time_diff)
 
 
 if __name__ == "__main__":
