@@ -10,6 +10,9 @@ CACHE_PATH = Path().cwd() / "cache"
 LEVEL_10_ACHIEVEMENT_ID = 6
 """Achievement ID for "Level 10" achievement, used to identify characters."""
 
+ALT_SIMILARITY_THRESHOLD = 0.8
+"""Jaccard similarity threshold for grouping alts."""
+
 FINGERPRINT_ACHIEVEMENT_IDS = {
     9670,  # Toying Around
     10693,  # Fashionista: Hand

@@ -7,6 +7,7 @@ import pandas as pd
 import requests
 
 from groster.constants import (
+    ALT_SIMILARITY_THRESHOLD,
     DATA_PATH,
     FINGERPRINT_ACHIEVEMENT_IDS,
     LEVEL_10_ACHIEVEMENT_ID,
@@ -253,9 +254,8 @@ def identify_alts(
             else:
                 similarity = intersection_size / union_size
 
-            # If similarity is high (e.g., > 80%), group them.
-            # This is far more resilient to incomplete API data than the subset check.
-            if similarity >= 0.8:
+            # If similarity is high, group them
+            if similarity >= ALT_SIMILARITY_THRESHOLD:
                 current_group.append(char_to_compare)
             else:
                 remaining_chars.append(char_to_compare)
