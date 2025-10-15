@@ -4,17 +4,27 @@ build-backend = "hatchling.build"
 
 [project]
 name = "groster"
-version = "0.2.0"
+version = "0.3.0"
 description = "A CLI tool to fetch and process World of Warcraft guild rosters, identifying player alts via the Blizzard API."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["pandas>=2.3.3", "python-dotenv>=1.1.1", "requests>=2.32.5"]
+dependencies = [
+    "httpx>=0.28.1",
+    "pandas>=2.3.3",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.5",
+]
 
 [project.scripts]
 groster = "groster.main:main"
 
 [dependency-groups]
-dev = ["pre-commit>=4.3.0", "chardet>=5.2.0", "ruff>=0.14.0"]
+dev = [
+    "pre-commit>=4.3.0",
+    "chardet>=5.2.0",
+    "ruff>=0.14.0",
+    "jupyter>=1.1.1",
+]
 testing = ["coverage[toml]>=7.10.6", "pytest>=8.4.2", "pytest-mock>=3.15.1"]
 
 [tool.uv]
