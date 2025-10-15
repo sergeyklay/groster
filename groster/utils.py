@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
 from groster.constants import TZ
@@ -24,8 +24,8 @@ def format_timestamp(ts: int, to_tz: str = TZ) -> str:
     if not isinstance(ts, (int, float)):
         raise ValueError(f"Timestamp must be a valid integer or float. Got: {type(ts)}")
 
-    dt_utc = datetime.fromtimestamp(ts / 1000)
-    cest_tz = ZoneInfo(to_tz)
-    dt_cest = dt_utc.astimezone(cest_tz)
+    dt_utc = datetime.fromtimestamp(ts / 1000, tz=UTC)
+    target_tz = ZoneInfo(to_tz)
+    dt_local = dt_utc.astimezone(target_tz)
 
-    return dt_cest.strftime("%Y-%m-%d %H:%M:%S")
+    return dt_local.strftime("%Y-%m-%d %H:%M:%S")
