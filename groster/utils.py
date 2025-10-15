@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 from groster.constants import TZ
 
 
-def format_timestamp(ts: int, to_tz: str = TZ) -> str:
+def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
     """Convert a UNIX timestamp in milliseconds to a human-readable datetime string.
 
     Args:
@@ -20,6 +20,9 @@ def format_timestamp(ts: int, to_tz: str = TZ) -> str:
     """
     if ts == 0 or ts is None:
         return "N/A"
+
+    if isinstance(ts, str):
+        ts = int(ts)
 
     if not isinstance(ts, (int, float)):
         raise ValueError(f"Timestamp must be a valid integer or float. Got: {type(ts)}")

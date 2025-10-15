@@ -369,10 +369,9 @@ def process_roster_to_csv(
         name = character.get("name")
         profile = profile_data.get(name, {})
 
-        last_login_ts = int(profile.get("last_login", 0))
+        last_login_raw = profile.get("last_login")
+        last_login_str = format_timestamp(last_login_raw)
         item_level = profile.get("ilvl", 0)
-
-        last_login_str = format_timestamp(last_login_ts)
 
         # Note: For class and race, we extract the ID.
         # A future function could resolve these IDs to names via another API call.
