@@ -1,7 +1,8 @@
 from datetime import UTC, datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from groster.constants import TZ
+from groster.constants import DATA_PATH, TZ
 
 
 def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
@@ -32,3 +33,9 @@ def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
     dt_local = dt_utc.astimezone(target_tz)
 
     return dt_local.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def data_path(*args) -> Path:
+    """Construct a data path from the given arguments."""
+    local_path = "-".join(args)
+    return DATA_PATH / f"{local_path}.csv"
