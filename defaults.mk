@@ -45,9 +45,25 @@ ifeq ($(COLORIZE),1)
 	CE = " ~~~${RESET}"
 else
 	# No color support
-	BLACK := YELLOW := RED := GREEN := BLUE := MAGENTA := CYAN := WHITE := \
-	BOLD := BOLD_GREEN := BOLD_YELLOW := BOLD_BLUE := BOLD_MAGENTA := \
-	RESET := TITLE := SECTION := TARGET := DESCRIPTION := EXAMPLE :=
+	BLACK :=
+	YELLOW :=
+	RED :=
+	GREEN :=
+	BLUE :=
+	MAGENTA :=
+	CYAN :=
+	WHITE :=
+	BOLD :=
+	BOLD_GREEN :=
+	BOLD_YELLOW :=
+	BOLD_BLUE :=
+	BOLD_MAGENTA :=
+	RESET :=
+	TITLE :=
+	SECTION :=
+	TARGET :=
+	DESCRIPTION :=
+	EXAMPLE :=
 
 	CS = "~~~ "
 	CE = " ~~~"
