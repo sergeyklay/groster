@@ -30,7 +30,7 @@ def _fetch_character_profile(args: tuple) -> dict | None:
         data = response.json()
 
         profile_path = DATA_PATH / region / realm / name.lower()
-        profile_path.parent.mkdir(parents=True, exist_ok=True)
+        profile_path.mkdir(parents=True, exist_ok=True)
         with open(profile_path / "profile.json", "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
