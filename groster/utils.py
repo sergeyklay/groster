@@ -18,7 +18,7 @@ def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
     Raises:
         ValueError: If timestamp is not a valid integer or float.
     """
-    if ts == 0 or ts is None:
+    if ts == 0 or str(ts) == "0" or ts is None:
         return "N/A"
 
     if isinstance(ts, str):
