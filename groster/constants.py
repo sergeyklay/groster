@@ -13,6 +13,9 @@ LEVEL_10_ACHIEVEMENT_ID = 6
 ALT_SIMILARITY_THRESHOLD = 0.8
 """Jaccard similarity threshold for grouping alts."""
 
+TZ = "Europe/Paris"
+"""Timezone for displaying timestamps."""
+
 FINGERPRINT_ACHIEVEMENT_IDS = {
     9670,  # Toying Around
     10693,  # Fashionista: Hand

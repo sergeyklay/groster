@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 from groster.characters import (
     identify_alts,
-    process_profiles,
+    process_links,
     process_roster_to_csv,
 )
 from groster.constants import CACHE_PATH, DATA_PATH, FINGERPRINT_ACHIEVEMENT_IDS
@@ -27,7 +27,8 @@ def setup_logging():
     log_path = Path().cwd() / "groster.log"
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        format="[%(asctime)s] [%(levelname)s] - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.StreamHandler(), logging.FileHandler(str(log_path))],
     )
 
@@ -105,10 +106,10 @@ def get_access_token(region: str, client_id: str, client_secret: str) -> str | N
         logger.error("'access_token' not found in the response")
         logger.debug("Token response: %s", token_data)
         return None
-    except requests.exceptions.HTTPError as http_err:
+    except requests.HTTPError as http_err:
         logger.error("HTTP error occurred while getting token: %s", http_err)
         logger.debug("Response content: %s", response.text)
-    except requests.exceptions.RequestException as err:
+    except requests.RequestException as err:
         logger.error("Request for token failed: %s", err)
 
     return None
@@ -172,7 +173,7 @@ def get_static_data_mappings(
         logger.info("Successfully cached %s to %s", data_key, cache_path)
 
         return dict(zip(df["id"].astype(int), df["name"].astype(str), strict=True))
-    except (OSError, requests.exceptions.RequestException, KeyError) as e:
+    except (OSError, requests.RequestException, KeyError) as e:
         logger.error("Failed to fetch or process static data for %s: %s", data_key, e)
         return None
 
@@ -214,10 +215,10 @@ def fetch_guild_roster(
         logger.info("Guild roster fetched successfully")
         return response.json()
 
-    except requests.exceptions.HTTPError as http_err:
+    except requests.HTTPError as http_err:
         logger.error("HTTP error occurred: %s", http_err)
         logger.debug("Response content: %s", response.text)
-    except requests.exceptions.RequestException as err:
+    except requests.RequestException as err:
         logger.error("Request failed: %s", err)
 
     return None
@@ -316,6 +317,8 @@ def generate_dashboard(region: str, realm: str, guild: str):
                 "total_points": "AP",
                 "alt": "Alt?",
                 "main": "Main",
+                "ilvl": "iLvl",
+                "last_login": "Last Login",
                 "rio_link": "Raider.io",
                 "armory_link": "Armory",
                 "warcraft_logs_link": "Logs",
@@ -334,6 +337,8 @@ def generate_dashboard(region: str, realm: str, guild: str):
             "AP",
             "Alt?",
             "Main",
+            "iLvl",
+            "Last Login",
             "Raider.io",
             "Armory",
             "Logs",
@@ -532,12 +537,14 @@ def main():
     hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
     if has_roster_changed(roster_hash, hash_file):
         roster_file = _data_path(args.region, args.realm, args.guild, "roster")
-        process_roster_to_csv(roster_data, str(roster_file))
+        process_roster_to_csv(
+            access_token, args.region, roster_data, str(roster_file), args.locale
+        )
     else:
         logger.info("Roster has not changed since last fetch. Skipping")
 
-    profiles_file = _data_path(args.region, args.realm, args.guild, "profiles")
-    process_profiles(args.region, roster_data, str(profiles_file))
+    links_file = _data_path(args.region, args.realm, args.guild, "links")
+    process_links(args.region, roster_data, str(links_file))
 
     alts_file = _data_path(args.region, args.realm, args.guild, "alts")
     identify_alts(

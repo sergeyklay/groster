@@ -12,8 +12,43 @@ from groster.constants import (
     FINGERPRINT_ACHIEVEMENT_IDS,
     LEVEL_10_ACHIEVEMENT_ID,
 )
+from groster.utils import format_timestamp
 
 logger = logging.getLogger(__name__)
+
+
+def _fetch_character_profile(args: tuple) -> dict | None:
+    """Fetches the main profile data for a character."""
+    api_token, region, realm, name, locale = args
+    url = f"https://{region}.api.blizzard.com/profile/wow/character/{realm}/{name.lower()}"
+    headers = {"Authorization": f"Bearer {api_token}"}
+    params = {"namespace": f"profile-{region}", "locale": locale}
+
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        profile_path = DATA_PATH / region / realm / name.lower()
+        profile_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(profile_path / "profile.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        profile_data = {
+            "name": data.get("name"),
+            "id": data.get("id"),
+            "last_login": data.get("last_login_timestamp"),
+            "ilvl": data.get("equipped_item_level"),
+        }
+
+        return profile_data
+    except requests.RequestException as e:
+        logger.warning(
+            "Could not fetch profile for %s: %s",
+            name,
+            e.response.text if e.response else str(e),
+        )
+        return None
 
 
 def _fetch_pets_summary(
@@ -41,7 +76,7 @@ def _fetch_pets_summary(
             "realm": realm,
             "pets": len(data.get("pets", [])),
         }
-    except requests.exceptions.RequestException as e:
+    except requests.RequestException as e:
         logger.warning(
             "Could not fetch pet summary for %s: %s",
             name,
@@ -75,7 +110,7 @@ def _fetch_mounts_summary(
             "realm": realm,
             "mounts": len(data.get("mounts", [])),
         }
-    except requests.exceptions.RequestException as e:
+    except requests.RequestException as e:
         logger.warning(
             "Could not fetch mounts summary for %s: %s",
             name,
@@ -128,7 +163,7 @@ def _fetch_achievement_fingerprint(
             )
         )
         return {"name": name, "fingerprint": fingerprint, "timestamps": timestamps}
-    except requests.exceptions.RequestException as e:
+    except requests.RequestException as e:
         logger.warning(
             "Could not fetch full achievements for %s: %s",
             name,
@@ -292,8 +327,11 @@ def identify_alts(
 
 
 def process_roster_to_csv(
-    data: dict,
+    api_token: str,
+    region: str,
+    roster_data: dict,
     output_filename: str,
+    locale: str = "en_US",
 ):
     """
     Processes guild roster data from a dictionary and saves it to a CSV file.
@@ -303,28 +341,52 @@ def process_roster_to_csv(
         output_filename: The name of the CSV file to create.
     """
     # Extract the list of members from the data.
-    members = data.get("members", [])
+    members = roster_data.get("members", [])
     if not members:
         logger.warning("No members found in roster data. Exiting.")
         return
+
+    logger.info("Fetching profiles for %d members...", len(members))
+    profile_tasks = [
+        (
+            api_token,
+            region,
+            member["character"]["realm"]["slug"],
+            member["character"]["name"],
+            locale,
+        )
+        for member in members
+    ]
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        profile_results = executor.map(_fetch_character_profile, profile_tasks)
+        profile_data = {p["name"]: p for p in profile_results if p}
 
     logger.info("Processing %d guild members", len(members))
 
     processed_data = []
     for member in members:
         character = member.get("character", {})
+        name = character.get("name")
+        profile = profile_data.get(name, {})
+
+        last_login_ts = int(profile.get("last_login", 0))
+        item_level = profile.get("ilvl", 0)
+
+        last_login_str = format_timestamp(last_login_ts)
 
         # Note: For class and race, we extract the ID.
         # A future function could resolve these IDs to names via another API call.
         processed_data.append(
             {
                 "id": character.get("id"),
-                "name": character.get("name"),
+                "name": name,
                 "realm": character.get("realm", {}).get("slug"),
                 "level": character.get("level"),
                 "class_id": character.get("playable_class", {}).get("id"),
                 "race_id": character.get("playable_race", {}).get("id"),
                 "rank": member.get("rank"),
+                "ilvl": item_level,
+                "last_login": last_login_str,
             }
         )
 
@@ -340,7 +402,7 @@ def process_roster_to_csv(
         logger.exception("An error occurred during data processing: %s", e)
 
 
-def process_profiles(region: str, data: dict, output_filename: str):
+def process_links(region: str, data: dict, output_filename: str):
     """Process profile for each character."""
     members = data.get("members", [])
     if not members:
