@@ -37,5 +37,5 @@ def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
 
 def data_path(*args) -> Path:
     """Construct a data path from the given arguments."""
-    local_path = "-".join(args)
+    local_path = "-".join(args).lstrip("/")
     return DATA_PATH / f"{local_path}.csv"
