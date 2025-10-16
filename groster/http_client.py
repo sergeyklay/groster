@@ -34,6 +34,16 @@ class BlizzardAPIClient:
         self._api_token: str | None = None
         self._token_expires_at: float = 0
 
+        self._profile_params = {
+            "namespace": f"profile-{self.region}",
+            "locale": self.locale,
+        }
+
+        self._static_params = {
+            "namespace": f"static-{self.region}",
+            "locale": self.locale,
+        }
+
         transport = httpx.AsyncHTTPTransport(
             retries=max_retries,
         )
@@ -110,25 +120,21 @@ class BlizzardAPIClient:
 
         path = f"data/wow/{data_key}/index"
         url = self._format_url(path)
-        params = {"namespace": f"static-{self.region}", "locale": self.locale}
-        return await self._request("GET", url, params=params)
+        return await self._request("GET", url, params=self._static_params)
 
     async def get_guild_roster(self, realm_slug: str, guild_slug: str) -> dict:
         logger.info("Fetching guild roster ...")
-
         url = self._format_url(f"data/wow/guild/{realm_slug}/{guild_slug}/roster")
-        params = {"namespace": f"profile-{self.region}", "locale": self.locale}
 
-        return await self._request("GET", url, params=params)
+        return await self._request("GET", url, params=self._profile_params)
 
     async def get_character_profile(self, realm_slug: str, char_name: str) -> dict:
         logger.info("Fetching character profile ...")
 
         name = char_name.lower()
         url = self._format_url(f"profile/wow/character/{realm_slug}/{name}")
-        params = {"namespace": f"profile-{self.region}", "locale": self.locale}
 
-        return await self._request("GET", url, params=params)
+        return await self._request("GET", url, params=self._profile_params)
 
     async def get_character_achievements(self, realm_slug: str, char_name: str) -> dict:
         logger.info("Fetching character achievements ...")
@@ -137,9 +143,8 @@ class BlizzardAPIClient:
         url = self._format_url(
             f"profile/wow/character/{realm_slug}/{name}/achievements"
         )
-        params = {"namespace": f"profile-{self.region}", "locale": self.locale}
 
-        return await self._request("GET", url, params=params)
+        return await self._request("GET", url, params=self._profile_params)
 
     async def get_playable_classes(self) -> dict:
         logger.info("Fetching playable classes ...")
