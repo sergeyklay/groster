@@ -7,10 +7,11 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
+# Default user agent for the Blizzard API.
 # TODO: Use project version from pyproject.toml
 DEFAULT_USER_AGENT = "groster/0.3.0"
-"""Default user agent for the Blizzard API."""
 
+# Region-based host mappings for different Blizzard API endpoints.
 _OAUTH_HOSTS = {
     "us": "https://oauth.battle.net",
     "eu": "https://oauth.battle.net",
@@ -18,16 +19,15 @@ _OAUTH_HOSTS = {
     "tw": "https://oauth.battle.net",
     "cn": "https://oauth.battlenet.com.cn",
 }
-"""Region-based host mappings for different Blizzard API endpoints."""
 
+# Fallback region-based host mapping for different Blizzard API endpoints.
 _API_HOSTS = {
     "cn": "https://gateway.battlenet.com.cn",
     "*": "https://{region}.api.blizzard.com",
 }
-"""Fallback region-based host mapping for different Blizzard API endpoints."""
 
+# Supported regions based on official Blizzard API documentation.
 SUPPORTED_REGIONS = {"us", "eu", "kr", "tw", "cn"}
-"""Supported regions based on official Blizzard API documentation."""
 
 
 def _validate_region(region: str) -> None:
