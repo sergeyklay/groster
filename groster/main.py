@@ -25,15 +25,28 @@ from groster.utils import data_path
 logger = logging.getLogger(__name__)
 
 
-def setup_logging():
-    """Configure logging for the application."""
+def setup_logging(debug: bool = False):
+    """Configure logging for the application.
+
+    Args:
+        debug: If True, enable debug logging for httpx/httpcore requests.
+    """
     log_path = Path().cwd() / "groster.log"
+
+    # Set base logging level
+    log_level = logging.DEBUG if debug else logging.INFO
+
     logging.basicConfig(
-        level=logging.INFO,
+        level=log_level,
         format="[%(asctime)s] [%(levelname)s] - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[logging.StreamHandler(), logging.FileHandler(str(log_path))],
     )
+
+    if not debug:
+        # Reduce httpx/httpcore logging noise - only show WARNING and above
+        logging.getLogger("httpx").setLevel(logging.WARNING)
+        logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 
 def parse_arguments():
@@ -76,6 +89,12 @@ def parse_arguments():
             "A comma-separated list of character names to debug (e.g., 'Darq,Lucen'). "
             "Skips normal execution."
         ),
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug logging, including HTTP request/response details.",
     )
 
     return parser.parse_args()
@@ -292,7 +311,7 @@ async def main():
     args = parse_arguments()
 
     load_dotenv()
-    setup_logging()
+    setup_logging(debug=args.debug)
 
     DATA_PATH.mkdir(parents=True, exist_ok=True)
     CACHE_PATH.mkdir(parents=True, exist_ok=True)
