@@ -179,7 +179,17 @@ async def fetch_roster_details(
 
 
 def create_profile_links(region: str, realm: str, guild: str, data: dict):
-    """Create profile links for each character."""
+    """Create CSV with external profile links for each guild member.
+
+    Generates links to Raider.IO, Armory, and Warcraft Logs for all members
+    and writes them to a CSV file.
+
+    Args:
+        region: Region code (e.g., 'us', 'eu').
+        realm: Realm slug.
+        guild: Guild slug.
+        data: Raw roster data dict containing members list.
+    """
     links_file = data_path(region, realm, guild, "links")
     links_file.parent.mkdir(parents=True, exist_ok=True)
 
