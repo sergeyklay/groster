@@ -64,6 +64,16 @@ async def fetch_member_fingerprint(
 async def fetch_roster_details(
     client: BlizzardAPIClient, roster_data: dict[str, Any]
 ) -> list[dict[str, Any]]:
+    """Fetch detailed profiles for all roster members.
+
+    Args:
+        client: Blizzard API client for making requests.
+        roster_data: Raw roster data containing member list.
+
+    Returns:
+        List of processed member detail dicts with id, name, realm, level,
+        class_id, race_id, rank, ilvl, and last_login.
+    """
     members = roster_data.get("members", [])
     if not members:
         return []
