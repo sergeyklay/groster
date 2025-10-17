@@ -312,3 +312,11 @@ class BlizzardAPIClient:
         """Close the underlying HTTP client session."""
         logger.debug("Closing HTTP client session")
         await self.client.aclose()
+
+    async def __aenter__(self) -> "BlizzardAPIClient":
+        """Enter the async context manager."""
+        return self
+
+    async def __aexit__(self, *_: object) -> None:
+        """Exit the async context manager."""
+        await self.close()
