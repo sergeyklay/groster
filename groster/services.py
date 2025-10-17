@@ -282,7 +282,17 @@ async def get_playable_classes(client: BlizzardAPIClient) -> dict:
 
 
 async def get_playable_races(client: BlizzardAPIClient) -> dict:
-    """Get playable races from the API."""
+    """Fetch playable race mappings from API or cached CSV.
+
+    Retrieves all playable races from the Blizzard API on first call and
+    caches to CSV. Subsequent calls read from the cached file.
+
+    Args:
+        client: Blizzard API client for fetching race data.
+
+    Returns:
+        Dict mapping race IDs (int) to race names (str).
+    """
     races_file = data_path("races")
     races_file.parent.mkdir(parents=True, exist_ok=True)
 
