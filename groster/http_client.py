@@ -74,7 +74,7 @@ class BlizzardAPIClient:
         data = {"grant_type": "client_credentials"}
         auth = (self.client_id, self.client_secret)
 
-        logger.info("Requesting new access token from Battle.net")
+        logger.debug("Requesting new access token from Battle.net")
         try:
             response = await self.client.post(url, data=data, auth=auth)
             response.raise_for_status()
@@ -93,7 +93,7 @@ class BlizzardAPIClient:
             expires_in = token_data.get("expires_in", 3600)
             self._token_expires_at = time.time() + int(expires_in) - 60
 
-            logger.info("Access token successfully obtained")
+            logger.debug("Access token successfully obtained")
             return self._api_token
         except httpx.HTTPError:
             logger.exception("Failed to obtain access token")
@@ -136,7 +136,7 @@ class BlizzardAPIClient:
         Returns:
             A dict containing the guild roster data, or an empty dict on failure.
         """
-        logger.info("Fetching guild roster")
+        logger.debug("Fetching guild roster")
         url = self._format_url(f"data/wow/guild/{realm_slug}/{guild_slug}/roster")
 
         return await self._request("GET", url, params=self._profile_params)
@@ -151,7 +151,7 @@ class BlizzardAPIClient:
         Returns:
             A dict containing the character profile data, or an empty dict on failure.
         """
-        logger.info("Fetching character profile")
+        logger.debug("Fetching character profile for %s on %s", char_name, realm_slug)
 
         name = char_name.lower()
         url = self._format_url(f"profile/wow/character/{realm_slug}/{name}")
@@ -169,7 +169,9 @@ class BlizzardAPIClient:
             A dict containing the character achievements data, or an empty dict on
             failure.
         """
-        logger.info("Fetching character achievements")
+        logger.debug(
+            "Fetching character achievements for %s on %s", char_name, realm_slug
+        )
 
         name = char_name.lower()
         url = self._format_url(
@@ -188,7 +190,7 @@ class BlizzardAPIClient:
         Returns:
             A dict containing the character pets data, or an empty dict on failure.
         """
-        logger.info("Fetching character pets")
+        logger.debug("Fetching character pets for %s on %s", char_name, realm_slug)
 
         name = char_name.lower()
         url = self._format_url(
@@ -207,7 +209,7 @@ class BlizzardAPIClient:
         Returns:
             A dict containing the character mounts data, or an empty dict on failure.
         """
-        logger.info("Fetching character mounts")
+        logger.debug("Fetching character mounts for %s on %s", char_name, realm_slug)
 
         name = char_name.lower()
         url = self._format_url(
@@ -222,8 +224,7 @@ class BlizzardAPIClient:
         Returns:
             A list of dicts containing class information, or an empty list on failure.
         """
-        logger.info("Fetching playable classes")
-
+        logger.debug("Fetching playable classes")
         data = await self._get_static_data("playable-class")
 
         return data.get("classes", [])
@@ -234,8 +235,7 @@ class BlizzardAPIClient:
         Returns:
             A list of dicts containing race information, or an empty list on failure.
         """
-        logger.info("Fetching playable races")
-
+        logger.debug("Fetching playable races")
         data = await self._get_static_data("playable-race")
 
         return data.get("races", [])
