@@ -217,9 +217,12 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
             }
         )
 
-    df = pd.DataFrame(links_data)
-    df.to_csv(links_file, index=False, encoding="utf-8")
-    logger.info("Successfully created profile links file: %s", links_file.resolve())
+    try:
+        df = pd.DataFrame(links_data)
+        df.to_csv(links_file, index=False, encoding="utf-8")
+        logger.info("Successfully created profile links file: %s", links_file.resolve())
+    except OSError:
+        logger.warning("Failed to write profile links file")
 
 
 async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
