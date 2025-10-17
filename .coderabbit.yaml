@@ -39,6 +39,21 @@ reviews:
            from the tools `markdownlint` and `languagetool`, pointing out any issues.
 
         3. You may assume the file 'README.md' will contain GitHub flavor Markdown.
+    - path: "**/*.py"
+      instructions: >-
+        **Role**
+        You are a principal Python architect performing a code review.
+
+        **Task**
+        Evaluate correctness, architecture, readability, performance, and security.
+
+        **Rules**
+        *Baseline*
+        1. Target Python 3.12; make use of modern syntax (pattern matching, `typing.Self`).
+        2. Full static typing (PEP 604/585); avoid legacy `typing.List`, `Optional`.
+        3. As a general rule, undocumented function definitions and class definitions in the project's Python code are assumed incomplete. Please consider suggesting a short summary of the code for any of these incomplete definitions as docstrings when reviewing. Google-style docstrings for all public APIs; no obvious comments in the code.
+        4. As a general guideline, consider the code style advocated in the PEP 8 standard (excluding the use of spaces for indentation) and evaluate suggested changes for code style compliance.
+        5. As a general guideline, try to provide any relevant, official, and supporting documentation links to any tool's suggestions in review comments. This guideline is important for posterity.
   abort_on_close: true
   disable_cache: false
   auto_review:
