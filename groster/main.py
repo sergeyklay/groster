@@ -320,9 +320,7 @@ async def main():
     )
 
     try:
-        ranks_data = await get_guild_ranks(
-            api_client, args.region, args.realm, args.guild
-        )
+        ranks_data = await get_guild_ranks(args.region, args.realm, args.guild)
         if not ranks_data:
             raise RuntimeError("Failed to get guild ranks data")
 

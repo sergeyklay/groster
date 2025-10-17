@@ -186,9 +186,7 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
     logger.info("Successfully created profile links file: %s", links_file.resolve())
 
 
-async def get_guild_ranks(
-    client: BlizzardAPIClient, region: str, realm: str, guild: str
-) -> dict:
+async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
     """Get guild ranks from the API."""
     ranks_file = data_path(region, realm, guild, "ranks")
     ranks_file.parent.mkdir(parents=True, exist_ok=True)
