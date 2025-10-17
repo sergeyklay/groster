@@ -308,7 +308,7 @@ class BlizzardAPIClient:
 
         return data.get("races", [])
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the underlying HTTP client session."""
         logger.debug("Closing HTTP client session")
         await self.client.aclose()
