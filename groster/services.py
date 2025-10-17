@@ -358,7 +358,19 @@ async def fetch_member_pets_summary(
 async def fetch_member_mounts_summary(
     client: BlizzardAPIClient, member: dict
 ) -> dict | None:
-    """Fetch mount collection summary for one member."""
+    """Fetch mount collection summary for one member.
+
+    Retrieves mount collection summary for one member from the Blizzard API
+    and caches to JSON file. Subsequent calls read from the cached file.
+
+    Args:
+        client: Blizzard API client for fetching mount data.
+        member: Raw member dict from roster data containing character info.
+
+    Returns:
+        Dict with 'id', 'name', 'realm', and 'mounts' (int), or None if member data
+        is invalid.
+    """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
