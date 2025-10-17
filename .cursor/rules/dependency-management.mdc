@@ -1,0 +1,52 @@
+---
+description: Dependency Management
+globs: pyproject.toml
+alwaysApply: false
+---
+# Dependency Management
+
+**For dependency files:** Strict rules for managing project dependencies with uv.
+
+## Core Principles
+
+- **ONLY use `uv`** - `pip` is forbidden in this project
+- **Lock file committed** - `uv.lock` must be in version control
+- **Explicit versions** - avoid loose version constraints in production
+
+## Essential Commands
+
+```bash
+# ✅ DO: Correct uv usage
+uv add package-name            # Add new dependency
+uv add --group dev ruff        # Add development dependency
+uv add --upgrade package-name  # Upgrade specific package
+uv run tool-name               # Run tools via uv
+uv sync                        # Install from lock file
+
+# ❌ DON'T: Forbidden commands
+pip install package-name       # Never use pip
+uv pip install package-name    # Don't use uv pip
+uv add package-name@latest     # Don't use @latest syntax
+```
+
+## Quick Reference
+
+```bash
+# Add dependency
+uv add package-name
+
+# Add testing dependency
+uv add --group testing pytest
+
+# Install from lock file
+uv sync
+
+# Update dependencies
+uv sync --upgrade
+```
+
+## Critical Rules
+
+- **NEVER use pip** - uv only in this project
+- **Commit uv.lock** - always version control lock file
+- **Review before adding** - evaluate necessity of new dependencies

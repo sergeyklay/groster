@@ -1,0 +1,121 @@
+---
+description: Python Coding Standards
+globs: **/*.py
+alwaysApply: false
+---
+# Python Coding Standards
+
+**For Python files:** Follow these standards for consistent, maintainable code.
+
+## Type System
+
+- **Type hints required** on all functions and class methods
+- **Use modern syntax**: Full static typing (PEP 604/585); avoid legacy `typing.List`, `Optional`, etc
+- **Avoid `Any` type** - use specific types or protocols
+
+```python
+# ✅ DO:
+def process_items(items: list[dict[str, str]]) -> list[str]:
+    return [item["name"] for item in items]
+
+# ❌ DON'T:
+def process_items(items):
+    return [item["name"] for item in items]
+```
+
+Note: For functions that do not return a meaningful value, annotating with `-> None`
+is optional and often redundant. Prefer clarity and brevity unless the annotation
+improves readability. For functions that truly never return (e.g., always raise or
+exit), use `typing.Never`.
+
+```python
+# ✅ DO (omit `-> None` when it's obvious/idiomatic, e.g., __init__):
+def __init__(self, items: list[dict[str, str]]):
+    self.items = items
+
+# ✅ DO for non-returning functions:
+from typing import Never
+
+def abort_run(msg: str) -> Never:
+    raise SystemExit(msg)
+
+# ❌ DON'T:
+def __init__(self, items: list[dict[str, str]]) -> None:
+    self.items = items
+```
+
+## Code Style
+
+- **Line length**: 88 characters maximum (Ruff default)
+- **Function structure**: Guard clauses first, happy path last
+- **Naming**: Descriptive names, no abbreviations (`user_count` not `uc`)
+- **Comprehensions**: Prefer over loops when readable
+
+```python
+# ✅ DO: Guard clauses first
+def calculate_discount(price: float, user_type: str) -> float:
+    if price <= 0:
+        raise ValueError("Price must be positive")
+    if user_type not in ["premium", "standard"]:
+        raise ValueError("Invalid user type")
+
+    # Happy path
+    return price * (0.1 if user_type == "premium" else 0.05)
+```
+
+- **Logging**: Do not use print() for logging. Use Python's built-in logging module:
+
+```python
+# ❌ DON'T:
+print("message")
+
+# ✅ DO:
+context.log.info("Message")
+```
+
+Avoid using f-strings to format logging messages:
+```python
+# ❌ DON'T:
+context.log.info(f"User {user_id} - Something happened")
+
+# ✅ DO:
+context.log.info("User %s - Something happened", user_id)
+```
+
+## Docstrings: Use imperative voice, be concise and professional
+
+- Prefer a one-line summary for trivial functions.
+- For non-trivial functions, include Google-style sections (Args, Returns, Raises).
+- Do not duplicate types in Args/Returns when type hints are present.
+
+```python
+# ✅ DO: Imperative voice, concise
+def calculate_discount(price: float, user_type: str) -> float:
+    """Calculate discount based on price and user type."""
+    ...
+
+def validate_user_input(data: dict[str, str]) -> None:
+    """Validate user input data and raise ValueError if invalid."""
+    ...
+
+# ❌ DON'T: Descriptive voice, verbose
+def calculate_discount(price: float, user_type: str) -> float:
+    """This function calculates the discount that should be applied."""
+    ...
+
+# ✅ DO: Non-trivial example with Google style sections
+def fetch_users(source: str, limit: int = 100) -> list[dict[str, str]]:
+    """Fetch users from the given source with an optional limit.
+
+    Args:
+        source: Data source identifier.
+        limit: Maximum number of users to fetch.
+
+    Returns:
+        A list of user records.
+
+    Raises:
+        ValueError: If the source is unsupported.
+    """
+    ...
+```

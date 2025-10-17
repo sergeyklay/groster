@@ -1,0 +1,310 @@
+---
+description: Testing Guidelines
+globs: tests/**/*.py
+alwaysApply: false
+---
+# Testing Guidelines
+
+**For test files:** Comprehensive testing practices for reliable code.
+
+## Test Types and Scope
+
+- **Unit Test**: Tests a single function or component in complete isolation from external systems.
+  - **MUST** mock all I/O, including network and database calls.
+  - **MUST** be fast and self-contained.
+  - Lives in `tests/unit` directory.
+- **Integration Test**: Tests the interaction between multiple components or with external systems like a database or an API.
+  - **MAY** make real network or database calls to a dedicated test environment.
+  - Inherently slower than unit tests.
+  - Lives in `tests/integration` and **MUST** be marked with `@pytest.mark.integration`.
+
+## Test Quality
+
+- Tests should be understandable without comments. Minimize comments by keeping tests simple; comment **ONLY** when the alternative is confusion. If test needs a comment, it's a sign the test is too complex and needs to be simplified.
+- Break complex tests into smaller, focused tests
+- Each test should have only one logical scenario per test.
+- Always write tests using plain functions. Avoid class-based or OOP-style tests entirely unless a concrete technical requirement makes them unavoidable
+- Describe what is being tested and the expected outcome using a structured name. Use the pattern `test_<subject>_<scenario>_<expected_outcome>`.
+
+```python
+# ✅ DO: Descriptive test name
+def test_user_registration_with_invalid_email_raises_validation_error():
+    # Test implementation
+
+# ❌ DON'T: Vague test name
+def test_user():
+    # Test implementation
+```
+
+## Assertion Strategy
+
+- Prefer the plain `assert` statement for simple comparisons – pytest gives you rich diffs for free.
+- Use domain-specific helpers (`pandas.testing.assert_frame_equal`, `numpy.testing.*`, etc.) when they convey intent or provide better diagnostics.
+- To check for exceptions, **MUST** use `pytest.raises` as a context manager.
+- When using `pytest.raises`, use the `match` parameter to assert on the exception message using a regex pattern. This is more robust than asserting on the exact string.
+
+```python
+# ✅ DO: Use pytest.raises with a message matcher
+import pytest
+
+def test_divide_by_zero_raises_error():
+    """Test that dividing by zero raises a ValueError with a specific message."""
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        divide(10, 0)
+
+# ❌ DON'T: Use a generic try/except block
+def test_divide_by_zero_manual_check():
+    try:
+        divide(10, 0)
+        assert False, "ValueError was not raised"
+    except ValueError as e:
+        assert "divide by zero" in str(e)
+```
+
+## Test Organization
+
+- Maintain a 1:1 ratio between test files and implementation files
+- All new features require tests; bug fixes need regression tests
+- Arrange-Act-Assert pattern clearly separated
+- Use pytest fixtures for setup/teardown instead of setUp/tearDown methods
+- Use `@pytest.mark.parametrize` for data-driven testing and to reduce repeated test code
+
+```python
+# ✅ DO: Use parametrize for multiple test cases
+import pandas as pd
+
+@pytest.mark.parametrize(
+    "input_data,expected_valid",
+    [
+        (pd.DataFrame({"id": [1, 2]}), True),
+        (pd.DataFrame({"id": [1, None]}), False),
+        (pd.DataFrame(), False),
+    ],
+)
+def test_data_validation(input_data: pd.DataFrame, expected_valid: bool):
+    result = validate_data(input_data)
+    assert result.is_valid is expected_valid
+
+# ❌ DON'T:
+def test_data_validation():
+    result = validate_data(pd.DataFrame({"id": [1, 2]}))
+    assert result.is_valid is True
+
+    result = validate_data(pd.DataFrame({"id": [1, None]}))
+    assert result.is_valid is False
+
+    result = validate_data(pd.DataFrame())
+    assert result.is_valid is False
+```
+
+## Fixture Organization
+
+- Follow "Local when possible, shared when necessary" principle
+- Move fixtures to `conftest.py` when they are used by 2+ test modules
+  - Used by multiple test files across different domains
+  - Core infrastructure like database session mocks
+  - Utilities that won't change often
+  - Context managers, common mocks, etc
+- Keep fixtures in test files when they are domain-specific or likely to change
+  - Test data tied to specific APIs or business logic
+  - Fixtures that evolve with feature development
+  - Multi-step scenarios specific to test cases
+  - Only needed by one test module
+- Use an appropriate strategy when defining fixtures scope
+  - Function scope (default): For test data and mocks that should be fresh per test
+  - Module scope: For expensive setup that can be shared within a module
+  - Session scope: For very expensive resources shared across entire test suite
+
+### DRY Principle in Test Fixtures
+
+- Extract common setup patterns into reusable fixtures
+- Eliminate duplication across test files without over-centralizing
+- Refactor repetitive test setup into fixture composition
+
+```python
+# ❌ DON'T: Repetitive setup in every test
+def test_asset_success():
+    data = pd.DataFrame({"order_id": [1, 2], "item_id": [432, 878]})
+    # Test logic...
+
+
+def test_asset_failure():
+    data = pd.DataFrame({"order_id": [1, 2], "item_id": [432, 878]})  # Duplicated!
+    # Test logic...
+
+# ✅ DO: Use composable fixtures
+@pytest.fixture()
+def sample_dataset():
+    return pd.DataFrame({
+        "order_id": [1, 2],
+        "item_id": [432, 878]
+    })
+
+
+def test_asset_success(sample_dataset):
+    # Test logic only...
+
+
+def test_asset_failure(sample_dataset):
+    # Test logic only...
+```
+
+## Mock and Patch Strategy
+
+- Flatten nested context managers using comma syntax.
+- Mock external dependencies but not internal business logic.
+- Use `pytest-mock` for consistent mocking patterns. Use the `mocker` fixture.
+
+```python
+# ✅ DO: Use mocker fixture with autospec
+def test_complex_function_with_dependency(mocker):
+    """Test the function, mocking its dependency safely."""
+    # The mock will fail if get_session is called with wrong arguments
+    mock_db_session = mocker.patch(
+        "module.database.get_session",
+        autospec=True
+    )
+    mock_db_session.return_value.query.return_value = "mock_data"
+
+    result = complex_asset_function()
+
+    assert result.success
+    mock_db_session.assert_called_once()
+```
+
+- Avoid deep nesting of context managers:
+```python
+# ✅ DO:
+with patch("module.first_dependency", mock_value1), \
+    patch("module.second_dependency", mock_value2), \
+    patch("module.third_dependency", mock_value3):
+    # Test code
+
+# ❌ DON'T:
+with patch("module.first_dependency", mock_value1):
+    with patch("module.second_dependency", mock_value2):
+        with patch("module.third_dependency", mock_value3):
+            # Test code
+```
+
+## Resource Management in Tests
+
+- Unit tests **MUST NOT** perform real I/O operations (network calls, database connections, disk reads/writes). These must be mocked.
+- Use pytest fixtures to ensure all resources (e.g., mock database connections, temporary files) are properly set up and torn down for each test, preventing state leakage between tests.
+
+- Mock external dependencies - prevent real network calls and database connections
+- Use proper fixture cleanup - ensure all resources are properly closed
+- Testing strategies - Always prefer strategies with faster execution
+
+```python
+# ✅ DO: Mock external dependencies
+def test_asset_with_database_dependency(mocker):
+    """Test asset that depends on database without real database."""
+    mock_db = mocker.patch("module.database.get_connection")
+    mock_db.return_value.execute.return_value = mock_data
+
+    result = asset_function()
+    assert result is not None
+    mock_db.assert_called_once()
+
+
+# ✅ DO: Test data transformations without Dagster overhead
+import pandas as pd
+
+def test_data_transformation_logic(input_data, expected_output):
+    """Test pure data transformation logic."""
+
+    result = transform_data(input_data)
+    pd.testing.assert_frame_equal(result, expected_output)
+```
+
+## Dagster Testing Patterns
+
+Test Dagster assets using the unit testing approach
+
+- Test asset logic separately from Dagster infrastructure
+- Test asset checks independently of the assets they validate
+- Use direct function calls to test asset computation logic
+- Focus on data transformations and business logic
+- Use Dagster testing utilities sparingly for integration tests only (e.g. `materialize`)
+- Mock external dependencies like databases and APIs for unit tests
+
+```python
+# ✅ DO: Test asset logic directly
+def test_process_orders_data(sample_dataset):
+    """Test the core logic of the process_orders asset."""
+    result = process_orders_logic(sample_dataset)
+
+    assert len(result) == 2
+    assert "processed_status" in result.columns
+
+
+# ✅ DO: Use Dagster's testing utilities for integration tests
+def test_process_orders_asset():
+    """Test the asset with Dagster context."""
+    from dagster import materialize
+
+    result = materialize([process_orders])
+    assert result.success
+```
+
+## Logging in Tests
+
+Default approach: Focus on business logic.
+
+```python
+# ✅ DO: Most tests don't need to worry about logging
+def test_business_logic():
+    # Focus on behavior, not logging
+    result = function_under_test()
+    assert result == expected_value
+
+
+# ✅ DO: Mock logger only when testing logging calls
+def test_function_logs_correctly(mocker):
+    mock_logger = mocker.patch("module.logger")
+
+    function_under_test()
+
+    mock_logger.info.assert_called_once_with("Expected message", key="value")
+```
+
+### Logging Control During Tests
+
+Current global configuration in `pyproject.toml` for logging:
+
+- Silent tests (default): INFO logs suppressed, WARNING/ERROR visible
+- Integration tests: Auto-suppress via fixtures with level control
+
+Command-line overrides:
+
+- Verbose logging: `uv run --frozen pytest --log-cli-level=INFO -s`
+- Debug logging: `uv run --frozen pytest --log-cli-level=DEBUG -s`
+- No logging: `uv run --frozen pytest --log-disable=<LOGGER_NAME>`
+- Enable specific logger: `uv run --frozen pytest --log-cli-level=INFO --capture=no`
+
+Unit test approach:
+
+- Global suppression: INFO logs automatically suppressed in `tests/unit/conftest.py`
+- Selective mocking: Use `mocker.patch("module.logger")` only when testing logging behavior
+- Clean by default: Most tests focus on business logic without logging noise
+
+## Test Markers
+
+- Mark slow tests: `@pytest.mark.slow`
+- Mark integration tests: `@pytest.mark.integration`
+- Mark Dagster tests: `@pytest.mark.dagster` for Dagster-specific tests
+- Skip tests conditionally: Use `@pytest.mark.skipif` with clear reason
+
+## Test Commands
+
+- Run all tests: `uv run --frozen pytest ./tests`
+- Run unit tests only: `uv run --frozen pytest -v ./tests/unit` (must be fast, no database or other external resources are required)
+- Run integration tests only: `uv run --frozen pytest -v ./tests/integration -m integration` (requires database or other external resources to be available)
+- Run specific test: `uv run --frozen pytest ./tests/unit/assets/test_orders.py`
+- Run only fast tests: `uv run --frozen pytest -m "not slow"`
+
+---
+
+**See also:**
+- [README.md](mdc:README.md) for overall project introduction

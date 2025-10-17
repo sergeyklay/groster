@@ -5,3 +5,9 @@
 *.mk diff=make linguist-language=Makefile
 *[Mm]akefile diff=make linguist-language=Makefile
 .env.example diff=shell linguist-language=Shell
+
+# Cursor Rules
+*.mdc text diff=markdown linguist-language=YAML
+
+# Tune up language detection
+docs/*.md diff=markdown linguist-documentation linguist-detectable=true
