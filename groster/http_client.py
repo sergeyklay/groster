@@ -10,6 +10,33 @@ logger = logging.getLogger(__name__)
 DEFAULT_USER_AGENT = "groster/0.3.0"
 """Default user agent for the Blizzard API."""
 
+_OAUTH_HOSTS = {
+    "us": "https://oauth.battle.net",
+    "eu": "https://oauth.battle.net",
+    "kr": "https://oauth.battle.net",
+    "tw": "https://oauth.battle.net",
+    "cn": "https://oauth.battlenet.com.cn",
+}
+"""Region-based host mappings for different Blizzard API endpoints."""
+
+_API_HOSTS = {
+    "cn": "https://gateway.battlenet.com.cn",
+    "*": "https://{region}.api.blizzard.com",
+}
+"""Fallback region-based host mapping for different Blizzard API endpoints."""
+
+SUPPORTED_REGIONS = {"us", "eu", "kr", "tw", "cn"}
+"""Supported regions based on official Blizzard API documentation."""
+
+
+def _validate_region(region: str) -> None:
+    """Validate that the region is supported by the Blizzard API."""
+    if region not in SUPPORTED_REGIONS:
+        raise ValueError(
+            f"Unsupported region '{region}'. "
+            f"Supported regions are: {', '.join(sorted(SUPPORTED_REGIONS))}"
+        )
+
 
 class BlizzardAPIClient:
     """A HTTP client for the Blizzard Battle.net API."""
@@ -26,6 +53,7 @@ class BlizzardAPIClient:
         if not all([region, client_id, client_secret]):
             raise ValueError("Region, client ID, and client secret must be provided")
 
+        _validate_region(region)
         self.region = region
         self.client_id = client_id
         self.client_secret = client_secret
@@ -62,14 +90,23 @@ class BlizzardAPIClient:
     def _format_url(self, path: str) -> str:
         """Format the URL for the Blizzard Battle.net API."""
         path = path.lstrip("/")
-        return f"https://{self.region}.api.blizzard.com/{path}"
+
+        # Use region-specific API host or fallback to standard pattern
+        if self.region in _API_HOSTS:
+            base_url = _API_HOSTS[self.region]
+        else:
+            base_url = _API_HOSTS["*"].format(region=self.region)
+
+        return f"{base_url}/{path}"
 
     async def _get_access_token(self) -> str:
         """Fetch or renews the OAuth access token."""
         if self._api_token and time.time() < self._token_expires_at:
             return self._api_token
 
-        url = "https://oauth.battle.net/token"
+        # Use region-specific OAuth host
+        oauth_host = _OAUTH_HOSTS.get(self.region, _OAUTH_HOSTS["us"])
+        url = f"{oauth_host}/token"
         data = {"grant_type": "client_credentials"}
         auth = (self.client_id, self.client_secret)
 
