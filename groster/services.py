@@ -242,19 +242,20 @@ async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
     ranks_file = data_path(region, realm, guild, "ranks")
     ranks_file.parent.mkdir(parents=True, exist_ok=True)
 
-    if not ranks_file.exists():
-        logger.info("Creating ranks file: %s", ranks_file)
-        try:
+    try:
+        if not ranks_file.exists():
+            logger.info("Creating ranks file: %s", ranks_file)
             ranks_mapping = create_rank_mapping()
             ranks_data = [rank._asdict() for rank in ranks_mapping.values()]
             df = pd.DataFrame(ranks_data)
             df.to_csv(ranks_file, index=False, encoding="utf-8")
             logger.info("Successfully created ranks file: %s", ranks_file.resolve())
-        except OSError as e:
-            raise RuntimeError("Failed to write ranks file") from e
-    else:
-        logger.info("Ranks file already exists: %s", ranks_file)
-        df = pd.read_csv(ranks_file)
+        else:
+            logger.info("Ranks file already exists: %s", ranks_file)
+            df = pd.read_csv(ranks_file)
+    except OSError as e:
+        logger.exception("Failed to process ranks data file for %s guild", guild)
+        raise RuntimeError("Failed to process ranks data file") from e
 
     return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
 
@@ -264,19 +265,20 @@ async def get_playable_classes(client: BlizzardAPIClient) -> dict:
     classes_file = data_path("classes")
     classes_file.parent.mkdir(parents=True, exist_ok=True)
 
-    if not classes_file.exists():
-        logger.info("Creating classes file: %s", classes_file)
-        try:
+    try:
+        if not classes_file.exists():
+            logger.info("Creating classes file: %s", classes_file)
             classes_list = await client.get_playable_classes()
             classes = [{"id": c["id"], "name": c["name"]} for c in classes_list]
             df = pd.DataFrame(classes)
             df.to_csv(classes_file, index=False, encoding="utf-8")
             logger.info("Successfully created classes file: %s", classes_file.resolve())
-        except OSError as e:
-            raise RuntimeError("Failed to write classes file") from e
-    else:
-        logger.info("Classes file already exists: %s", classes_file)
-        df = pd.read_csv(classes_file)
+        else:
+            logger.info("Classes file already exists: %s", classes_file)
+            df = pd.read_csv(classes_file)
+    except OSError as e:
+        logger.exception("Failed to process classes datafile")
+        raise RuntimeError("Failed to process classes data file") from e
 
     return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
 
@@ -296,19 +298,20 @@ async def get_playable_races(client: BlizzardAPIClient) -> dict:
     races_file = data_path("races")
     races_file.parent.mkdir(parents=True, exist_ok=True)
 
-    if not races_file.exists():
-        logger.info("Creating races file: %s", races_file)
-        try:
+    try:
+        if not races_file.exists():
+            logger.info("Creating races file: %s", races_file)
             races_list = await client.get_playable_races()
             races = [{"id": r["id"], "name": r["name"]} for r in races_list]
             df = pd.DataFrame(races)
             df.to_csv(races_file, index=False, encoding="utf-8")
             logger.info("Successfully created races file: %s", races_file.resolve())
-        except OSError as e:
-            raise RuntimeError("Failed to write races file") from e
-    else:
-        logger.info("Races file already exists: %s", races_file)
-        df = pd.read_csv(races_file)
+        else:
+            logger.info("Races file already exists: %s", races_file)
+            df = pd.read_csv(races_file)
+    except OSError as e:
+        logger.exception("Failed to process races data file")
+        raise RuntimeError("Failed to process races data file") from e
 
     return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
 
@@ -344,7 +347,7 @@ async def fetch_member_pets_summary(
         with open(char_path / "pets.json", "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
     except OSError:
-        logger.warning("Failed to write pet data file for %s", name)
+        logger.warning("Failed to process pet data file for %s", name)
         # we still can continue with the rest of the processing
 
     return {
