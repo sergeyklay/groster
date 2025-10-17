@@ -329,7 +329,7 @@ async def identify_alts(
     """Identify alts for a guild."""
     members = roster_data.get("members", [])
     if not members:
-        return []
+        return [], None
 
     logger.info("Fetching fingerprints for %d members to identify alts", len(members))
 
