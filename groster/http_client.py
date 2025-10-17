@@ -51,7 +51,13 @@ class BlizzardAPIClient:
         self.client = httpx.AsyncClient(
             transport=transport,
             timeout=timeout,
-            headers={"User-Agent": DEFAULT_USER_AGENT},
+            headers={
+                "User-Agent": DEFAULT_USER_AGENT,
+                "Accept": "application/json",
+                "Accept-Language": self.locale,
+                "Accept-Charset": "utf-8",
+                "Accept-Encoding": "gzip, deflate, br",
+            },
         )
 
     def _format_url(self, path: str) -> str:
@@ -150,6 +156,16 @@ class BlizzardAPIClient:
         name = char_name.lower()
         url = self._format_url(
             f"profile/wow/character/{realm_slug}/{name}/collections/pets"
+        )
+
+        return await self._request("GET", url, params=self._profile_params)
+
+    async def get_character_mounts(self, realm_slug: str, char_name: str) -> dict:
+        logger.info("Fetching character mounts")
+
+        name = char_name.lower()
+        url = self._format_url(
+            f"profile/wow/character/{realm_slug}/{name}/collections/mounts"
         )
 
         return await self._request("GET", url, params=self._profile_params)
