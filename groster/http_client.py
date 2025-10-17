@@ -5,6 +5,8 @@ from typing import Any
 
 import httpx
 
+from groster.models import PlayableClass, PlayableRace
+
 logger = logging.getLogger(__name__)
 
 # Default user agent for the Blizzard API.
@@ -284,22 +286,22 @@ class BlizzardAPIClient:
 
         return await self._request("GET", url, params=self._profile_params)
 
-    async def get_playable_classes(self) -> list[dict[str, str]]:
+    async def get_playable_classes(self) -> list[PlayableClass]:
         """Fetch all playable classes from the game.
 
         Returns:
-            A list of dicts containing class information, or an empty list on failure.
+            A list of PlayableClass objects, or an empty list on failure.
         """
         logger.debug("Fetching playable classes")
         data = await self._get_static_data("playable-class")
 
         return data.get("classes", [])
 
-    async def get_playable_races(self) -> list[dict[str, str]]:
+    async def get_playable_races(self) -> list[PlayableRace]:
         """Fetch all playable races from the game.
 
         Returns:
-            A list of dicts containing race information, or an empty list on failure.
+            A list of PlayableRace objects, or an empty list on failure.
         """
         logger.debug("Fetching playable races")
         data = await self._get_static_data("playable-race")
