@@ -95,8 +95,8 @@ class BlizzardAPIClient:
 
             logger.info("Access token successfully obtained")
             return self._api_token
-        except httpx.HTTPError as e:
-            logger.error("Failed to obtain access token: %s", e)
+        except httpx.HTTPError:
+            logger.exception("Failed to obtain access token")
             raise
 
     async def _request(self, method: str, url: str, **kwargs) -> dict[str, Any]:
