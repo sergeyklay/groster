@@ -1,5 +1,5 @@
 import argparse
-import hashlib
+import asyncio
 import json
 import logging
 import os
@@ -8,16 +8,19 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-import requests
 from dotenv import load_dotenv
 
-from groster.characters import (
-    identify_alts,
-    process_links,
-    process_roster_to_csv,
-)
 from groster.constants import CACHE_PATH, DATA_PATH, FINGERPRINT_ACHIEVEMENT_IDS
-from groster.ranks import create_rank_mapping
+from groster.http_client import BlizzardAPIClient
+from groster.services import (
+    create_profile_links,
+    fetch_roster_details,
+    get_guild_ranks,
+    get_playable_classes,
+    get_playable_races,
+    identify_alts,
+)
+from groster.utils import data_path
 
 logger = logging.getLogger(__name__)
 
@@ -78,181 +81,6 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def get_access_token(region: str, client_id: str, client_secret: str) -> str | None:
-    """
-    Obtains an OAuth access token using the Client Credentials flow.
-
-    Args:
-        region: The Battle.net region (e.g., 'eu').
-        client_id: Your Battle.net application client ID.
-        client_secret: Your Battle.net application client secret.
-
-    Returns:
-        The access token string or None if the request fails.
-    """
-    url = f"https://{region}.battle.net/oauth/token"
-    data = {"grant_type": "client_credentials"}
-    auth = (client_id, client_secret)
-
-    logger.info("Requesting access token from Battle.net")
-    try:
-        response = requests.post(url, data=data, auth=auth)
-        response.raise_for_status()
-        token_data = response.json()
-        access_token = token_data.get("access_token")
-        if access_token:
-            logger.info("Access token successfully obtained")
-            return access_token
-        logger.error("'access_token' not found in the response")
-        logger.debug("Token response: %s", token_data)
-        return None
-    except requests.HTTPError as http_err:
-        logger.error("HTTP error occurred while getting token: %s", http_err)
-        logger.debug("Response content: %s", response.text)
-    except requests.RequestException as err:
-        logger.error("Request for token failed: %s", err)
-
-    return None
-
-
-def get_static_data_mappings(
-    endpoint_url: str,
-    region: str,
-    token: str,
-    data_key: str,
-    cache_filename: str,
-    locale: str = "en_US",
-) -> dict | None:
-    """
-    Fetches static data (like classes or races) from the API, with local caching.
-
-    Args:
-        endpoint_url: The API URL for the static data index.
-        region: The Battle.net region (e.g., 'eu').
-        token: The OAuth access token.
-        data_key: The key in the JSON response that holds the list of items.
-        cache_filename: The local file to use for caching the data.
-        locale: The locale for the API request.
-
-    Returns:
-        A dictionary mapping IDs to names, or None on failure.
-    """
-    cache_path = DATA_PATH / cache_filename
-    if cache_path.exists():
-        logger.info("Loading %s from local cache: %s", data_key, cache_path)
-        try:
-            df = pd.read_csv(cache_path, dtype={"id": int, "name": str})
-
-            # Ensure keys are strings for consistent mapping
-            return dict(zip(df["id"].astype(int), df["name"].astype(str), strict=True))
-        except (pd.errors.EmptyDataError, KeyError, OSError) as e:
-            logger.warning(
-                "Failed to read cache file %s: %s. Refetching from API",
-                cache_path,
-                e,
-            )
-
-    logger.info("Fetching %s from API and creating cache", data_key)
-    headers = {"Authorization": f"Bearer {token}"}
-    params = {"namespace": f"static-{region}", "locale": locale}
-
-    try:
-        response = requests.get(endpoint_url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
-
-        items = data.get(data_key)
-        if not items:
-            logger.error("'%s' key not found in static API response.", data_key)
-            return None
-
-        df = pd.DataFrame(items)
-        df = df[["id", "name"]]
-
-        df.to_csv(cache_path, index=False, encoding="utf-8")
-        logger.info("Successfully cached %s to %s", data_key, cache_path)
-
-        return dict(zip(df["id"].astype(int), df["name"].astype(str), strict=True))
-    except (OSError, requests.RequestException, KeyError) as e:
-        logger.error("Failed to fetch or process static data for %s: %s", data_key, e)
-        return None
-
-
-def fetch_guild_roster(
-    api_token: str,
-    region: str,
-    realm_slug: str,
-    guild_slug: str,
-    locale: str = "en_US",
-) -> dict | None:
-    """
-    Fetches the guild roster from the Battle.net API.
-
-    Args:
-        api_token: The OAuth 2.0 bearer token.
-        region: The Battle.net region (e.g., 'eu').
-        realm_slug: The slug of the realm (e.g., 'terokkar').
-        guild_slug: The slug of the guild (e.g., 'darq-side-of-the-moon').
-        locale: The locale for the API request (e.g., 'en_US')
-
-    Returns:
-        A dictionary with the guild roster data or None if the request fails.
-    """
-    url = f"https://{region}.api.blizzard.com/data/wow/guild/{realm_slug}/{guild_slug}/roster"
-    headers = {"Authorization": f"Bearer {api_token}"}
-
-    params = {"namespace": f"profile-{region}", "locale": locale}
-
-    logger.info("Requesting guild roster from Battle.net API")
-    logger.debug("API endpoint: %s", url)
-
-    try:
-        response = requests.get(url, headers=headers, params=params)
-
-        # Raise an exception for bad status codes (4xx or 5xx)
-        response.raise_for_status()
-
-        logger.info("Guild roster fetched successfully")
-        return response.json()
-
-    except requests.HTTPError as http_err:
-        logger.error("HTTP error occurred: %s", http_err)
-        logger.debug("Response content: %s", response.text)
-    except requests.RequestException as err:
-        logger.error("Request failed: %s", err)
-
-    return None
-
-
-def calculate_hash(data: dict) -> str:
-    """Calculate a SHA256 hash of a dictionary."""
-    encoded_data = json.dumps(data, sort_keys=True, separators=(",", ":")).encode(
-        "utf-8"
-    )
-    return hashlib.sha256(encoded_data).hexdigest()
-
-
-def has_roster_changed(new_hash: str, hash_file: Path) -> bool:
-    """Checks for hash changes and updates the hash file."""
-    if not hash_file.exists():
-        logger.info("No previous roster hash found. Processing data...")
-        hash_file.write_text(new_hash)
-        return True
-
-    old_hash = hash_file.read_text()
-    if old_hash == new_hash:
-        logger.info("Roster data has not changed since last run. Skipping")
-        return False
-
-    logger.info("Roster data has changed. Reprocessing and updating hash...")
-    hash_file.write_text(new_hash)
-    return True
-
-
-def _data_path(region: str, realm: str, guild: str, file: str) -> Path:
-    return DATA_PATH / f"{region}-{realm}-{guild}-{file}.csv"
-
-
 def generate_dashboard(region: str, realm: str, guild: str):
     """
     Generates a consolidated dashboard.csv by merging all other data files.
@@ -277,7 +105,7 @@ def generate_dashboard(region: str, realm: str, guild: str):
         df_alts = pd.read_csv(alts_file)
         df_achievements = pd.read_csv(
             achievements_file,
-            usecols=[
+            usecols=[  # type: ignore
                 "id",
                 "name",
                 "total_quantity",
@@ -406,9 +234,8 @@ def debug_character_info(region: str, realm: str, names: list[str]):
                         date_str = datetime.fromtimestamp(ts / 1000).strftime(
                             "%Y-%m-%d %H:%M:%S"
                         )
-                        print(
-                            f"  - {ach['achievement']['name']} (ID: {ach['id']}): {date_str}"
-                        )
+                        aname = ach["achievement"]["name"]
+                        print(f"  - {aname} (ID: {ach['id']}): {date_str}")
                         found_fingerprints = True
             if not found_fingerprints:
                 print("  - No fingerprint achievements found.")
@@ -459,13 +286,13 @@ def summary_report(alts_file: str, time_diff: float):
         print(f"\nProcessing completed in {time_diff:.2f} seconds")
 
 
-def main():
+async def main():
     """Main entry point for the application."""
     start_time = time.time()
     args = parse_arguments()
 
-    setup_logging()
     load_dotenv()
+    setup_logging()
 
     DATA_PATH.mkdir(parents=True, exist_ok=True)
     CACHE_PATH.mkdir(parents=True, exist_ok=True)
@@ -476,92 +303,60 @@ def main():
         exit(0)
 
     if not args.guild:
-        logger.error("Guild name must be provided via --guild argument.")
-        exit(1)
+        raise ValueError("Guild name must be provided via --guild argument")
 
-    client_id = os.getenv("BLIZZARD_CLIENT_ID")
-    client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
+    api_client = BlizzardAPIClient(
+        region=args.region,
+        client_id=os.getenv("BLIZZARD_CLIENT_ID"),  # type: ignore
+        client_secret=os.getenv("BLIZZARD_CLIENT_SECRET"),  # type: ignore
+        locale=args.locale,
+    )
 
-    if not all([client_id, client_secret]):
-        logger.error(
-            "BLIZZARD_CLIENT_ID and BLIZZARD_CLIENT_SECRET must be set in .env file."
+    try:
+        ranks_data = await get_guild_ranks(
+            api_client, args.region, args.realm, args.guild
         )
-        exit(1)
+        if not ranks_data:
+            raise RuntimeError("Failed to get guild ranks data")
 
-    access_token = get_access_token(args.region, client_id, client_secret)  # type: ignore
-    if not access_token:
-        logger.error("Failed to obtain access token. Exiting.")
-        exit(1)
+        class_map = await get_playable_classes(api_client)
+        race_map = await get_playable_races(api_client)
+        if not all([class_map, race_map]):
+            raise RuntimeError("Failed to get necessary playable classes/races data")
 
-    ranks_map = create_rank_mapping()
-    ranks_file = _data_path(args.region, args.realm, args.guild, "ranks")
-    if not ranks_file.exists():
-        logger.info("Creating ranks file: %s", ranks_file)
-        try:
-            ranks_data = [rank._asdict() for rank in ranks_map.values()]
-            df = pd.DataFrame(ranks_data)
-            df.to_csv(ranks_file, index=False, encoding="utf-8")
-            logger.info("Successfully created ranks file: %s", ranks_file.resolve())
-        except OSError as e:
-            logger.error("Failed to write ranks file: %s", e)
-    else:
-        logger.info("Ranks file already exists: %s", ranks_file)
+        roster_data = await api_client.get_guild_roster(args.realm, args.guild)
+        if not roster_data:
+            raise RuntimeError("Failed to get guild roster data.")
 
-    class_map = get_static_data_mappings(
-        f"https://{args.region}.api.blizzard.com/data/wow/playable-class/index",
-        args.region,
-        access_token,
-        "classes",
-        "classes.csv",
-    )
-    race_map = get_static_data_mappings(
-        f"https://{args.region}.api.blizzard.com/data/wow/playable-race/index",
-        args.region,
-        access_token,
-        "races",
-        "races.csv",
-    )
+        logger.info("Processing roster details for all members...")
+        details_data = await fetch_roster_details(api_client, roster_data)
+        roster_file = data_path(args.region, args.realm, args.guild, "roster")
+        if details_data:
+            df = pd.DataFrame(details_data)
+            df.to_csv(roster_file, index=False, encoding="utf-8")
+            logger.info("Successfully created roster file: %s", roster_file.resolve())
+        else:
+            logger.warning(
+                "No roster details data found. Skipping roster file creation"
+            )
+            roster_file.unlink(missing_ok=True)
 
-    if not all([class_map, race_map]):
-        logger.error("Failed to get necessary class/race data. Exiting.")
-        exit(1)
+        create_profile_links(args.region, args.realm, args.guild, roster_data)
 
-    roster_data = fetch_guild_roster(
-        access_token, args.region, args.realm, args.guild, args.locale
-    )
-    if not roster_data:
-        logger.error("No data fetched from the API. Exiting")
-        exit(1)
-
-    roster_hash = calculate_hash(roster_data)
-    hash_file = CACHE_PATH / f"{args.region}-{args.realm}-{args.guild}.hash"
-    if has_roster_changed(roster_hash, hash_file):
-        roster_file = _data_path(args.region, args.realm, args.guild, "roster")
-        process_roster_to_csv(
-            access_token, args.region, roster_data, str(roster_file), args.locale
+        alts_data, alts_file = await identify_alts(
+            api_client, args.region, args.realm, args.guild, roster_data
         )
-    else:
-        logger.info("Roster has not changed since last fetch. Skipping")
+        if not alts_data:
+            raise RuntimeError("Failed to identify alts")
 
-    links_file = _data_path(args.region, args.realm, args.guild, "links")
-    process_links(args.region, roster_data, str(links_file))
+        generate_dashboard(args.region, args.realm, args.guild)
 
-    alts_file = _data_path(args.region, args.realm, args.guild, "alts")
-    identify_alts(
-        access_token,
-        args.region,
-        roster_data,
-        str(alts_file),
-        args.locale,
-    )
-
-    generate_dashboard(args.region, args.realm, args.guild)
-
-    # Generate summary report
-    end_time = time.time()
-    time_diff = end_time - start_time
-    summary_report(str(alts_file), time_diff)
+        end_time = time.time()
+        time_diff = end_time - start_time
+        summary_report(str(alts_file), time_diff)
+    finally:
+        await api_client.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
