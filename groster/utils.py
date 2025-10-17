@@ -35,7 +35,7 @@ def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
     return dt_local.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def data_path(*args) -> Path:
+def data_path(*args: str) -> Path:
     """Construct a data file path from the given path components.
 
     Args:
