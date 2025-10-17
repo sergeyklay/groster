@@ -226,7 +226,19 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
 
 
 async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
-    """Get guild ranks from the API."""
+    """Get guild rank mappings from CSV or create default ranks.
+
+    Creates a ranks CSV file with default WoW guild ranks if it doesn't exist,
+    otherwise reads the existing file.
+
+    Args:
+        region: Region code for path construction.
+        realm: Realm slug for path construction.
+        guild: Guild slug for path construction.
+
+    Returns:
+        Dict mapping rank IDs (int) to rank names (str).
+    """
     ranks_file = data_path(region, realm, guild, "ranks")
     ranks_file.parent.mkdir(parents=True, exist_ok=True)
 
