@@ -1,21 +1,21 @@
 from pathlib import Path
 
+# Path for storing generated data files.
 DATA_PATH = Path().cwd() / "data"
-"""Path for storing generated data files (CSVs)"""
 
+# Path for storing cache files (e.g., roster hash).
 CACHE_PATH = Path().cwd() / "cache"
-"""Path for storing cache files (e.g., roster hash)"""
 
-
+# Achievement ID for "Level 10" achievement, used to identify characters.
 LEVEL_10_ACHIEVEMENT_ID = 6
-"""Achievement ID for "Level 10" achievement, used to identify characters."""
 
+# Jaccard similarity threshold for grouping alts.
 ALT_SIMILARITY_THRESHOLD = 0.8
-"""Jaccard similarity threshold for grouping alts."""
 
+# Timezone for displaying timestamps.
 TZ = "Europe/Paris"
-"""Timezone for displaying timestamps."""
 
+# Set of common, account-wide achievements IDs used to identify characters.
 FINGERPRINT_ACHIEVEMENT_IDS = {
     9670,  # Toying Around
     10693,  # Fashionista: Hand
@@ -32,4 +32,3 @@ FINGERPRINT_ACHIEVEMENT_IDS = {
     10681,  # Fashionista: Head
     11176,  # Fabulous
 }
-"""Set of common, account-wide achievements IDs used to identify characters."""
