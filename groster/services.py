@@ -334,7 +334,22 @@ async def identify_alts(
     guild: str,
     roster_data: dict[str, Any],
 ):
-    """Identify alts for a guild."""
+    """Identify alt characters by fingerprinting achievements and collections.
+
+    Fetches achievements, pets, and mounts for all members, then clusters
+    characters by Jaccard similarity of achievement fingerprints. Groups
+    are assigned a main based on earliest Level 10 achievement.
+
+    Args:
+        client: Blizzard API client.
+        region: Region code.
+        realm: Realm slug.
+        guild: Guild slug.
+        roster_data: Raw roster data with members list.
+
+    Returns:
+        Tuple of (alts_data list, alts_file path) or (empty list, None) if no members.
+    """
     members = roster_data.get("members", [])
     if not members:
         return [], None
