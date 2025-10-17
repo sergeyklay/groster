@@ -305,10 +305,17 @@ async def main():
     if not args.guild:
         raise ValueError("Guild name must be provided via --guild argument")
 
+    client_id = os.getenv("BLIZZARD_CLIENT_ID")
+    client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
+    if not client_id or not client_secret:
+        raise RuntimeError(
+            "Missing BLIZZARD_CLIENT_ID/BLIZZARD_CLIENT_SECRET in environment"
+        )
+
     api_client = BlizzardAPIClient(
         region=args.region,
-        client_id=os.getenv("BLIZZARD_CLIENT_ID"),  # type: ignore
-        client_secret=os.getenv("BLIZZARD_CLIENT_SECRET"),  # type: ignore
+        client_id=client_id,
+        client_secret=client_secret,
         locale=args.locale,
     )
 
