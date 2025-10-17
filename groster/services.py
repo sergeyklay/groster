@@ -114,9 +114,13 @@ async def fetch_roster_details(
             return None
 
         char_path = DATA_PATH / client.region / realm / name.lower()
-        char_path.mkdir(parents=True, exist_ok=True)
-        with open(char_path / "profile.json", "w", encoding="utf-8") as f:
-            json.dump(response, f, ensure_ascii=False, indent=4)
+        try:
+            char_path.mkdir(parents=True, exist_ok=True)
+            with open(char_path / "profile.json", "w", encoding="utf-8") as f:
+                json.dump(response, f, ensure_ascii=False, indent=4)
+        except OSError:
+            logger.warning("Failed to write intermediate profile data for %s", name)
+            # we still can continue with the rest of the processing
 
         return {
             "name": response.get("name"),
