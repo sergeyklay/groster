@@ -21,7 +21,19 @@ logger = logging.getLogger(__name__)
 async def fetch_member_fingerprint(
     client: BlizzardAPIClient, member: dict
 ) -> dict | None:
-    """Fetch achievement data and computes a fingerprint for one member."""
+    """Fetch achievement data and compute a fingerprint for one member.
+
+    A fingerprint is a tuple of (achievement_id, timestamp) pairs used to
+    identify alt characters by comparing achievement completion patterns.
+
+    Args:
+        client: Blizzard API client for making requests.
+        member: Raw member dict from roster data containing character info.
+
+    Returns:
+       Dict with 'name', 'fingerprint' (tuple), and 'timestamps' (dict),
+       or None if member data is invalid.
+    """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
