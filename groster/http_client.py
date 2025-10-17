@@ -39,7 +39,7 @@ def _validate_region(region: str) -> None:
 
 
 class BlizzardAPIClient:
-    """A HTTP client for the Blizzard Battle.net API."""
+    """An HTTP client for the Blizzard Battle.net API."""
 
     def __init__(
         self,
@@ -153,7 +153,8 @@ class BlizzardAPIClient:
                 e.response.text,
             )
         except httpx.RequestError as e:
-            logger.warning("API request to %s failed: %s", e.request.url, e)
+            req_url = e.request.url if getattr(e, "request", None) else url
+            logger.warning("API request to %s failed: %s", req_url, e)
 
         return {}  # Return empty dict on failure
 
