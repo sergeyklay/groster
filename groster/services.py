@@ -381,9 +381,13 @@ async def fetch_member_mounts_summary(
     data = await client.get_character_mounts(realm, name)
 
     char_path = DATA_PATH / client.region / realm / name.lower()
-    char_path.mkdir(parents=True, exist_ok=True)
-    with open(char_path / "mounts.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    try:
+        char_path.mkdir(parents=True, exist_ok=True)
+        with open(char_path / "mounts.json", "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    except OSError:
+        logger.warning("Failed to write mount data file for %s", name)
+        # we still can continue with the rest of the processing
 
     return {
         "id": char_id,
