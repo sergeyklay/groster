@@ -61,12 +61,12 @@ class BlizzardAPIClient:
         )
 
     def _format_url(self, path: str) -> str:
-        """Formats the URL for the Blizzard Battle.net API."""
+        """Format the URL for the Blizzard Battle.net API."""
         path = path.lstrip("/")
         return f"https://{self.region}.api.blizzard.com/{path}"
 
     async def _get_access_token(self) -> str:
-        """Fetche or renews the OAuth access token."""
+        """Fetch or renews the OAuth access token."""
         if self._api_token and time.time() < self._token_expires_at:
             return self._api_token
 
