@@ -36,6 +36,23 @@ def format_timestamp(ts: int | float | str | None, to_tz: str = TZ) -> str:
 
 
 def data_path(*args) -> Path:
-    """Construct a data path from the given arguments."""
+    """Construct a data file path from the given path components.
+
+    Args:
+        *args: Path components to join with hyphens (e.g., "guild", "members").
+            At least one component is required.
+
+    Returns:
+        Path object pointing to DATA_PATH/component1-component2-....csv.
+
+    Raises:
+        ValueError: If no path components are provided.
+
+    Example:
+        >>> data_path("guild", "roster")
+        Path("/data/guild-roster.csv")
+    """
+    if not args:
+        raise ValueError("At least one path component is required")
     local_path = "-".join(args).lstrip("/")
     return DATA_PATH / f"{local_path}.csv"
