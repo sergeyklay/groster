@@ -38,12 +38,20 @@ reviews:
       instructions: >-
         1. Consider the file 'README.md' the overview/introduction of the project.
            Also consider the 'README.md' file the first place to look for project documentation.
-
         2. When reviewing the file 'README.md' it should be linted with help
            from the tools `markdownlint` and `languagetool`, pointing out any issues.
-
-        3. You may assume the file 'README.md' will contain GitHub flavor Markdown.
-    - path: "**/*.py"
+        3. You may assume the file 'README.md' will contain GitHub flavor Markdown.\
+    - path: "tests/**/*.py"
+      instructions: >-
+        1. Review the following test code written using the pytest framework.
+        2. Do read testing guidelines in the file '.cursor/rules/testing-guidelines.mdc'
+        3. Ensure that all tests are written in a way that adheres to the testing guidelines.
+    - path: "**/pyproject.toml"
+      instructions: >-
+        This project uses >= version constraints as a deliberate strategy to allow compatible updates.
+        Do NOT suggest changing >= constraints to exact version pinning (==) unless there's concrete evidence
+        of compatibility issues. The use of >= is intentional and should be maintained.
+    - path: "groster/**/*.py"
       instructions: >-
         **Role**
         You are a principal Python architect performing a code review.
@@ -58,6 +66,11 @@ reviews:
         3. As a general rule, undocumented function definitions and class definitions in the project's Python code are assumed incomplete. Please consider suggesting a short summary of the code for any of these incomplete definitions as docstrings when reviewing. Google-style docstrings for all public APIs; no obvious comments in the code.
         4. As a general guideline, consider the code style advocated in the PEP 8 standard (excluding the use of spaces for indentation) and evaluate suggested changes for code style compliance.
         5. As a general guideline, try to provide any relevant, official, and supporting documentation links to any tool's suggestions in review comments. This guideline is important for posterity.
+
+        **Docstrings**
+        1. Use imperative voice ("Calculate discount..." not "This function calculates...")
+        2. Keep them concise and professional
+        3. Follow Google style format
   abort_on_close: true
   disable_cache: false
   auto_review:
@@ -186,3 +199,4 @@ code_generation:
           formatting. Use 88 characters as a limit for line length. Do not use
           obvious comments. The target audience is a senior Python developer.
           Document functions and classes with docstrings using Google style.
+          Use imperative voice in docstrings and keep them concise and professional.
