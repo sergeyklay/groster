@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from typing import Any
@@ -72,9 +73,8 @@ class BlizzardAPIClient:
             "locale": self.locale,
         }
 
-        transport = httpx.AsyncHTTPTransport(
-            retries=max_retries,
-        )
+        self.max_retries = max_retries
+        transport = httpx.AsyncHTTPTransport(retries=max_retries)
 
         lang_header = self.locale.replace("_", "-")
         self.client = httpx.AsyncClient(
@@ -141,20 +141,49 @@ class BlizzardAPIClient:
         headers = kwargs.pop("headers", {})
         headers["Authorization"] = f"Bearer {token}"
 
-        try:
-            response = await self.client.request(method, url, headers=headers, **kwargs)
-            response.raise_for_status()
-            return response.json()
-        except httpx.HTTPStatusError as e:
-            logger.warning(
-                "API request to %s failed with status %d: %s",
-                e.request.url,
-                e.response.status_code,
-                e.response.text,
-            )
-        except httpx.RequestError as e:
-            req_url = e.request.url if getattr(e, "request", None) else url
-            logger.warning("API request to %s failed: %s", req_url, e)
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                response = await self.client.request(
+                    method, url, headers=headers, **kwargs
+                )
+                if response.status_code in (429, 500, 502, 503, 504):
+                    retry_after = response.headers.get("Retry-After")
+                    if retry_after and retry_after.isdigit():
+                        delay = int(retry_after)
+                    else:
+                        delay = min(0.5 * 2 ** (attempt - 1), 5)
+
+                    logger.warning(
+                        "Transient %d from %s (attempt %d/%d); retrying in %.1fs",
+                        response.status_code,
+                        url,
+                        attempt,
+                        self.max_retries,
+                        delay,
+                    )
+
+                    await asyncio.sleep(delay)
+                    continue
+                response.raise_for_status()
+                return response.json()
+            except httpx.RequestError as e:
+                req_url = e.request.url if getattr(e, "request", None) else url
+                logger.warning(
+                    "API request to %s failed (attempt %d/%d): %s",
+                    req_url,
+                    attempt,
+                    self.max_retries,
+                    e,
+                )
+                await asyncio.sleep(min(0.5 * 2 ** (attempt - 1), 5))
+            except httpx.HTTPStatusError as e:
+                logger.warning(
+                    "API request to %s failed with status %d: %s",
+                    e.request.url,
+                    e.response.status_code,
+                    e.response.text,
+                )
+                break
 
         return {}  # Return empty dict on failure
 
