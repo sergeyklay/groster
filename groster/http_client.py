@@ -48,15 +48,14 @@ class BlizzardAPIClient:
             retries=max_retries,
         )
 
+        lang_header = self.locale.replace("_", "-")
         self.client = httpx.AsyncClient(
             transport=transport,
             timeout=timeout,
             headers={
                 "User-Agent": DEFAULT_USER_AGENT,
                 "Accept": "application/json",
-                "Accept-Language": self.locale,
-                "Accept-Charset": "utf-8",
-                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": lang_header,
             },
         )
 
