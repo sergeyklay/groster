@@ -316,7 +316,19 @@ async def get_playable_races(client: BlizzardAPIClient) -> dict:
 async def fetch_member_pets_summary(
     client: BlizzardAPIClient, member: dict
 ) -> dict | None:
-    """Fetch pet collection summary for one member."""
+    """Fetch pet collection summary for one member.
+
+    Retrieves pet collection summary for one member from the Blizzard API
+    and caches to JSON file. Subsequent calls read from the cached file.
+
+    Args:
+        client: Blizzard API client for fetching pet data.
+        member: Raw member dict from roster data containing character info.
+
+    Returns:
+        Dict with 'id', 'name', 'realm', and 'pets' (int), or None if member data
+        is invalid.
+    """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
