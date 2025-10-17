@@ -144,6 +144,16 @@ class BlizzardAPIClient:
 
         return await self._request("GET", url, params=self._profile_params)
 
+    async def get_character_pets(self, realm_slug: str, char_name: str) -> dict:
+        logger.info("Fetching character pets")
+
+        name = char_name.lower()
+        url = self._format_url(
+            f"profile/wow/character/{realm_slug}/{name}/collections/pets"
+        )
+
+        return await self._request("GET", url, params=self._profile_params)
+
     async def get_playable_classes(self) -> list[dict[str, str]]:
         logger.info("Fetching playable classes")
 
