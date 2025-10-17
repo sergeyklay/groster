@@ -68,7 +68,7 @@ class BlizzardAPIClient:
         data = {"grant_type": "client_credentials"}
         auth = (self.client_id, self.client_secret)
 
-        logger.info("Requesting new access token from Battle.net...")
+        logger.info("Requesting new access token from Battle.net")
         try:
             response = await self.client.post(url, data=data, auth=auth)
             response.raise_for_status()
@@ -121,13 +121,13 @@ class BlizzardAPIClient:
         return await self._request("GET", url, params=self._static_params)
 
     async def get_guild_roster(self, realm_slug: str, guild_slug: str) -> dict:
-        logger.info("Fetching guild roster...")
+        logger.info("Fetching guild roster")
         url = self._format_url(f"data/wow/guild/{realm_slug}/{guild_slug}/roster")
 
         return await self._request("GET", url, params=self._profile_params)
 
     async def get_character_profile(self, realm_slug: str, char_name: str) -> dict:
-        logger.info("Fetching character profile...")
+        logger.info("Fetching character profile")
 
         name = char_name.lower()
         url = self._format_url(f"profile/wow/character/{realm_slug}/{name}")
@@ -135,7 +135,7 @@ class BlizzardAPIClient:
         return await self._request("GET", url, params=self._profile_params)
 
     async def get_character_achievements(self, realm_slug: str, char_name: str) -> dict:
-        logger.info("Fetching character achievements...")
+        logger.info("Fetching character achievements")
 
         name = char_name.lower()
         url = self._format_url(
@@ -144,21 +144,21 @@ class BlizzardAPIClient:
 
         return await self._request("GET", url, params=self._profile_params)
 
-    async def get_playable_classes(self) -> dict:
-        logger.info("Fetching playable classes...")
+    async def get_playable_classes(self) -> list[dict[str, str]]:
+        logger.info("Fetching playable classes")
 
         data = await self._get_static_data("playable-class")
 
-        return data.get("classes", {})
+        return data.get("classes", [])
 
-    async def get_playable_races(self) -> dict:
-        logger.info("Fetching playable races...")
+    async def get_playable_races(self) -> list[dict[str, str]]:
+        logger.info("Fetching playable races")
 
         data = await self._get_static_data("playable-race")
 
-        return data.get("races", {})
+        return data.get("races", [])
 
     async def close(self):
         """Close the underlying HTTP client session."""
-        logger.debug("Closing HTTP client session ...")
+        logger.debug("Closing HTTP client session")
         await self.client.aclose()
