@@ -7,12 +7,16 @@ name = "groster"
 version = "0.3.0"
 description = "A CLI tool to fetch and process World of Warcraft guild rosters, identifying player alts via the Blizzard API."
 readme = "README.md"
-requires-python = ">=3.12"
+license = { file = "LICENSE" }
+requires-python = ">=3.12, <4"
+authors = [{ name = "Serghei Iakovlev", email = "oss@serghei.pl" }]
+maintainers = [{ name = "Serghei Iakovlev", email = "oss@serghei.pl" }]
+
+# Keep these dependencies in sorted alphabetical order
 dependencies = [
     "httpx>=0.28.1",
     "pandas>=2.3.3",
     "python-dotenv>=1.1.1",
-    "requests>=2.32.5",
 ]
 
 [project.scripts]

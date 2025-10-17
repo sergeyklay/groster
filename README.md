@@ -12,11 +12,15 @@ This tool automates the process by programmatically analyzing character data to 
 
 - Language: Python 3.12+
 - Data Processing: [pandas](https://pandas.pydata.org) - Data processing, analysis and manipulation
-- HTTP Requests: [requests](https://requests.readthedocs.io/en/latest/) - For all interactions with the Blizzard Battle.net REST API
+- HTTP Requests: [httpx](https://www.python-httpx.org) - For all interactions with the Blizzard Battle.net REST API
 - Configuration: [python-dotenv](https://pypi.org/project/python-dotenv/) - For managing API credentials securely
 - Linting: [ruff](https://docs.astral.sh/ruff/) - As an all-in-one tool for code linting and formatting, ensuring high code quality
 - Dependency Management: [uv](https://docs.astral.sh/uv/) - The project's required tool for Python dependency management.
 
+## Documentation
+
+- [Coding Standards](./docs/coding-standards.md) - The project's coding standards and guidelines.
+- [Contributing](./CONTRIBUTING.md) - The project's contributing guidelines.
 
 ## License
 
