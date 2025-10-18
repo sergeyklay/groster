@@ -2,25 +2,47 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["groster"]
+
 [project]
 name = "groster"
 version = "0.4.0"
-description = "A CLI tool to fetch and process World of Warcraft guild rosters, identifying player alts via the Blizzard API."
+description = "A tool to fetch and process World of Warcraft guild rosters, identifying players info via the Blizzard API."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12, <4"
 authors = [{ name = "Serghei Iakovlev", email = "oss@serghei.pl" }]
 maintainers = [{ name = "Serghei Iakovlev", email = "oss@serghei.pl" }]
-
-# Keep these dependencies in sorted alphabetical order
-dependencies = [
-    "httpx>=0.28.1",
-    "pandas>=2.3.3",
-    "python-dotenv>=1.1.1",
+keywords = ["wow", "world-of-warcraft", "game", "mmorpg"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+    "Topic :: Games/Entertainment :: Role-Playing",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: MIT License",
+    "Typing :: Typed",
 ]
 
+# Keep these dependencies in sorted alphabetical order
+dependencies = ["httpx>=0.28.1", "pandas>=2.3.3", "python-dotenv>=1.1.1"]
+
+[project.urls]
+Homepage = "https://github.com/sergeyklay/groster"
+Repository = "https://github.com/sergeyklay/groster"
+Issues = "https://github.com/sergeyklay/groster/issues"
+Download = "https://github.com/sergeyklay/groster/releases"
+
 [project.scripts]
-groster = "groster.main:cli"
+groster = "groster.cli:cli"
 
 [dependency-groups]
 dev = ["pre-commit>=4.3.0", "chardet>=5.2.0", "ruff>=0.14.0", "jupyter>=1.1.1"]

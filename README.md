@@ -1,6 +1,6 @@
 # groster
 
-A command-line tool for fetching and processing a World of Warcraft guild roster via the official Blizzard API. Its primary feature is to identify and group alternate characters (_alts_) with their main characters based on shared account-wide data.
+A tool for fetching and processing a World of Warcraft guild roster via the official Blizzard API. Its primary feature is to identify and group alternate characters (_alts_) with their main characters based on shared account-wide data.
 
 ## Problem Statement
 
