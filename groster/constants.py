@@ -3,9 +3,6 @@ from pathlib import Path
 # Path for storing generated data files.
 DATA_PATH = Path().cwd() / "data"
 
-# Path for storing cache files (e.g., roster hash).
-CACHE_PATH = Path().cwd() / "cache"
-
 # Achievement ID for "Level 10" achievement, used to identify characters.
 LEVEL_10_ACHIEVEMENT_ID = 6
 
