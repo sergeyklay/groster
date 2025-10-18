@@ -413,7 +413,7 @@ def _find_main_in_group(group: list[dict]) -> str:
     return earliest_char or group[0]["name"]
 
 
-async def identify_alts(
+async def identify_alts(  # noqa: C901
     client: BlizzardAPIClient,
     region: str,
     realm: str,
