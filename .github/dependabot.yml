@@ -4,7 +4,6 @@ updates:
   # Python dependencies
   - package-ecosystem: uv
     versioning-strategy: increase
-    insecure-external-code-execution: allow
     directory: "/" # lock file lives at the repo root
     schedule:
       interval: daily
