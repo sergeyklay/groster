@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Default user agent for the Blizzard API.
 # TODO: Use project version from pyproject.toml
-DEFAULT_USER_AGENT = "groster/0.3.0"
+DEFAULT_USER_AGENT = "groster/0.4.0"
 
 # Region-based host mappings for different Blizzard API endpoints.
 _OAUTH_HOSTS = {
