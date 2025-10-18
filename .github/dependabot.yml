@@ -7,7 +7,7 @@ updates:
     directory: "/" # lock file lives at the repo root
     schedule:
       interval: daily
-    assignees: [sergeyklay]
+    assignees: [cicdbot]
     target-branch: main
     open-pull-requests-limit: 20
     commit-message:
@@ -20,6 +20,6 @@ updates:
     schedule:
       interval: daily
     target-branch: main
-    assignees: [sergeyklay]
+    assignees: [cicdbot]
     commit-message:
       prefix: "ci: "
