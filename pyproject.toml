@@ -8,7 +8,7 @@ packages = ["groster"]
 [project]
 name = "groster"
 version = "0.4.0"
-description = "A tool to fetch and process World of Warcraft guild rosters, identifying players info via the Blizzard API."
+description = "A tool to fetch and process World of Warcraft guild rosters, identifying player information via the Blizzard API."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12, <4"
@@ -33,7 +33,16 @@ classifiers = [
 ]
 
 # Keep these dependencies in sorted alphabetical order
-dependencies = ["httpx>=0.28.1", "pandas>=2.3.3", "python-dotenv>=1.1.1"]
+# Keep these dependencies in sorted alphabetical order
+dependencies = [
+    "aiohttp[speedups]>=3.13.1",
+    "httpx>=0.28.1",
+    "pandas>=2.3.3",
+    "pynacl>=1.6.0",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.5",
+]
+
 
 [project.urls]
 Homepage = "https://github.com/sergeyklay/groster"
