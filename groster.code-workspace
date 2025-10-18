@@ -1,0 +1,109 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"git.enableSmartCommit": false,
+		"makefile.configureOnOpen": false,
+		"editor.rulers": [
+			88
+		],
+		"files.autoSave": "onFocusChange",
+		"files.insertFinalNewline": true,
+		"files.trimTrailingWhitespace": true,
+		"files.associations": {
+			".env*": "shellscript",
+			".config.*": "shellscript",
+		},
+		"files.exclude": {
+			"**/__pycache__": true,
+			"**/.idea": true,
+			"**/.pytest_cache": true,
+			"**/.ruff_cache": true,
+		},
+		"python.testing.pytestArgs": [
+			"tests"
+		],
+		"python.languageServer": "None",  // Disable Pylance for Cursor
+		"python.testing.unittestEnabled": false,
+		"python.testing.pytestEnabled": true,
+		"python.terminal.activateEnvInCurrentTerminal": true,
+		"python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+
+		/// Autofix violations on-save.
+		// https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff
+		// Set this to be the path to your ruff executable.
+		"ruff.path": [
+			"${workspaceFolder}/.venv/bin/ruff"
+		],
+
+		// Set this to be the path to your python interpreter.
+		"ruff.interpreter": [
+			"${workspaceFolder}/.venv/bin/python"
+		],
+
+		// Format code on-save.
+		"[python]": {
+			"editor.defaultFormatter": "charliermarsh.ruff",
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.fixAll.ruff": "explicit",
+				"source.organizeImports.ruff": "explicit"
+			}
+		},
+
+		/// Configure formatting for various file types.
+		"[dockerfile]": {
+			"editor.defaultFormatter": "ms-azuretools.vscode-containers",
+			"editor.formatOnSave": true
+		},
+		"[xml]": {
+			"editor.defaultFormatter": "DotJoshJohnson.xml",
+			"editor.formatOnSave": true
+		},
+		"[toml]": {
+			"editor.defaultFormatter": "tamasfe.even-better-toml",
+			"editor.formatOnSave": true
+		},
+		"[json]": {
+			"editor.tabSize": 2,
+			"editor.detectIndentation": false,
+			"editor.insertSpaces": true,
+			"editor.formatOnSave": true
+		},
+		"cursorpyright.analysis.autoImportCompletions": true,
+		"cursorpyright.analysis.inlayHints.functionReturnTypes": false,
+		"cursorpyright.analysis.inlayHints.variableTypes": true,
+		"cursorpyright.analysis.typeCheckingMode": "basic"
+	},
+	"extensions": {
+		"recommendations": [
+			// Python Language Support & Development Tools
+			"charliermarsh.ruff",               // Fast Python linter and formatter
+
+			// Database & Data Visualization
+			"mechatroner.rainbow-csv",          // CSV/TSV file highlighting and navigation
+
+			// DevOps & Container Tools
+			"github.vscode-github-actions",     // GitHub Actions integration
+			"mkhl.direnv",                      // direnv integration for environment variables
+			"elagil.pre-commit-helper",         // Pre-commit hooks integration
+
+			// File Format & Configuration Support
+			"DotJoshJohnson.xml",               // XML tools and formatting
+			"foxundermoon.shell-format",        // Shell script formatting
+			"tamasfe.even-better-toml",         // TOML file support
+			"ms-vscode.makefile-tools",         // Makefile support
+
+			"codezombiech.gitignore",            // Gitignore support
+
+			// Organization
+			"Gruntfuggly.todo-tree",            // Tree view for TODO comments
+
+			// AI
+			"coderabbit.coderabbit-vscode",      // CodeRabbit
+		]
+	}
+}
