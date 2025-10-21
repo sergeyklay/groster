@@ -13,7 +13,6 @@ from groster.constants import (
     LEVEL_10_ACHIEVEMENT_ID,
 )
 from groster.http_client import BlizzardAPIClient
-from groster.ranks import create_rank_mapping
 from groster.utils import data_path, format_timestamp
 
 logger = logging.getLogger(__name__)
@@ -226,95 +225,38 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
         logger.warning("Failed to write profile links file")
 
 
-async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
-    """Get guild rank mappings from CSV or create default ranks.
+async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, Any]]:
+    """Fetch playable classes from the Blizzard API.
 
-    Creates a ranks CSV file with default WoW guild ranks if it doesn't exist,
-    otherwise reads the existing file.
-
-    Args:
-        region: Region code for path construction.
-        realm: Realm slug for path construction.
-        guild: Guild slug for path construction.
-
-    Returns:
-        Dict mapping rank IDs (int) to rank names (str).
-    """
-    ranks_file = data_path(region, realm, guild, "ranks")
-    ranks_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        if not ranks_file.exists():
-            logger.info("Creating ranks file: %s", ranks_file)
-            ranks_mapping = create_rank_mapping()
-            ranks_data = [rank._asdict() for rank in ranks_mapping.values()]
-            df = pd.DataFrame(ranks_data)
-            df.to_csv(ranks_file, index=False, encoding="utf-8")
-            logger.info("Successfully created ranks file: %s", ranks_file.resolve())
-        else:
-            logger.info("Ranks file already exists: %s", ranks_file)
-            df = pd.read_csv(ranks_file)
-    except OSError as e:
-        logger.exception("Failed to process ranks data file for %s guild", guild)
-        raise RuntimeError("Failed to process ranks data file") from e
-
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
-
-
-async def get_playable_classes(client: BlizzardAPIClient) -> dict:
-    """Get playable classes from the API."""
-    classes_file = data_path("classes")
-    classes_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        if not classes_file.exists():
-            logger.info("Creating classes file: %s", classes_file)
-            classes_list = await client.get_playable_classes()
-            classes = [{"id": c["id"], "name": c["name"]} for c in classes_list]
-            df = pd.DataFrame(classes)
-            df.to_csv(classes_file, index=False, encoding="utf-8")
-            logger.info("Successfully created classes file: %s", classes_file.resolve())
-        else:
-            logger.info("Classes file already exists: %s", classes_file)
-            df = pd.read_csv(classes_file)
-    except OSError as e:
-        logger.exception("Failed to process classes datafile")
-        raise RuntimeError("Failed to process classes data file") from e
-
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
-
-
-async def get_playable_races(client: BlizzardAPIClient) -> dict:
-    """Fetch playable race mappings from API or cached CSV.
-
-    Retrieves all playable races from the Blizzard API on first call and
-    caches to CSV. Subsequent calls read from the cached file.
+    This function has no side effects and only retrieves and formats data.
 
     Args:
-        client: Blizzard API client for fetching race data.
+        client: Blizzard API client for making requests.
 
     Returns:
-        Dict mapping race IDs (int) to race names (str).
+        List of dictionaries containing class data, e.g.,
+            [{"id": 1, "name": "Warrior"}, ...]
     """
-    races_file = data_path("races")
-    races_file.parent.mkdir(parents=True, exist_ok=True)
+    logger.debug("Requesting playable classes from API")
+    classes_list = await client.get_playable_classes()
+    return [{"id": c["id"], "name": c["name"]} for c in classes_list]
 
-    try:
-        if not races_file.exists():
-            logger.info("Creating races file: %s", races_file)
-            races_list = await client.get_playable_races()
-            races = [{"id": r["id"], "name": r["name"]} for r in races_list]
-            df = pd.DataFrame(races)
-            df.to_csv(races_file, index=False, encoding="utf-8")
-            logger.info("Successfully created races file: %s", races_file.resolve())
-        else:
-            logger.info("Races file already exists: %s", races_file)
-            df = pd.read_csv(races_file)
-    except OSError as e:
-        logger.exception("Failed to process races data file")
-        raise RuntimeError("Failed to process races data file") from e
 
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+async def fetch_playable_races(client: BlizzardAPIClient) -> list[dict[str, Any]]:
+    """Fetch playable races from the Blizzard API.
+
+    This function has no side effects and only retrieves and formats data.
+
+    Args:
+        client: Blizzard API client for making requests.
+
+    Returns:
+        List of dictionaries containing race data, e.g.,
+            [{"id": 1, "name": "Human"}, ...]
+    """
+    logger.debug("Requesting playable races from API")
+    races_list = await client.get_playable_races()
+    return [{"id": r["id"], "name": r["name"]} for r in races_list]
 
 
 async def fetch_member_pets_summary(

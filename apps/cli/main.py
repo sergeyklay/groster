@@ -8,17 +8,17 @@ from pathlib import Path
 import pandas as pd
 from dotenv import load_dotenv
 
-from groster.constants import DATA_PATH
+from apps.cli.repository import CsvRosterRepository
+from apps.cli.utils import data_path
 from groster.http_client import BlizzardAPIClient
+from groster.ranks import create_rank_mapping
 from groster.services import (
     create_profile_links,
+    fetch_playable_classes,
+    fetch_playable_races,
     fetch_roster_details,
-    get_guild_ranks,
-    get_playable_classes,
-    get_playable_races,
     identify_alts,
 )
-from groster.utils import data_path
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def generate_dashboard(region: str, realm: str, guild: str):
+def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
     """
     Generates a consolidated dashboard.csv by merging all other data files.
     """
@@ -98,15 +98,15 @@ def generate_dashboard(region: str, realm: str, guild: str):
 
     try:
         # Define paths to all source CSV files
-        roster_file = DATA_PATH / f"{region}-{realm}-{guild}-roster.csv"
-        profiles_file = DATA_PATH / f"{region}-{realm}-{guild}-profiles.csv"
-        alts_file = DATA_PATH / f"{region}-{realm}-{guild}-alts.csv"
-        achievements_file = DATA_PATH / f"{region}-{realm}-{guild}-achievements.csv"
+        roster_file = base_path / f"{region}-{realm}-{guild}-roster.csv"
+        profiles_file = base_path / f"{region}-{realm}-{guild}-profiles.csv"
+        alts_file = base_path / f"{region}-{realm}-{guild}-alts.csv"
+        achievements_file = base_path / f"{region}-{realm}-{guild}-achievements.csv"
 
         # Paths to static mapping files
-        classes_file = DATA_PATH / "classes.csv"
-        races_file = DATA_PATH / "races.csv"
-        ranks_file = DATA_PATH / f"{region}-{realm}-{guild}-ranks.csv"
+        classes_file = base_path / "classes.csv"
+        races_file = base_path / "races.csv"
+        ranks_file = base_path / f"{region}-{realm}-{guild}-ranks.csv"
 
         # Read all necessary files into pandas DataFrames
         df_roster = pd.read_csv(roster_file)
@@ -183,7 +183,7 @@ def generate_dashboard(region: str, realm: str, guild: str):
         dashboard_df = dashboard_df[final_columns]
 
         # Save the final dashboard file
-        dashboard_file = DATA_PATH / f"{region}-{realm}-{guild}-dashboard.csv"
+        dashboard_file = base_path / f"{region}-{realm}-{guild}-dashboard.csv"
         dashboard_df.to_csv(dashboard_file, index=False, encoding="utf-8")
         logger.info("Successfully created dashboard CSV: %s", dashboard_file.resolve())
 
@@ -226,7 +226,7 @@ async def main():
     load_dotenv()
     setup_logging(debug=args.debug)
 
-    DATA_PATH.mkdir(parents=True, exist_ok=True)
+    base_path = Path().cwd() / "data"
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
@@ -242,15 +242,35 @@ async def main():
         locale=args.locale,
     )
 
-    try:
-        ranks_data = await get_guild_ranks(args.region, args.realm, args.guild)
-        if not ranks_data:
-            raise RuntimeError("Failed to get guild ranks data")
+    repo = CsvRosterRepository(base_path=base_path)
 
-        class_map = await get_playable_classes(api_client)
-        race_map = await get_playable_races(api_client)
-        if not all([class_map, race_map]):
-            raise RuntimeError("Failed to get necessary playable classes/races data")
+    try:
+        ranks_map = await repo.get_guild_ranks(args.region, args.realm, args.guild)
+        if not ranks_map:
+            logger.info("No guild ranks found, fetching from API")
+            default_ranks_mapping = create_rank_mapping()
+            ranks_data_list = [
+                rank._asdict() for rank in default_ranks_mapping.values()
+            ]
+
+            await repo.save_guild_ranks(
+                ranks_data_list, args.region, args.realm, args.guild
+            )
+            ranks_map = {rank.id: rank.name for rank in default_ranks_mapping.values()}
+
+        class_map = await repo.get_playable_classes()
+        if not class_map:
+            logger.info("No playable classes found, fetching from API")
+            classes_data = await fetch_playable_classes(api_client)
+            await repo.save_playable_classes(classes_data)
+            class_map = {c["id"]: c["name"] for c in classes_data}
+
+        race_map = await repo.get_playable_races()
+        if not race_map:
+            logger.info("No playable races found, fetching from API")
+            races_data = await fetch_playable_races(api_client)
+            await repo.save_playable_races(races_data)
+            race_map = {r["id"]: r["name"] for r in races_data}
 
         roster_data = await api_client.get_guild_roster(args.realm, args.guild)
         if not roster_data:
@@ -258,7 +278,9 @@ async def main():
 
         logger.info("Processing roster details for all members...")
         details_data = await fetch_roster_details(api_client, roster_data)
-        roster_file = data_path(args.region, args.realm, args.guild, "roster")
+        roster_file = data_path(
+            base_path, args.region, args.realm, args.guild, "roster"
+        )
         if details_data:
             df = pd.DataFrame(details_data)
             df.to_csv(roster_file, index=False, encoding="utf-8")
@@ -277,7 +299,7 @@ async def main():
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
 
-        generate_dashboard(args.region, args.realm, args.guild)
+        generate_dashboard(base_path, args.region, args.realm, args.guild)
 
         end_time = time.time()
         time_diff = end_time - start_time
