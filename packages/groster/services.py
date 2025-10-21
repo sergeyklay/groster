@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
@@ -93,7 +94,7 @@ async def fetch_roster_details(
     logger.info("Fetching profiles for %d members...", len(members))
 
     # Blizzard caps API requests at 100 per second
-    tasks_limit = 90
+    tasks_limit = 50
     semaphore = asyncio.Semaphore(tasks_limit)
 
     async def fetch_profile(member: dict) -> dict | None:
@@ -442,7 +443,7 @@ async def identify_alts(  # noqa: C901
 
     logger.info("Fetching fingerprints for %d members to identify alts", len(members))
 
-    tasks_limit = 90
+    tasks_limit = 50
     all_tasks = []
     for member in members:
         all_tasks.append(fetch_member_fingerprint(client, member))
@@ -577,3 +578,109 @@ async def identify_alts(  # noqa: C901
     except OSError as e:
         logger.exception("Failed to write alts file")
         raise RuntimeError("Failed to write alts file") from e
+
+
+def get_character_information(name: str) -> tuple[dict | None, datetime | None]:
+    """Get comprehensive character information including main and alts.
+
+    Args:
+        name: Character name to search for (case-insensitive).
+
+    Returns:
+        Dict with main character info and list of alts, or None if not found.
+        Format: {
+            "name": str,
+            "realm": str,
+            "level": int,
+            "class": str,
+            "race": str,
+            "rank": str,
+            "ilvl": int,
+            "last_login": str,
+            "is_alt": bool,
+            "main": str,
+            "alts": [{"name": str, "realm": str, ...}, ...]
+        }
+    """
+    dashboard_file = DATA_PATH / "eu-terokkar-darq-side-of-the-moon-dashboard.csv"
+
+    try:
+        df = pd.read_csv(dashboard_file)
+    except FileNotFoundError:
+        logger.warning("Dashboard file not found: %s", dashboard_file)
+        return None, None
+    except Exception as e:
+        logger.error("Failed to read dashboard file: %s", e)
+        return None, None
+
+    # Search for character (case-insensitive)
+    character_row = df[df["Name"].str.lower() == name.lower()]
+    modified_at = datetime.fromtimestamp(dashboard_file.stat().st_mtime)
+
+    if character_row.empty:
+        logger.debug("Character '%s' not found in guild roster", name)
+        return None, modified_at
+
+    char_data = character_row.iloc[0]
+
+    # Determine main character name
+    main_name = char_data["Main"] if char_data["Alt?"] else char_data["Name"]
+
+    # Get main character data
+    main_row = df[df["Name"].str.lower() == main_name.lower()]
+    if main_row.empty:
+        logger.warning("Main character '%s' not found for '%s'", main_name, name)
+        main_info = _create_character_info(char_data)
+    else:
+        main_info = _create_character_info(main_row.iloc[0])
+
+    # Find all alts for this main character
+    alts_df = df[(df["Main"].str.lower() == main_name.lower()) & df["Alt?"]]
+
+    alts = []
+    for _, alt_row in alts_df.iterrows():
+        alts.append(_create_character_info(alt_row))
+
+    # Add alts list to main character info
+    main_info["alts"] = alts
+
+    logger.debug(
+        "Found character '%s' (main: %s) with %d alts", name, main_name, len(alts)
+    )
+
+    return main_info, modified_at
+
+
+def _create_character_info(row: pd.Series) -> dict[str, Any]:
+    """Create character info dict from pandas row.
+
+    Args:
+        row: Pandas Series containing character data from dashboard CSV.
+
+    Returns:
+        Dict with character information.
+    """
+    # Extract scalar values to avoid pandas Series type issues
+    name = row["Name"]
+    realm = row["Realm"]
+    level = row["Level"]
+    char_class = row["Class"]
+    race = row["Race"]
+    rank = row["Rank"]
+    ilvl = row["iLvl"]
+    last_login = row["Last Login"]
+    is_alt = row["Alt?"]
+    main = row["Main"]
+
+    return {
+        "name": str(name),
+        "realm": str(realm),
+        "level": int(level) if pd.notna(level) else 0,  # type: ignore
+        "class": str(char_class) if pd.notna(char_class) else "Unknown",  # type: ignore
+        "race": str(race) if pd.notna(race) else "Unknown",  # type: ignore
+        "rank": str(rank) if pd.notna(rank) else "Unknown",  # type: ignore
+        "ilvl": int(ilvl) if pd.notna(ilvl) else 0,  # type: ignore
+        "last_login": str(last_login) if pd.notna(last_login) else "N/A",  # type: ignore
+        "is_alt": bool(is_alt) if pd.notna(is_alt) else False,  # type: ignore
+        "main": str(main) if pd.notna(main) else str(name),  # type: ignore
+    }
