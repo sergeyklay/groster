@@ -10,7 +10,6 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from apps.cli.repository import CsvRosterRepository
-from apps.cli.utils import data_path
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
 from groster.repository import RosterRepository
@@ -273,8 +272,8 @@ async def _get_playable_races(
 
 
 async def _get_roster_details(
+    repo: RosterRepository,
     client: BlizzardAPIClient,
-    base_path: Path,
     region: str,
     realm: str,
     guild: str,
@@ -285,16 +284,18 @@ async def _get_roster_details(
         raise RuntimeError("Failed to get guild roster data.")
 
     logger.info("Processing roster details for all members")
-    details_data = await fetch_roster_details(client, roster_data)
-    roster_file = data_path(base_path, region, realm, guild, "roster")
-    if not details_data:
-        logger.warning("No roster details data found. Skipping roster file creation")
-        roster_file.unlink(missing_ok=True)
-        return roster_data
 
-    df = pd.DataFrame(details_data)
-    df.to_csv(roster_file, index=False, encoding="utf-8")
-    logger.info("Successfully created roster file: %s", roster_file.resolve())
+    details_data, raw_profiles = await fetch_roster_details(client, roster_data)
+    if details_data:
+        await repo.save_roster_details(details_data, region, realm, guild)
+    else:
+        logger.warning("No roster details data found. Skipping roster file creation")
+
+    if raw_profiles:
+        logger.info("Saving raw profile data for %d characters", len(raw_profiles))
+        for name, profile_json in raw_profiles.items():
+            await repo.save_character_profile(profile_json, region, realm, name)
+
     return roster_data
 
 
@@ -330,7 +331,7 @@ async def main():
         await _get_playable_races(repo, client)
 
         roster_data = await _get_roster_details(
-            client, base_path, args.region, args.realm, args.guild
+            repo, client, args.region, args.realm, args.guild
         )
 
         logger.info("Building profile links")
