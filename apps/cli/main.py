@@ -4,6 +4,7 @@ import logging
 import os
 import time
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -12,8 +13,9 @@ from apps.cli.repository import CsvRosterRepository
 from apps.cli.utils import data_path
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
+from groster.repository import RosterRepository
 from groster.services import (
-    create_profile_links,
+    build_profile_links,
     fetch_playable_classes,
     fetch_playable_races,
     fetch_roster_details,
@@ -218,6 +220,84 @@ def summary_report(alts_file: str, time_diff: float):
         print(f"\nProcessing completed in {time_diff:.2f} seconds")
 
 
+async def _get_guild_ranks(
+    repo: RosterRepository, region: str, realm: str, guild: str
+) -> dict[int, str]:
+    """Get guild ranks from the repository or API."""
+    ranks_map = await repo.get_guild_ranks(region, realm, guild)
+    if ranks_map:
+        return ranks_map
+
+    logger.info("No guild ranks found, fetching from API and saving to repository")
+    default_ranks_mapping = create_rank_mapping()
+    ranks_data_list = [rank._asdict() for rank in default_ranks_mapping.values()]
+    if not ranks_data_list:
+        raise RuntimeError("Failed to get guild ranks from default mapping")
+
+    await repo.save_guild_ranks(ranks_data_list, region, realm, guild)
+    return {rank.id: rank.name for rank in default_ranks_mapping.values()}
+
+
+async def _get_playable_classes(
+    repo: RosterRepository, client: BlizzardAPIClient
+) -> dict[int, str]:
+    """Get playable classes from the repository or API."""
+    class_map = await repo.get_playable_classes()
+    if class_map:
+        return class_map
+
+    logger.info("No playable classes found, fetching from API and saving to repository")
+    classes_data = await fetch_playable_classes(client)
+    if not classes_data:
+        raise RuntimeError("Failed to fetch playable classes from API")
+
+    await repo.save_playable_classes(classes_data)
+    return {c["id"]: c["name"] for c in classes_data}
+
+
+async def _get_playable_races(
+    repo: RosterRepository, client: BlizzardAPIClient
+) -> dict[int, str]:
+    """Get playable races from the repository or API."""
+    race_map = await repo.get_playable_races()
+    if race_map:
+        return race_map
+
+    logger.info("No playable races found, fetching from API and saving to repository")
+    races_data = await fetch_playable_races(client)
+    if not races_data:
+        raise RuntimeError("Failed to fetch playable races from API")
+
+    await repo.save_playable_races(races_data)
+    return {r["id"]: r["name"] for r in races_data}
+
+
+async def _get_roster_details(
+    client: BlizzardAPIClient,
+    base_path: Path,
+    region: str,
+    realm: str,
+    guild: str,
+) -> dict[str, Any]:
+    """Get roster details from the repository or API."""
+    roster_data: dict[str, Any] = await client.get_guild_roster(realm, guild)
+    if not roster_data:
+        raise RuntimeError("Failed to get guild roster data.")
+
+    logger.info("Processing roster details for all members")
+    details_data = await fetch_roster_details(client, roster_data)
+    roster_file = data_path(base_path, region, realm, guild, "roster")
+    if not details_data:
+        logger.warning("No roster details data found. Skipping roster file creation")
+        roster_file.unlink(missing_ok=True)
+        return roster_data
+
+    df = pd.DataFrame(details_data)
+    df.to_csv(roster_file, index=False, encoding="utf-8")
+    logger.info("Successfully created roster file: %s", roster_file.resolve())
+    return roster_data
+
+
 async def main():
     """Main entry point for the application."""
     start_time = time.time()
@@ -235,7 +315,7 @@ async def main():
             "Missing BLIZZARD_CLIENT_ID/BLIZZARD_CLIENT_SECRET in environment"
         )
 
-    api_client = BlizzardAPIClient(
+    client = BlizzardAPIClient(
         region=args.region,
         client_id=client_id,
         client_secret=client_secret,
@@ -245,56 +325,20 @@ async def main():
     repo = CsvRosterRepository(base_path=base_path)
 
     try:
-        ranks_map = await repo.get_guild_ranks(args.region, args.realm, args.guild)
-        if not ranks_map:
-            logger.info("No guild ranks found, fetching from API")
-            default_ranks_mapping = create_rank_mapping()
-            ranks_data_list = [
-                rank._asdict() for rank in default_ranks_mapping.values()
-            ]
+        await _get_guild_ranks(repo, args.region, args.realm, args.guild)
+        await _get_playable_classes(repo, client)
+        await _get_playable_races(repo, client)
 
-            await repo.save_guild_ranks(
-                ranks_data_list, args.region, args.realm, args.guild
-            )
-            ranks_map = {rank.id: rank.name for rank in default_ranks_mapping.values()}
-
-        class_map = await repo.get_playable_classes()
-        if not class_map:
-            logger.info("No playable classes found, fetching from API")
-            classes_data = await fetch_playable_classes(api_client)
-            await repo.save_playable_classes(classes_data)
-            class_map = {c["id"]: c["name"] for c in classes_data}
-
-        race_map = await repo.get_playable_races()
-        if not race_map:
-            logger.info("No playable races found, fetching from API")
-            races_data = await fetch_playable_races(api_client)
-            await repo.save_playable_races(races_data)
-            race_map = {r["id"]: r["name"] for r in races_data}
-
-        roster_data = await api_client.get_guild_roster(args.realm, args.guild)
-        if not roster_data:
-            raise RuntimeError("Failed to get guild roster data.")
-
-        logger.info("Processing roster details for all members...")
-        details_data = await fetch_roster_details(api_client, roster_data)
-        roster_file = data_path(
-            base_path, args.region, args.realm, args.guild, "roster"
+        roster_data = await _get_roster_details(
+            client, base_path, args.region, args.realm, args.guild
         )
-        if details_data:
-            df = pd.DataFrame(details_data)
-            df.to_csv(roster_file, index=False, encoding="utf-8")
-            logger.info("Successfully created roster file: %s", roster_file.resolve())
-        else:
-            logger.warning(
-                "No roster details data found. Skipping roster file creation"
-            )
-            roster_file.unlink(missing_ok=True)
 
-        create_profile_links(args.region, args.realm, args.guild, roster_data)
+        logger.info("Building profile links")
+        links_data = build_profile_links(args.region, roster_data)
+        await repo.save_profile_links(links_data, args.region, args.realm, args.guild)
 
         alts_data, alts_file = await identify_alts(
-            api_client, args.region, args.realm, args.guild, roster_data
+            client, args.region, args.realm, args.guild, roster_data
         )
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
@@ -305,7 +349,7 @@ async def main():
         time_diff = end_time - start_time
         summary_report(str(alts_file), time_diff)
     finally:
-        await api_client.close()
+        await client.close()
 
 
 def cli() -> None:

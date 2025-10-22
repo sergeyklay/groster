@@ -1,8 +1,5 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import Any
-
-logger = logging.getLogger(__name__)
 
 
 class RosterRepository(ABC):
@@ -19,7 +16,6 @@ class RosterRepository(ABC):
         Returns:
             Dictionary mapping class IDs to class names, or None if not found.
         """
-        pass
 
     @abstractmethod
     async def save_playable_classes(self, classes: list[dict[str, Any]]) -> None:
@@ -28,7 +24,6 @@ class RosterRepository(ABC):
         Args:
             classes: List of class data dictionaries to save.
         """
-        pass
 
     @abstractmethod
     async def get_playable_races(self) -> dict[int, str] | None:
@@ -37,7 +32,6 @@ class RosterRepository(ABC):
         Returns:
             Dictionary mapping race IDs to race names, or None if not found.
         """
-        pass
 
     @abstractmethod
     async def save_playable_races(self, races: list[dict[str, Any]]) -> None:
@@ -46,7 +40,6 @@ class RosterRepository(ABC):
         Args:
             races: List of race data dictionaries to save.
         """
-        pass
 
     @abstractmethod
     async def get_guild_ranks(
@@ -62,7 +55,6 @@ class RosterRepository(ABC):
         Returns:
             Dictionary mapping rank IDs to rank names, or None if not found.
         """
-        pass
 
     @abstractmethod
     async def save_guild_ranks(
@@ -76,4 +68,16 @@ class RosterRepository(ABC):
             realm: The realm slug.
             guild: The guild slug.
         """
-        pass
+
+    @abstractmethod
+    async def save_profile_links(
+        self, links_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save generated profile links for guild members.
+
+        Args:
+            links_data: List of profile link data dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """

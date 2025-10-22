@@ -178,27 +178,23 @@ async def fetch_roster_details(
     return processed_data
 
 
-def create_profile_links(region: str, realm: str, guild: str, data: dict):
-    """Create CSV with external profile links for each guild member.
-
-    Generates links to Raider.IO, Armory, and Warcraft Logs for all members
-    and writes them to a CSV file.
+def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
+    """Builds external profile links for each guild member.
 
     Args:
-        region: Region code (e.g., 'us', 'eu').
-        realm: Realm slug.
-        guild: Guild slug.
-        data: Raw roster data dict containing members list.
-    """
-    links_file = data_path(region, realm, guild, "links")
-    links_file.parent.mkdir(parents=True, exist_ok=True)
+        region: Guild region identifier (e.g., 'eu').
+        data: Raw roster data containing the 'members' list.
 
+    Returns:
+        List of dictionaries containing profile links for each member.
+    """
     members = data.get("members", [])
     if not members:
-        return
+        return []
 
-    logger.info("Processing %d guild members for profile links", len(members))
+    logger.info("Building profile links for %d members", len(members))
     links_data = []
+
     for member in members:
         character = member.get("character", {})
         name = character.get("name")
@@ -217,18 +213,11 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
             }
         )
 
-    try:
-        df = pd.DataFrame(links_data)
-        df.to_csv(links_file, index=False, encoding="utf-8")
-        logger.info("Successfully created profile links file: %s", links_file.resolve())
-    except OSError:
-        logger.warning("Failed to write profile links file")
+    return links_data
 
 
 async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, Any]]:
     """Fetch playable classes from the Blizzard API.
-
-    This function has no side effects and only retrieves and formats data.
 
     Args:
         client: Blizzard API client for making requests.
@@ -244,8 +233,6 @@ async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, An
 
 async def fetch_playable_races(client: BlizzardAPIClient) -> list[dict[str, Any]]:
     """Fetch playable races from the Blizzard API.
-
-    This function has no side effects and only retrieves and formats data.
 
     Args:
         client: Blizzard API client for making requests.
