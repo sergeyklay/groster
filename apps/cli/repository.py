@@ -63,7 +63,7 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(classes_file, index=False, encoding="utf-8")
             logger.info("Classes file successfully created: %s", classes_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process classes file: %s", e)
+            logger.exception("Failed to process classes file")
             raise RuntimeError("Failed to write classes file") from e
 
     async def get_playable_races(self) -> dict[int, str] | None:
@@ -106,7 +106,7 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(races_file, index=False, encoding="utf-8")
             logger.info("Races file successfully created: %s", races_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process races file: %s", e)
+            logger.exception("Failed to process races file")
             raise RuntimeError("Failed to write races file") from e
 
     async def get_guild_ranks(
@@ -161,5 +161,26 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(ranks_file, index=False, encoding="utf-8")
             logger.info("Ranks file successfully created: %s", ranks_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process ranks file: %s", e)
+            logger.exception("Failed to process ranks file")
             raise RuntimeError("Failed to write ranks file") from e
+
+    async def save_profile_links(
+        self, links_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save generated profile links for guild members.
+
+        Args:
+            links_data: List of profile link data dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """
+        links_file = data_path(self.base_path, region, realm, guild, "links")
+
+        try:
+            logger.info("Creating links file: %s", links_file)
+            df = pd.DataFrame(links_data)
+            df.to_csv(links_file, index=False, encoding="utf-8")
+            logger.info("Links file successfully created: %s", links_file.resolve())
+        except OSError as e:
+            logger.warning("Failed to process links file: %s", e)
