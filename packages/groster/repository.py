@@ -81,3 +81,33 @@ class RosterRepository(ABC):
             realm: The realm slug.
             guild: The guild slug.
         """
+
+    @abstractmethod
+    async def save_roster_details(
+        self, roster_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save processed roster details for a specific guild.
+
+        Args:
+            roster_data: List of processed member detail dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """
+
+    @abstractmethod
+    async def save_character_profile(
+        self,
+        profile_data: dict[str, Any],
+        region: str,
+        realm: str,
+        char_name: str,
+    ) -> None:
+        """Save raw JSON profile data for a single character.
+
+        Args:
+            profile_data: Raw character profile data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            char_name: The character's name.
+        """

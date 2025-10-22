@@ -75,7 +75,7 @@ async def fetch_member_fingerprint(
 
 async def fetch_roster_details(
     client: BlizzardAPIClient, roster_data: dict[str, Any]
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
     """Fetch detailed profiles for all roster members.
 
     Args:
@@ -83,18 +83,22 @@ async def fetch_roster_details(
         roster_data: Raw roster data containing member list.
 
     Returns:
-        List of processed member detail dicts with id, name, realm, level,
+        Tuple of
+        - List of processed member detail dicts with id, name, realm, level,
         class_id, race_id, rank, ilvl, and last_login.
+        - Dictionary of profile data by character name.
     """
     members = roster_data.get("members", [])
     if not members:
-        return []
+        logger.warning("No members found in roster data")
+        return [], {}
 
-    logger.info("Fetching profiles for %d members...", len(members))
+    logger.info("Fetching profiles for %d members", len(members))
 
     # Blizzard caps API requests at 100 per second
     tasks_limit = 50
     semaphore = asyncio.Semaphore(tasks_limit)
+    raw_profiles: dict[str, dict[str, Any]] = {}
 
     async def fetch_profile(member: dict) -> dict | None:
         """Coroutine to fetch a single character's profile."""
@@ -113,14 +117,7 @@ async def fetch_roster_details(
         if not response:
             return None
 
-        char_path = DATA_PATH / client.region / realm / name.lower()
-        try:
-            char_path.mkdir(parents=True, exist_ok=True)
-            with open(char_path / "profile.json", "w", encoding="utf-8") as f:
-                json.dump(response, f, ensure_ascii=False, indent=4)
-        except OSError:
-            logger.warning("Failed to write intermediate profile data for %s", name)
-            # we still can continue with the rest of the processing
+        raw_profiles[name] = response
 
         return {
             "name": response.get("name"),
@@ -175,7 +172,7 @@ async def fetch_roster_details(
         len(members),
     )
 
-    return processed_data
+    return processed_data, raw_profiles
 
 
 def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
@@ -203,13 +200,14 @@ def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
             logger.warning("No name or realm found for member: %s", member)
             continue
 
+        fq_name = f"{region}/{realm}/{name.lower()}"
         links_data.append(
             {
                 "id": character.get("id"),
                 "name": name,
-                "rio_link": f"https://raider.io/characters/{region}/{realm}/{name.lower()}",
-                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{region}/{realm}/{name.lower()}",
-                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{region}/{realm}/{name.lower()}",
+                "rio_link": f"https://raider.io/characters/{fq_name}",
+                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{fq_name}",
+                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{fq_name}",
             }
         )
 

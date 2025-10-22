@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -184,3 +185,48 @@ class CsvRosterRepository(RosterRepository):
             logger.info("Links file successfully created: %s", links_file.resolve())
         except OSError as e:
             logger.warning("Failed to process links file: %s", e)
+
+    async def save_roster_details(
+        self, roster_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save processed roster details for a specific guild.
+
+        Args:
+            roster_data: List of processed member detail dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """
+        roster_file = data_path(self.base_path, region, realm, guild, "roster")
+
+        try:
+            logger.info("Creating roster file: %s", roster_file)
+            df = pd.DataFrame(roster_data)
+            df.to_csv(roster_file, index=False, encoding="utf-8")
+            logger.info("Roster file successfully created: %s", roster_file.resolve())
+        except OSError as e:
+            logger.exception("Failed to process roster file")
+            raise RuntimeError("Failed to write roster file") from e
+
+    async def save_character_profile(
+        self, profile_data: dict[str, Any], region: str, realm: str, char_name: str
+    ) -> None:
+        """Save raw JSON profile data for a single character.
+
+        Args:
+            profile_data: Raw character profile data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            char_name: The character's name.
+        """
+        char_path = self.base_path / region / realm / char_name.lower()
+        char_path.mkdir(parents=True, exist_ok=True)
+        profile_file = char_path / "profile.json"
+
+        try:
+            logger.info("Creating profile file for %s: %s", char_name, profile_file)
+            with open(profile_file, "w", encoding="utf-8") as f:
+                json.dump(profile_data, f, ensure_ascii=False, indent=4)
+            logger.info("Profile file successfully created: %s", profile_file.resolve())
+        except OSError as exc:
+            logger.warning("Failed to process profile file for %s: %s", char_name, exc)
