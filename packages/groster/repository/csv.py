@@ -224,10 +224,12 @@ class CsvRosterRepository(RosterRepository):
         profile_file = char_path / "profile.json"
 
         try:
-            logger.info("Creating profile file for %s: %s", char_name, profile_file)
+            logger.debug("Creating profile file for %s: %s", char_name, profile_file)
             with open(profile_file, "w", encoding="utf-8") as f:
                 json.dump(profile_data, f, ensure_ascii=False, indent=4)
-            logger.info("Profile file successfully created: %s", profile_file.resolve())
+            logger.debug(
+                "Profile file successfully created: %s", profile_file.resolve()
+            )
         except OSError as exc:
             logger.warning("Failed to process profile file for %s: %s", char_name, exc)
 
