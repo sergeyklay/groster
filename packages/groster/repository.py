@@ -111,3 +111,50 @@ class RosterRepository(ABC):
             realm: The realm slug.
             char_name: The character's name.
         """
+
+    @abstractmethod
+    async def save_character_pets(
+        self,
+        pets_data: dict[str, Any],
+        region: str,
+        realm: str,
+        character_name: str,
+    ) -> None:
+        """Save pet collection data for a single character.
+
+        Args:
+            pets_data: Raw character pet collection data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            character_name: The character's name.
+        """
+
+    @abstractmethod
+    async def save_character_mounts(
+        self,
+        mounts_data: dict[str, Any],
+        region: str,
+        realm: str,
+        character_name: str,
+    ) -> None:
+        """Save mount collection data for a single character.
+
+        Args:
+            mounts_data: Raw character mount collection data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            character_name: The character's name.
+        """
+
+    @abstractmethod
+    async def save_alts_data(
+        self, alts_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save processed alts data for a specific guild.
+
+        Args:
+            alts_data: List of processed alt data dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """

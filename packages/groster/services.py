@@ -1,5 +1,4 @@
 import asyncio
-import json
 import logging
 from datetime import datetime
 from typing import Any
@@ -13,7 +12,7 @@ from groster.constants import (
     LEVEL_10_ACHIEVEMENT_ID,
 )
 from groster.http_client import BlizzardAPIClient
-from groster.utils import data_path, format_timestamp
+from groster.utils import format_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -246,86 +245,69 @@ async def fetch_playable_races(client: BlizzardAPIClient) -> list[dict[str, Any]
 
 async def fetch_member_pets_summary(
     client: BlizzardAPIClient, member: dict
-) -> dict | None:
+) -> tuple[dict | None, dict | None]:
     """Fetch pet collection summary for one member.
-
-    Retrieves pet collection summary for one member from the Blizzard API
-    and caches to JSON file. Subsequent calls read from the cached file.
 
     Args:
         client: Blizzard API client for fetching pet data.
         member: Raw member dict from roster data containing character info.
 
     Returns:
-        Dict with 'id', 'name', 'realm', and 'pets' (int), or None if member data
-        is invalid.
+        Tuple of
+        - pet summary dict
+        - raw pet data dict
+        or (None, None) if member data is invalid.
     """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
     char_id = char_info.get("id")
     if not all([name, realm, char_id]):
-        return None
+        return None, None
 
     data = await client.get_character_pets(realm, name)
-
-    char_path = DATA_PATH / client.region / realm / name.lower()
-    try:
-        char_path.mkdir(parents=True, exist_ok=True)
-        with open(char_path / "pets.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    except OSError:
-        logger.warning("Failed to process pet data file for %s", name)
-        # we still can continue with the rest of the processing
-
-    return {
+    summary = {
         "id": char_id,
         "name": name,
         "realm": realm,
         "pets": len(data.get("pets", [])),
     }
 
+    return summary, data
+
 
 async def fetch_member_mounts_summary(
     client: BlizzardAPIClient, member: dict
-) -> dict | None:
+) -> tuple[dict | None, dict | None]:
     """Fetch mount collection summary for one member.
-
-    Retrieves mount collection summary for one member from the Blizzard API
-    and caches to JSON file. Subsequent calls read from the cached file.
 
     Args:
         client: Blizzard API client for fetching mount data.
         member: Raw member dict from roster data containing character info.
 
     Returns:
-        Dict with 'id', 'name', 'realm', and 'mounts' (int), or None if member data
-        is invalid.
+        Tuple of
+        - mount summary dict
+        - raw mount data dict
+        or (None, None) if member data is invalid.
     """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
     char_id = char_info.get("id")
     if not all([name, realm, char_id]):
-        return None
+        return None, None
 
     data = await client.get_character_mounts(realm, name)
 
-    char_path = DATA_PATH / client.region / realm / name.lower()
-    try:
-        char_path.mkdir(parents=True, exist_ok=True)
-        with open(char_path / "mounts.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    except OSError:
-        logger.warning("Failed to write mount data file for %s", name)
-        # we still can continue with the rest of the processing
-
-    return {
+    summary = {
         "id": char_id,
         "name": name,
         "realm": realm,
         "mounts": len(data.get("mounts", [])),
     }
+
+    return summary, data
 
 
 def _find_main_in_group(group: list[dict]) -> str:
@@ -343,33 +325,20 @@ def _find_main_in_group(group: list[dict]) -> str:
 
 async def identify_alts(  # noqa: C901
     client: BlizzardAPIClient,
-    region: str,
-    realm: str,
-    guild: str,
     roster_data: dict[str, Any],
-):
-    """Identify alt characters by fingerprinting achievements and collections.
-
-    Fetches achievements, pets, and mounts for all members, then clusters
-    characters by Jaccard similarity of achievement fingerprints. Groups
-    are assigned a main based on earliest Level 10 achievement.
-
-    Args:
-        client: Blizzard API client.
-        region: Region code.
-        realm: Realm slug.
-        guild: Guild slug.
-        roster_data: Raw roster data with members list.
-
-    Returns:
-        Tuple of (alts_data list, alts_file path) or (empty list, None) if no members.
-    """
+) -> tuple[
+    list[dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+]:
+    """Identify alt characters by fingerprinting achievements and collections."""
     members = roster_data.get("members", [])
     if not members:
-        return [], None
+        return [], {}, {}
 
     logger.info("Fetching fingerprints for %d members to identify alts", len(members))
 
+    # Blizzard caps API requests at 100 per second
     tasks_limit = 50
     all_tasks = []
     for member in members:
@@ -390,17 +359,29 @@ async def identify_alts(  # noqa: C901
     mount_summaries = {}
     fingerprints_data = {}
 
+    all_raw_pets: dict[str, dict[str, Any]] = {}
+    all_raw_mounts: dict[str, dict[str, Any]] = {}
+
     for res in all_results:
         if res is None:
             continue
 
-        name = res["name"]
-        if "pets" in res:
-            pet_summaries[name] = res
-        elif "mounts" in res:
-            mount_summaries[name] = res
-        elif "fingerprint" in res:
-            fingerprints_data[name] = res
+        if isinstance(res, dict) and "fingerprint" in res:
+            fingerprints_data[res["name"]] = res
+            continue
+
+        if isinstance(res, tuple) and len(res) == 2:
+            summary, raw_data = res
+            if summary is None or raw_data is None:
+                continue
+
+            name = summary["name"]
+            if "pets" in summary:
+                pet_summaries[name] = summary
+                all_raw_pets[name] = raw_data
+            elif "mounts" in summary:
+                mount_summaries[name] = summary
+                all_raw_mounts[name] = raw_data
 
     logger.info(
         "Found %d pet summaries for %d characters", len(pet_summaries), len(members)
@@ -496,15 +477,7 @@ async def identify_alts(  # noqa: C901
         for char in all_char_data
     ]
 
-    alts_file = data_path(region, realm, guild, "alts")
-    try:
-        df_alts = pd.DataFrame(alts_data).sort_values(by=["main", "name"])
-        df_alts.to_csv(alts_file, index=False, encoding="utf-8")
-        logger.info("Successfully created alts CSV: %s", alts_file.resolve())
-        return alts_data, alts_file
-    except OSError as e:
-        logger.exception("Failed to write alts file")
-        raise RuntimeError("Failed to write alts file") from e
+    return alts_data, all_raw_pets, all_raw_mounts
 
 
 def get_character_information(name: str) -> tuple[dict | None, datetime | None]:

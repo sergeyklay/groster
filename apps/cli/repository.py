@@ -230,3 +230,83 @@ class CsvRosterRepository(RosterRepository):
             logger.info("Profile file successfully created: %s", profile_file.resolve())
         except OSError as exc:
             logger.warning("Failed to process profile file for %s: %s", char_name, exc)
+
+    async def save_character_pets(
+        self,
+        pets_data: dict[str, Any],
+        region: str,
+        realm: str,
+        character_name: str,
+    ) -> None:
+        """Save raw JSON pet collection data for a single character.
+
+        Args:
+            pets_data: Raw character pet collection data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            character_name: The character's name.
+        """
+        char_path = self.base_path / region / realm / character_name.lower()
+        char_path.mkdir(parents=True, exist_ok=True)
+        pets_file = char_path / "pets.json"
+
+        try:
+            logger.info("Creating pets file for %s: %s", character_name, pets_file)
+            with open(pets_file, "w", encoding="utf-8") as f:
+                json.dump(pets_data, f, ensure_ascii=False, indent=4)
+            logger.info("Pets file successfully created: %s", pets_file.resolve())
+        except OSError as exc:
+            logger.warning(
+                "Failed to process pets file for %s: %s", character_name, exc
+            )
+
+    async def save_character_mounts(
+        self,
+        mounts_data: dict[str, Any],
+        region: str,
+        realm: str,
+        character_name: str,
+    ) -> None:
+        """Save raw JSON mount collection data for a single character.
+
+        Args:
+            mounts_data: Raw character mount collection data dictionary to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            character_name: The character's name.
+        """
+        char_path = self.base_path / region / realm / character_name.lower()
+        char_path.mkdir(parents=True, exist_ok=True)
+        mounts_file = char_path / "mounts.json"
+
+        try:
+            logger.info("Creating mounts file for %s: %s", character_name, mounts_file)
+            with open(mounts_file, "w", encoding="utf-8") as f:
+                json.dump(mounts_data, f, ensure_ascii=False, indent=4)
+            logger.info("Mounts file successfully created: %s", mounts_file.resolve())
+        except OSError as exc:
+            logger.warning(
+                "Failed to process mounts file for %s: %s", character_name, exc
+            )
+
+    async def save_alts_data(
+        self, alts_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save processed alts data for a specific guild.
+
+        Args:
+            alts_data: List of processed alt data dictionaries to save.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+        """
+        alts_file = data_path(self.base_path, region, realm, guild, "alts")
+
+        try:
+            logger.info("Creating alts file: %s", alts_file)
+            df = pd.DataFrame(alts_data)
+            df.to_csv(alts_file, index=False, encoding="utf-8")
+            logger.info("Alts file successfully created: %s", alts_file.resolve())
+        except OSError as e:
+            logger.exception("Failed to process alts file")
+            raise RuntimeError("Failed to write alts file") from e

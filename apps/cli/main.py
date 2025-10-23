@@ -10,6 +10,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from apps.cli.repository import CsvRosterRepository
+from apps.cli.utils import data_path
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
 from groster.repository import RosterRepository
@@ -198,7 +199,12 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
         )
 
 
-def summary_report(alts_file: str, time_diff: float):
+def summary_report(
+    base_path: Path, region: str, realm: str, guild: str, time_diff: float
+):
+    args = parse_arguments()
+    alts_file = data_path(base_path, args.region, args.realm, args.guild, "alts")
+
     try:
         alts_df = pd.read_csv(alts_file)
         total_alts = alts_df["alt"].sum()
@@ -338,17 +344,28 @@ async def main():
         links_data = build_profile_links(args.region, roster_data)
         await repo.save_profile_links(links_data, args.region, args.realm, args.guild)
 
-        alts_data, alts_file = await identify_alts(
-            client, args.region, args.realm, args.guild, roster_data
+        alts_data, all_raw_pets, all_raw_mounts = await identify_alts(
+            client, roster_data
         )
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
+
+        await repo.save_alts_data(alts_data, args.region, args.realm, args.guild)
+
+        logger.info("Saving raw pets data for %d characters", len(all_raw_pets))
+        for name, pets_json in all_raw_pets.items():
+            await repo.save_character_pets(pets_json, args.region, args.realm, name)
+
+        logger.info("Saving raw mounts data for %d characters", len(all_raw_mounts))
+        for name, mounts_json in all_raw_mounts.items():
+            await repo.save_character_mounts(mounts_json, args.region, args.realm, name)
 
         generate_dashboard(base_path, args.region, args.realm, args.guild)
 
         end_time = time.time()
         time_diff = end_time - start_time
-        summary_report(str(alts_file), time_diff)
+
+        summary_report(base_path, args.region, args.realm, args.guild, time_diff)
     finally:
         await client.close()
 
