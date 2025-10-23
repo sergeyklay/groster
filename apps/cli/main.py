@@ -9,11 +9,9 @@ from typing import Any
 import pandas as pd
 from dotenv import load_dotenv
 
-from apps.cli.repository import CsvRosterRepository
-from apps.cli.utils import data_path
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
-from groster.repository import RosterRepository
+from groster.repository import CsvRosterRepository, RosterRepository
 from groster.services import (
     build_profile_links,
     fetch_playable_classes,
@@ -21,6 +19,7 @@ from groster.services import (
     fetch_roster_details,
     identify_alts,
 )
+from groster.utils import data_path
 
 logger = logging.getLogger(__name__)
 
