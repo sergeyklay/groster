@@ -1,10 +1,12 @@
 import json
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
+from groster.models import create_character_info
 from groster.repository import RosterRepository
 from groster.utils import data_path
 
@@ -312,3 +314,69 @@ class CsvRosterRepository(RosterRepository):
         except OSError as e:
             logger.exception("Failed to process alts file")
             raise RuntimeError("Failed to write alts file") from e
+
+    async def get_character_info_by_name(
+        self, name: str, region: str, realm: str, guild: str
+    ) -> tuple[dict[str, Any] | None, datetime | None]:
+        """Retrieve character information by name from the dashboard data.
+
+        Searches for a character in the dashboard and returns their complete
+        information including main and alt character details.
+
+        Args:
+            name: The character's name to search for (case-insensitive).
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            A tuple containing
+            - the character information dictionary
+            - the last modified datetime of the dashboard data
+
+            If the character is not found, first element of the tuple is None.
+            If dashboard file does not exist, second element of the tuple is None.
+        """
+        dashboard_file = data_path(self.base_path, region, realm, guild, "dashboard")
+        if not dashboard_file.exists():
+            logger.warning("Dashboard file does not exist: %s", dashboard_file)
+            return None, None
+
+        modified_at = datetime.fromtimestamp(dashboard_file.stat().st_mtime)
+        df = pd.read_csv(dashboard_file)
+
+        # Search for character (case-insensitive)
+        character_row = df[df["Name"].str.lower() == name.lower()]
+        if character_row.empty:
+            logger.debug(
+                "Character '%s' not found in guild roster: %s", name, dashboard_file
+            )
+            return None, modified_at
+
+        # Determine main character name
+        char_data = character_row.iloc[0]
+        main_name = char_data["Main"] if char_data["Alt?"] else char_data["Name"]
+
+        # Get main character data
+        main_row = df[df["Name"].str.lower() == main_name.lower()]
+        if main_row.empty:
+            logger.warning("Main character '%s' not found for '%s'", main_name, name)
+            # Use alt data as a fallback
+            main_info = create_character_info(char_data)
+        else:
+            main_info = create_character_info(main_row.iloc[0])
+
+        # Find all alts for this main character
+        alts_df = df[(df["Main"].str.lower() == main_name.lower()) & df["Alt?"]]
+
+        alts = []
+        for _, alt_row in alts_df.iterrows():
+            alts.append(create_character_info(alt_row))
+
+        # Add alts list to main character info
+        main_info["alts"] = alts
+        logger.debug(
+            "Found character '%s' (main: %s) with %d alts", name, main_name, len(alts)
+        )
+
+        return main_info, modified_at
