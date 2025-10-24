@@ -53,7 +53,7 @@ groster = "apps.cli.main:cli"
 groster-bot = "apps.discord_bot.main:run_bot"
 
 [dependency-groups]
-dev = ["pre-commit>=4.3.0", "chardet>=5.2.0", "ruff>=0.14.0", "jupyter>=1.1.1"]
+dev = ["pre-commit>=4.3.0", "chardet>=5.2.0", "ruff>=0.14.2", "jupyter>=1.1.1"]
 testing = ["coverage[toml]>=7.10.6", "pytest>=8.4.2", "pytest-mock>=3.15.1"]
 
 [tool.uv]
