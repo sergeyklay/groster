@@ -117,15 +117,14 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
         dashboard_file = base_path / f"{region}-{realm}-{guild}-dashboard.csv"
         dashboard_df.to_csv(dashboard_file, index=False, encoding="utf-8")
         logger.info("Successfully created dashboard CSV: %s", dashboard_file.resolve())
-
     except FileNotFoundError as e:
-        logger.error(
-            "Failed to generate dashboard: a source CSV file is missing. %s", e
-        )
+        raise RuntimeError(
+            "Failed to generate dashboard: a source CSV file is missing"
+        ) from e
     except Exception as e:
-        logger.exception(
-            "An unexpected error occurred during dashboard generation: %s", e
-        )
+        raise RuntimeError(
+            "An unexpected error occurred during dashboard generation"
+        ) from e
 
 
 def summary_report(
