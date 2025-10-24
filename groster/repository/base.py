@@ -180,3 +180,17 @@ class RosterRepository(ABC):
             - the character information dictionary
             - the last modified datetime of the dashboard data
         """
+
+    @abstractmethod
+    async def save_achievements_summary(
+        self, summary_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Saves the summary of achievements (count, points) for all members.
+
+        Args:
+            summary_data: List of dicts, each with 'id', 'name',
+                          'total_quantity', 'total_points'.
+            region: The region identifier.
+            realm: The realm slug.
+            guild: The guild slug.
+        """

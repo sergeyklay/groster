@@ -32,13 +32,26 @@ async def fetch_member_fingerprint(
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
+    char_id = char_info.get("id")
+
     if not name or not realm:
         return None
 
     ach_data = await client.get_character_achievements(realm, name)
+
+    total_quantity = ach_data.get("total_quantity", 0)
+    total_points = ach_data.get("total_points", 0)
+
     if not ach_data.get("achievements"):
         logger.warning("No achievements found for %s", name)
-        return {"name": name, "fingerprint": (), "timestamps": {}}
+        return {
+            "id": char_id,
+            "name": name,
+            "fingerprint": (),
+            "timestamps": {},
+            "total_quantity": total_quantity,
+            "total_points": total_points,
+        }
 
     timestamps = {
         ach["id"]: ach.get("completed_timestamp")
@@ -65,7 +78,14 @@ async def fetch_member_fingerprint(
         )
     )
 
-    return {"name": name, "fingerprint": fingerprint, "timestamps": timestamps}
+    return {
+        "id": char_id,
+        "name": name,
+        "fingerprint": fingerprint,
+        "timestamps": timestamps,
+        "total_quantity": total_quantity,
+        "total_points": total_points,
+    }
 
 
 async def fetch_roster_details(
@@ -326,11 +346,12 @@ async def identify_alts(  # noqa: C901
     list[dict[str, Any]],
     dict[str, dict[str, Any]],
     dict[str, dict[str, Any]],
+    list[dict[str, Any]],
 ]:
     """Identify alt characters by fingerprinting achievements and collections."""
     members = roster_data.get("members", [])
     if not members:
-        return [], {}, {}
+        return [], {}, {}, []
 
     logger.info("Fetching fingerprints for %d members to identify alts", len(members))
 
@@ -354,6 +375,7 @@ async def identify_alts(  # noqa: C901
     pet_summaries = {}
     mount_summaries = {}
     fingerprints_data = {}
+    achievements_summaries: list[dict[str, Any]] = []
 
     all_raw_pets: dict[str, dict[str, Any]] = {}
     all_raw_mounts: dict[str, dict[str, Any]] = {}
@@ -364,6 +386,14 @@ async def identify_alts(  # noqa: C901
 
         if isinstance(res, dict) and "fingerprint" in res:
             fingerprints_data[res["name"]] = res
+            achievements_summaries.append(
+                {
+                    "id": res["id"],
+                    "name": res["name"],
+                    "total_quantity": res.get("total_quantity", 0),
+                    "total_points": res.get("total_points", 0),
+                }
+            )
             continue
 
         if isinstance(res, tuple) and len(res) == 2:
@@ -473,4 +503,4 @@ async def identify_alts(  # noqa: C901
         for char in all_char_data
     ]
 
-    return alts_data, all_raw_pets, all_raw_mounts
+    return alts_data, all_raw_pets, all_raw_mounts, achievements_summaries
