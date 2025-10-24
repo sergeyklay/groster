@@ -30,7 +30,7 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
     try:
         # Define paths to all source CSV files
         roster_file = base_path / f"{region}-{realm}-{guild}-roster.csv"
-        profiles_file = base_path / f"{region}-{realm}-{guild}-profiles.csv"
+        links_file = base_path / f"{region}-{realm}-{guild}-links.csv"
         alts_file = base_path / f"{region}-{realm}-{guild}-alts.csv"
         achievements_file = base_path / f"{region}-{realm}-{guild}-achievements.csv"
 
@@ -41,7 +41,7 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
 
         # Read all necessary files into pandas DataFrames
         df_roster = pd.read_csv(roster_file)
-        df_profiles = pd.read_csv(profiles_file)
+        df_links = pd.read_csv(links_file)
         df_alts = pd.read_csv(alts_file)
         df_achievements = pd.read_csv(
             achievements_file,
@@ -64,7 +64,7 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
         )
 
         # Merge the main data files
-        dashboard_df = pd.merge(df_roster, df_profiles, on=["id", "name"])
+        dashboard_df = pd.merge(df_roster, df_links, on=["id", "name"])
         dashboard_df = pd.merge(dashboard_df, df_alts, on=["id", "name"])
         dashboard_df = pd.merge(
             dashboard_df, df_achievements, on=["id", "name"], how="left"
@@ -264,13 +264,31 @@ async def update_roster(region: str, realm: str, guild: str, locale: str):
         links_data = build_profile_links(region, roster_data)
         await repo.save_profile_links(links_data, region, realm, guild)
 
-        alts_data, all_raw_pets, all_raw_mounts = await identify_alts(
-            client, roster_data
-        )
+        (
+            alts_data,
+            all_raw_pets,
+            all_raw_mounts,
+            achievements_summaries,
+        ) = await identify_alts(client, roster_data)
+
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
 
         await repo.save_alts_data(alts_data, region, realm, guild)
+
+        if achievements_summaries:
+            logger.info(
+                "Saving achievement summaries for %d characters",
+                len(achievements_summaries),
+            )
+            await repo.save_achievements_summary(
+                achievements_summaries, region, realm, guild
+            )
+        else:
+            logger.warning(
+                "No achievement summaries found. "
+                "Skipping achievement summary file creation"
+            )
 
         logger.info("Saving raw pets data for %d characters", len(all_raw_pets))
         for name, pets_json in all_raw_pets.items():

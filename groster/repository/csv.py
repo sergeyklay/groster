@@ -375,3 +375,33 @@ class CsvRosterRepository(RosterRepository):
         )
 
         return main_info, modified_at
+
+    async def save_achievements_summary(
+        self, summary_data: list[dict[str, Any]], region: str, realm: str, guild: str
+    ) -> None:
+        """Save the summary of achievements (count, points) for all members.
+
+        Args:
+            summary_data: List of dicts, each with 'id', 'name',
+                          'total_quantity', 'total_points'.
+            region: The region identifier.
+            realm: The realm slug.
+            guild: The guild slug.
+        """
+        achievements_file = data_path(
+            self.base_path, region, realm, guild, "achievements"
+        )
+
+        try:
+            logger.info("Creating achievements summary file: %s", achievements_file)
+            df = pd.DataFrame(summary_data)
+            df = df[["id", "name", "total_quantity", "total_points"]]
+            df.to_csv(achievements_file, index=False, encoding="utf-8")
+            logger.info(
+                "Achievements summary file successfully created: %s",
+                achievements_file.resolve(),
+            )
+        except OSError as e:
+            raise RuntimeError("Failed to write achievements summary file") from e
+        except KeyError as e:
+            raise RuntimeError("Invalid achievement summary data structure") from e
