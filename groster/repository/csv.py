@@ -258,7 +258,7 @@ class CsvRosterRepository(RosterRepository):
             logger.info("Creating pets file for %s: %s", character_name, pets_file)
             with open(pets_file, "w", encoding="utf-8") as f:
                 json.dump(pets_data, f, ensure_ascii=False, indent=4)
-            logger.info("Pets file successfully created: %s", pets_file.resolve())
+            logger.debug("Pets file successfully created: %s", pets_file.resolve())
         except OSError as exc:
             logger.warning(
                 "Failed to process pets file for %s: %s", character_name, exc
@@ -284,10 +284,10 @@ class CsvRosterRepository(RosterRepository):
         mounts_file = char_path / "mounts.json"
 
         try:
-            logger.info("Creating mounts file for %s: %s", character_name, mounts_file)
+            logger.debug("Creating mounts file for %s: %s", character_name, mounts_file)
             with open(mounts_file, "w", encoding="utf-8") as f:
                 json.dump(mounts_data, f, ensure_ascii=False, indent=4)
-            logger.info("Mounts file successfully created: %s", mounts_file.resolve())
+            logger.debug("Mounts file successfully created: %s", mounts_file.resolve())
         except OSError as exc:
             logger.warning(
                 "Failed to process mounts file for %s: %s", character_name, exc

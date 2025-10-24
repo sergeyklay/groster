@@ -24,9 +24,9 @@ verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
 BOT_REGION = os.getenv("WOW_REGION", "eu")
 BOT_REALM = os.getenv("WOW_REALM", "terokkar")
 BOT_GUILD = os.getenv("WOW_GUILD", "darq-side-of-the-moon")
-DATA_PATH = Path(os.getenv("GROSTER_DATA_PATH", "./data"))
 
-repo: RosterRepository = CsvRosterRepository(base_path=DATA_PATH)
+base_path = Path(os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"))
+repo: RosterRepository = CsvRosterRepository(base_path=base_path)
 
 logger = logging.getLogger(__name__)
 
@@ -113,27 +113,26 @@ async def interactions_handler(request: web.Request):
     try:
         verify_key.verify(timestamp.encode() + body, bytes.fromhex(signature))
     except BadSignatureError:
-        print("Invalid request signature")
+        logger.warning("Invalid request signature")
         return web.Response(text="Invalid request signature", status=401)
 
     data = json.loads(body)
 
     interaction_type = data.get("type")
     invoking_user = data.get("member", {}).get("user", {})
-    user_id = invoking_user.get("id")
+    user_id = invoking_user.get("id", 0)
 
-    print(f"Invoking user: {invoking_user}")
-    print(f"User ID: {user_id}")
+    logger.info("Invoking user: %s (%s)", invoking_user.get("global_name"), user_id)
 
     # Discord PING
     if interaction_type == 1:
-        print("Received PING from Discord, responding with PONG.")
+        logger.info("Received PING from Discord, responding with PONG.")
         return web.json_response({"type": 1})
 
     # Command
     if interaction_type == 2:
         command_name = data.get("data", {}).get("name")
-        print(f"Received command: /{command_name}")
+        logger.info("Received command: /%s", command_name)
 
         if command_name == "ping":
             return web.json_response(
@@ -144,8 +143,10 @@ async def interactions_handler(request: web.Request):
             )
         if command_name == "whois":
             character_name = data.get("data", {}).get("options", [{}])[0].get("value")
-            print(f"Received character name: {character_name}")
+            logger.info("Received character name: %s", character_name)
+
             if not character_name:
+                logger.warning("No character name provided")
                 return web.json_response(
                     {
                         "type": 4,
@@ -176,8 +177,8 @@ async def interactions_handler(request: web.Request):
                         "data": {"content": response_content},
                     }
                 )
-            except Exception as e:
-                print(f"Error getting character info: {e}")
+            except Exception:
+                logger.exception("Error getting character info")
                 error_message = (
                     "An error occurred while retrieving character information."
                 )
