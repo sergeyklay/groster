@@ -51,6 +51,32 @@ def get_class_emoji(class_name: str) -> str:
     return class_emojis.get(class_name, "⚔️")
 
 
+def _format_no_character_message(
+    character_name: str,
+    modified_at: datetime | None,
+    user_id: str | None,
+) -> str:
+    mention = f"<@{user_id}>, " if user_id else ""
+    if modified_at:
+        formatted_date = modified_at.strftime("%Y-%m-%d %H:%M:%S")
+        modified_message = f" Last date of guild roster update was {formatted_date}."
+
+        # Check if last date of roster update was more that 1 day ago
+        if modified_at < datetime.now() - timedelta(days=1):
+            modified_message += (
+                " The guild roster is outdated. Please contact the server "
+                "administrator to update the guild roster."
+            )
+    else:
+        modified_message = ""
+    return (
+        f"{mention}character **{character_name}** not found in guild roster. "
+        "Please check the character name and try again. "
+        "If the character name is correct, please contact the server administrator."
+        f"{modified_message}"
+    )
+
+
 def format_character_info(
     char_info: dict[str, Any],
     character_name: str,
@@ -59,27 +85,8 @@ def format_character_info(
 ) -> str:
     """Format character information for Discord."""
     if not char_info:
-        mention = f"<@{user_id}>, " if user_id else ""
-        if modified_at:
-            formatted_date = modified_at.strftime("%Y-%m-%d %H:%M:%S")
-            modified_message = (
-                f" Last date of guild roster update was {formatted_date}."
-            )
+        return _format_no_character_message(character_name, modified_at, user_id)
 
-            # Check if last date of roster update was more that 1 day ago
-            if modified_at < datetime.now() - timedelta(days=1):
-                modified_message += (
-                    " The guild roster is outdated. Please contact the server "
-                    "administrator to update the guild roster."
-                )
-        else:
-            modified_message = ""
-        return (
-            f"{mention}character **{character_name}** not found in guild roster. "
-            "Please check the character name and try again. "
-            "If the character name is correct, please contact the server administrator."
-            f"{modified_message}"
-        )
     # Format main character
     main_emoji = get_class_emoji(char_info["class"])
     response = "**Main:**\n"
@@ -163,7 +170,13 @@ async def interactions_handler(request: web.Request):
                     return web.json_response(
                         {
                             "type": 4,
-                            "data": {"content": "Character not found in guild roster."},
+                            "data": {
+                                "content": _format_no_character_message(
+                                    character_name,
+                                    modified_at,
+                                    user_id,
+                                )
+                            },
                         }
                     )
 
