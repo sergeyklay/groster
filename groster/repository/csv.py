@@ -255,7 +255,7 @@ class CsvRosterRepository(RosterRepository):
         pets_file = char_path / "pets.json"
 
         try:
-            logger.info("Creating pets file for %s: %s", character_name, pets_file)
+            logger.debug("Creating pets file for %s: %s", character_name, pets_file)
             with open(pets_file, "w", encoding="utf-8") as f:
                 json.dump(pets_data, f, ensure_ascii=False, indent=4)
             logger.debug("Pets file successfully created: %s", pets_file.resolve())
