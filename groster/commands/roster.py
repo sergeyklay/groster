@@ -236,7 +236,7 @@ async def _get_roster_details(
 async def update_roster(region: str, realm: str, guild: str, locale: str):
     """Main entry point for the application."""
     start_time = time.time()
-    base_path = Path(os.getenv("DATA_PATH", "./data"))
+    base_path = Path(os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"))
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")
