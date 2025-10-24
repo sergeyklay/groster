@@ -66,7 +66,6 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(classes_file, index=False, encoding="utf-8")
             logger.info("Classes file successfully created: %s", classes_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process classes file")
             raise RuntimeError("Failed to write classes file") from e
 
     async def get_playable_races(self) -> dict[int, str] | None:
@@ -109,7 +108,6 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(races_file, index=False, encoding="utf-8")
             logger.info("Races file successfully created: %s", races_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process races file")
             raise RuntimeError("Failed to write races file") from e
 
     async def get_guild_ranks(
@@ -164,7 +162,6 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(ranks_file, index=False, encoding="utf-8")
             logger.info("Ranks file successfully created: %s", ranks_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process ranks file")
             raise RuntimeError("Failed to write ranks file") from e
 
     async def save_profile_links(
@@ -207,7 +204,6 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(roster_file, index=False, encoding="utf-8")
             logger.info("Roster file successfully created: %s", roster_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process roster file")
             raise RuntimeError("Failed to write roster file") from e
 
     async def save_character_profile(
@@ -312,7 +308,6 @@ class CsvRosterRepository(RosterRepository):
             df.to_csv(alts_file, index=False, encoding="utf-8")
             logger.info("Alts file successfully created: %s", alts_file.resolve())
         except OSError as e:
-            logger.exception("Failed to process alts file")
             raise RuntimeError("Failed to write alts file") from e
 
     async def get_character_info_by_name(
