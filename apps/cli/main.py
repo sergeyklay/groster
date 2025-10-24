@@ -57,21 +57,23 @@ def parse_arguments():
     parser.add_argument(
         "--region",
         type=str,
-        default="eu",
+        default=os.getenv("WOW_REGION", "eu"),
         help="The region for the API request (e.g., 'eu').",
     )
 
     parser.add_argument(
         "--realm",
         type=str,
-        required=True,
+        default=os.getenv("WOW_REALM"),
+        required=os.getenv("WOW_REALM") is None,
         help="The slug of the realm (e.g., 'terokkar').",
     )
 
     parser.add_argument(
         "--guild",
         type=str,
-        required=True,
+        default=os.getenv("WOW_GUILD"),
+        required=os.getenv("WOW_GUILD") is None,
         help="The slug of the guild (e.g., 'darq-side-of-the-moon').",
     )
 
@@ -312,7 +314,7 @@ async def main():
     load_dotenv()
     setup_logging(debug=args.debug)
 
-    base_path = Path().cwd() / "data"
+    base_path = Path(os.getenv("DATA_PATH", "./data"))
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any
 
 
@@ -157,4 +158,25 @@ class RosterRepository(ABC):
             region: The region identifier (e.g., 'eu', 'us').
             realm: The realm slug.
             guild: The guild slug.
+        """
+
+    @abstractmethod
+    async def get_character_info_by_name(
+        self, name: str, region: str, realm: str, guild: str
+    ) -> tuple[dict[str, Any] | None, datetime | None]:
+        """Retrieve character information by name from the dashboard data.
+
+        Searches for a character in the dashboard and returns their complete
+        information including main and alt character details.
+
+        Args:
+            name: The character's name to search for (case-insensitive).
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            A tuple containing
+            - the character information dictionary
+            - the last modified datetime of the dashboard data
         """
