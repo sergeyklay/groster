@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from groster import __version__
+
 # Path for storing generated data files.
 DATA_PATH = Path().cwd() / "data"
 
@@ -29,3 +31,10 @@ FINGERPRINT_ACHIEVEMENT_IDS = {
     10681,  # Fashionista: Head
     11176,  # Fabulous
 }
+
+# Supported regions based on official Blizzard API documentation.
+SUPPORTED_REGIONS = {"us", "eu", "kr", "tw", "cn"}
+
+
+# Default user agent for the Blizzard API.
+DEFAULT_USER_AGENT = f"groster/{__version__}"

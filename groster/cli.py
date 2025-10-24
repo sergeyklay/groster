@@ -6,6 +6,7 @@ import click
 from dotenv import load_dotenv
 
 from groster.commands import register_commands, run_bot, update_roster
+from groster.constants import SUPPORTED_REGIONS
 from groster.logging import setup_logging
 
 logger = logging.getLogger(__name__)
@@ -86,6 +87,7 @@ def cli(ctx: click.Context, debug: bool) -> None:
 @click.option(
     "--region",
     default=lambda: os.getenv("WOW_REGION", "eu"),
+    type=click.Choice(SUPPORTED_REGIONS),
     show_default=True,
     help="The region for the API request (e.g., 'eu').",
 )

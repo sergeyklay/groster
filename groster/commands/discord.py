@@ -2,7 +2,7 @@ import logging
 
 import httpx
 
-from groster.http_client import DEFAULT_USER_AGENT
+from groster.constants import DEFAULT_USER_AGENT
 
 logger = logging.getLogger(__name__)
 

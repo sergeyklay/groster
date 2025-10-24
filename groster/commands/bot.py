@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime, timedelta
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +28,6 @@ DATA_PATH = Path(os.getenv("GROSTER_DATA_PATH", "./data"))
 
 repo: RosterRepository = CsvRosterRepository(base_path=DATA_PATH)
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -191,12 +191,18 @@ async def interactions_handler(request: web.Request):
     return web.Response(text="Unhandled interaction type", status=400)
 
 
-app = web.Application()
-app.router.add_post("/api/interactions", interactions_handler)
+@lru_cache(maxsize=1)
+def _create_app() -> web.Application:
+    """Create aiohttp application."""
+    app = web.Application()
+    app.router.add_post("/api/interactions", interactions_handler)
+    return app
 
 
 def run_bot(host: str, port: int) -> None:
     """Main entry point for the bot application."""
+
+    app = _create_app()
 
     logger.info("Starting aiohttp server on http://%s:%d", host, port)
     web.run_app(app, host=host, port=port)
