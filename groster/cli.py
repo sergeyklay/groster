@@ -121,9 +121,8 @@ def update(
     logger.info("Starting update for %s@%s.%s...", guild, realm, region)
     try:
         asyncio.run(update_roster(region, realm, guild, locale))
-    except Exception as e:
-        logger.exception("Update failed")
-        click.echo(f"Update failed: {e}", err=True)
+    except Exception:
+        logger.exception("Failed to update guild roster")
 
 
 @cli.command()
@@ -145,9 +144,8 @@ def serve(host: str, port: int):
     logger.info("Starting server on %s:%d...", host, port)
     try:
         run_bot(host=host, port=port)
-    except Exception as e:
-        logger.exception("Server failed")
-        click.echo(f"Server failed: {e}", err=True)
+    except Exception:
+        logger.exception("Failed to start Discord bot server")
 
 
 @cli.command()
@@ -174,9 +172,8 @@ def register(app_id: str, guild_id: str, bot_token: str):
     logger.info("Registering Discord commands...")
     try:
         asyncio.run(register_commands(app_id, guild_id, bot_token))
-    except Exception as e:
-        logger.exception("Commands failed")
-        click.echo(f"Commands failed: {e}", err=True)
+    except Exception:
+        logger.exception("Failed to register Discord commands")
 
 
 def main(args: list[str] | None = None) -> int:
