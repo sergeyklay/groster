@@ -1,5 +1,3 @@
-import argparse
-import asyncio
 import logging
 import os
 import time
@@ -7,7 +5,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from dotenv import load_dotenv
 
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
@@ -22,75 +19,6 @@ from groster.services import (
 from groster.utils import data_path
 
 logger = logging.getLogger(__name__)
-
-
-def setup_logging(debug: bool = False):
-    """Configure logging for the application.
-
-    Args:
-        debug: If True, enable debug logging for httpx/httpcore requests.
-    """
-    log_path = Path().cwd() / "groster.log"
-
-    # Set base logging level
-    log_level = logging.DEBUG if debug else logging.INFO
-
-    logging.basicConfig(
-        level=log_level,
-        format="[%(asctime)s] [%(levelname)s] - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[logging.StreamHandler(), logging.FileHandler(str(log_path))],
-    )
-
-    if not debug:
-        # Reduce httpx/httpcore logging noise - only show WARNING and above
-        logging.getLogger("httpx").setLevel(logging.WARNING)
-        logging.getLogger("httpcore").setLevel(logging.WARNING)
-
-
-def parse_arguments():
-    """Parses command-line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Fetch and process a WoW guild roster from the Battle.net API."
-    )
-
-    parser.add_argument(
-        "--region",
-        type=str,
-        default=os.getenv("WOW_REGION", "eu"),
-        help="The region for the API request (e.g., 'eu').",
-    )
-
-    parser.add_argument(
-        "--realm",
-        type=str,
-        default=os.getenv("WOW_REALM"),
-        required=os.getenv("WOW_REALM") is None,
-        help="The slug of the realm (e.g., 'terokkar').",
-    )
-
-    parser.add_argument(
-        "--guild",
-        type=str,
-        default=os.getenv("WOW_GUILD"),
-        required=os.getenv("WOW_GUILD") is None,
-        help="The slug of the guild (e.g., 'darq-side-of-the-moon').",
-    )
-
-    parser.add_argument(
-        "--locale",
-        type=str,
-        default="en_US",
-        help="The locale for the API request (e.g., 'en_US').",
-    )
-
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Enable debug logging, including HTTP request/response details.",
-    )
-
-    return parser.parse_args()
 
 
 def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
@@ -203,8 +131,7 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
 def summary_report(
     base_path: Path, region: str, realm: str, guild: str, time_diff: float
 ):
-    args = parse_arguments()
-    alts_file = data_path(base_path, args.region, args.realm, args.guild, "alts")
+    alts_file = data_path(base_path, region, realm, guild, "alts")
 
     try:
         alts_df = pd.read_csv(alts_file)
@@ -306,14 +233,9 @@ async def _get_roster_details(
     return roster_data
 
 
-async def main():
+async def update_roster(region: str, realm: str, guild: str, locale: str):
     """Main entry point for the application."""
     start_time = time.time()
-    args = parse_arguments()
-
-    load_dotenv()
-    setup_logging(debug=args.debug)
-
     base_path = Path(os.getenv("DATA_PATH", "./data"))
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
@@ -324,26 +246,24 @@ async def main():
         )
 
     client = BlizzardAPIClient(
-        region=args.region,
+        region=region,
         client_id=client_id,
         client_secret=client_secret,
-        locale=args.locale,
+        locale=locale,
     )
 
     repo = CsvRosterRepository(base_path=base_path)
 
     try:
-        await _get_guild_ranks(repo, args.region, args.realm, args.guild)
+        await _get_guild_ranks(repo, region, realm, guild)
         await _get_playable_classes(repo, client)
         await _get_playable_races(repo, client)
 
-        roster_data = await _get_roster_details(
-            repo, client, args.region, args.realm, args.guild
-        )
+        roster_data = await _get_roster_details(repo, client, region, realm, guild)
 
         logger.info("Building profile links")
-        links_data = build_profile_links(args.region, roster_data)
-        await repo.save_profile_links(links_data, args.region, args.realm, args.guild)
+        links_data = build_profile_links(region, roster_data)
+        await repo.save_profile_links(links_data, region, realm, guild)
 
         alts_data, all_raw_pets, all_raw_mounts = await identify_alts(
             client, roster_data
@@ -351,30 +271,21 @@ async def main():
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
 
-        await repo.save_alts_data(alts_data, args.region, args.realm, args.guild)
+        await repo.save_alts_data(alts_data, region, realm, guild)
 
         logger.info("Saving raw pets data for %d characters", len(all_raw_pets))
         for name, pets_json in all_raw_pets.items():
-            await repo.save_character_pets(pets_json, args.region, args.realm, name)
+            await repo.save_character_pets(pets_json, region, realm, name)
 
         logger.info("Saving raw mounts data for %d characters", len(all_raw_mounts))
         for name, mounts_json in all_raw_mounts.items():
-            await repo.save_character_mounts(mounts_json, args.region, args.realm, name)
+            await repo.save_character_mounts(mounts_json, region, realm, name)
 
-        generate_dashboard(base_path, args.region, args.realm, args.guild)
+        generate_dashboard(base_path, region, realm, guild)
 
         end_time = time.time()
         time_diff = end_time - start_time
 
-        summary_report(base_path, args.region, args.realm, args.guild, time_diff)
+        summary_report(base_path, region, realm, guild, time_diff)
     finally:
         await client.close()
-
-
-def cli() -> None:
-    """Synchronous entry point for the CLI command."""
-    asyncio.run(main())
-
-
-if __name__ == "__main__":
-    cli()

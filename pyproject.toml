@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["packages/groster", "apps"]
+packages = ["groster"]
 
 [project]
 name = "groster"
@@ -35,11 +35,11 @@ classifiers = [
 # Keep these dependencies in sorted alphabetical order
 dependencies = [
     "aiohttp[speedups]>=3.13.1",
+    "click>=8.3.0",
     "httpx>=0.28.1",
     "pandas>=2.3.3",
     "pynacl>=1.6.0",
     "python-dotenv>=1.1.1",
-    "requests>=2.32.5",
 ]
 
 [project.urls]
@@ -49,8 +49,7 @@ Issues = "https://github.com/sergeyklay/groster/issues"
 Download = "https://github.com/sergeyklay/groster/releases"
 
 [project.scripts]
-groster = "apps.cli.main:cli"
-groster-bot = "apps.discord_bot.main:run_bot"
+groster = "groster.cli:cli"
 
 [dependency-groups]
 dev = ["pre-commit>=4.3.0", "chardet>=5.2.0", "ruff>=0.14.2", "jupyter>=1.1.1"]

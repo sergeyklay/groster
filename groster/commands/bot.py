@@ -195,14 +195,8 @@ app = web.Application()
 app.router.add_post("/api/interactions", interactions_handler)
 
 
-def run_bot() -> None:
+def run_bot(host: str, port: int) -> None:
     """Main entry point for the bot application."""
-    host = os.getenv("GROSTER_HOST", "127.0.0.1")
-    port = int(os.getenv("GROSTER_PORT", "5000"))
 
-    print(f"Starting aiohttp server on http://{host}:{port}")
+    logger.info("Starting aiohttp server on http://%s:%d", host, port)
     web.run_app(app, host=host, port=port)
-
-
-if __name__ == "__main__":
-    run_bot()
