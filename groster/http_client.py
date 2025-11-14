@@ -5,13 +5,10 @@ from typing import Any
 
 import httpx
 
+from groster.constants import DEFAULT_USER_AGENT, SUPPORTED_REGIONS
 from groster.models import PlayableClass, PlayableRace
 
 logger = logging.getLogger(__name__)
-
-# Default user agent for the Blizzard API.
-# TODO: Use project version from pyproject.toml
-DEFAULT_USER_AGENT = "groster/0.4.0"
 
 # Region-based host mappings for different Blizzard API endpoints.
 _OAUTH_HOSTS = {
@@ -27,9 +24,6 @@ _API_HOSTS = {
     "cn": "https://gateway.battlenet.com.cn",
     "*": "https://{region}.api.blizzard.com",
 }
-
-# Supported regions based on official Blizzard API documentation.
-SUPPORTED_REGIONS = {"us", "eu", "kr", "tw", "cn"}
 
 
 def _validate_region(region: str) -> None:
