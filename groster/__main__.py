@@ -1,4 +1,4 @@
-"""Entry point for running groster as a module."""
+"""Entry point for running groster CLI application."""
 
 from groster.cli import cli
 
