@@ -168,9 +168,7 @@ def test_data_path_valid_components_returns_correct_path(
 ):
     # Mock DATA_PATH to have predictable test results
     mock_data_path = Path("/test/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    result = data_path(*components)
+    result = data_path(mock_data_path, *components)
 
     expected_path = mock_data_path / expected_filename
     assert result == expected_path
@@ -179,18 +177,14 @@ def test_data_path_valid_components_returns_correct_path(
 
 def test_data_path_single_component_works_correctly(mocker):
     mock_data_path = Path("/mock/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    result = data_path("members")
+    result = data_path(mock_data_path, "members")
 
     assert result == mock_data_path / "members.csv"
 
 
 def test_data_path_multiple_components_joined_with_hyphens(mocker):
     mock_data_path = Path("/mock/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    result = data_path("guild", "roster", "export")
+    result = data_path(mock_data_path, "guild", "roster", "export")
 
     assert result == mock_data_path / "guild-roster-export.csv"
 
@@ -210,60 +204,40 @@ def test_data_path_special_characters_handled_correctly(
     components: tuple[str, ...], expected_filename: str, mocker
 ):
     mock_data_path = Path("/test")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    result = data_path(*components)
+    result = data_path(mock_data_path, *components)
 
     assert result == mock_data_path / expected_filename
 
 
 def test_data_path_leading_slash_stripped_correctly(mocker):
     mock_data_path = Path("/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
+    result = data_path(mock_data_path, "/guild", "roster")
 
-    # Test that leading slash in joined result is stripped
-    result = data_path("/guild", "roster")
-
-    # The function should strip the leading slash from the joined result
     assert result == mock_data_path / "guild-roster.csv"
 
 
 def test_data_path_no_arguments_raises_value_error():
     with pytest.raises(ValueError, match="At least one path component is required"):
-        data_path()
+        data_path(Path("/data"))
 
 
 def test_data_path_returns_pathlib_path_object(mocker):
     mock_data_path = Path("/test")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    result = data_path("test")
+    result = data_path(mock_data_path, "test")
 
     assert isinstance(result, Path)
 
 
 def test_data_path_always_adds_csv_extension(mocker):
     mock_data_path = Path("/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
 
-    # Test various inputs all get .csv extension
-    result1 = data_path("file")
-    result2 = data_path("guild", "members")
-    result3 = data_path("a", "b", "c", "d")
+    result1 = data_path(mock_data_path, "file")
+    result2 = data_path(mock_data_path, "guild", "members")
+    result3 = data_path(mock_data_path, "a", "b", "c", "d")
 
     assert result1.suffix == ".csv"
     assert result2.suffix == ".csv"
     assert result3.suffix == ".csv"
-
-
-def test_data_path_with_actual_data_path_constant():
-    # Test with the actual DATA_PATH constant to ensure integration works
-    result = data_path("test", "file")
-
-    # Should be a Path object with correct structure
-    assert isinstance(result, Path)
-    assert result.name == "test-file.csv"
-    assert str(result).endswith("test-file.csv")
 
 
 @pytest.mark.parametrize(
@@ -278,10 +252,7 @@ def test_data_path_empty_components_handled_correctly(
     components: tuple[str, ...], mocker
 ):
     mock_data_path = Path("/data")
-    mocker.patch("groster.utils.DATA_PATH", mock_data_path)
-
-    # Should still work, just include empty components in the filename
-    result = data_path(*components)
+    result = data_path(mock_data_path, *components)
 
     expected_filename = "-".join(components) + ".csv"
     assert result == mock_data_path / expected_filename

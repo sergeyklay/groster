@@ -29,12 +29,9 @@ ADDITIONAL_EXCLUDE_DIRS = [
     ".ruff_cache",
     ".venv",
     ".vscode",
-    "build",
-    "cache",
     "coverage",
     "data",
     "dist",
-    "fixtures",
     "node_modules",
 ]
 
