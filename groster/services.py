@@ -1,19 +1,14 @@
 import asyncio
-import json
 import logging
 from typing import Any
 
-import pandas as pd
-
 from groster.constants import (
     ALT_SIMILARITY_THRESHOLD,
-    DATA_PATH,
     FINGERPRINT_ACHIEVEMENT_IDS,
     LEVEL_10_ACHIEVEMENT_ID,
 )
 from groster.http_client import BlizzardAPIClient
-from groster.ranks import create_rank_mapping
-from groster.utils import data_path, format_timestamp
+from groster.utils import format_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +32,26 @@ async def fetch_member_fingerprint(
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
+    char_id = char_info.get("id")
+
     if not name or not realm:
         return None
 
     ach_data = await client.get_character_achievements(realm, name)
+
+    total_quantity = ach_data.get("total_quantity", 0)
+    total_points = ach_data.get("total_points", 0)
+
     if not ach_data.get("achievements"):
         logger.warning("No achievements found for %s", name)
-        return {"name": name, "fingerprint": (), "timestamps": {}}
+        return {
+            "id": char_id,
+            "name": name,
+            "fingerprint": (),
+            "timestamps": {},
+            "total_quantity": total_quantity,
+            "total_points": total_points,
+        }
 
     timestamps = {
         ach["id"]: ach.get("completed_timestamp")
@@ -70,12 +78,19 @@ async def fetch_member_fingerprint(
         )
     )
 
-    return {"name": name, "fingerprint": fingerprint, "timestamps": timestamps}
+    return {
+        "id": char_id,
+        "name": name,
+        "fingerprint": fingerprint,
+        "timestamps": timestamps,
+        "total_quantity": total_quantity,
+        "total_points": total_points,
+    }
 
 
 async def fetch_roster_details(
     client: BlizzardAPIClient, roster_data: dict[str, Any]
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
     """Fetch detailed profiles for all roster members.
 
     Args:
@@ -83,18 +98,22 @@ async def fetch_roster_details(
         roster_data: Raw roster data containing member list.
 
     Returns:
-        List of processed member detail dicts with id, name, realm, level,
+        Tuple of
+        - List of processed member detail dicts with id, name, realm, level,
         class_id, race_id, rank, ilvl, and last_login.
+        - Dictionary of profile data by character name.
     """
     members = roster_data.get("members", [])
     if not members:
-        return []
+        logger.warning("No members found in roster data")
+        return [], {}
 
-    logger.info("Fetching profiles for %d members...", len(members))
+    logger.info("Fetching profiles for %d members", len(members))
 
     # Blizzard caps API requests at 100 per second
-    tasks_limit = 90
+    tasks_limit = 50
     semaphore = asyncio.Semaphore(tasks_limit)
+    raw_profiles: dict[str, dict[str, Any]] = {}
 
     async def fetch_profile(member: dict) -> dict | None:
         """Coroutine to fetch a single character's profile."""
@@ -113,14 +132,7 @@ async def fetch_roster_details(
         if not response:
             return None
 
-        char_path = DATA_PATH / client.region / realm / name.lower()
-        try:
-            char_path.mkdir(parents=True, exist_ok=True)
-            with open(char_path / "profile.json", "w", encoding="utf-8") as f:
-                json.dump(response, f, ensure_ascii=False, indent=4)
-        except OSError:
-            logger.warning("Failed to write intermediate profile data for %s", name)
-            # we still can continue with the rest of the processing
+        raw_profiles[name] = response
 
         return {
             "name": response.get("name"),
@@ -175,30 +187,26 @@ async def fetch_roster_details(
         len(members),
     )
 
-    return processed_data
+    return processed_data, raw_profiles
 
 
-def create_profile_links(region: str, realm: str, guild: str, data: dict):
-    """Create CSV with external profile links for each guild member.
-
-    Generates links to Raider.IO, Armory, and Warcraft Logs for all members
-    and writes them to a CSV file.
+def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
+    """Builds external profile links for each guild member.
 
     Args:
-        region: Region code (e.g., 'us', 'eu').
-        realm: Realm slug.
-        guild: Guild slug.
-        data: Raw roster data dict containing members list.
-    """
-    links_file = data_path(region, realm, guild, "links")
-    links_file.parent.mkdir(parents=True, exist_ok=True)
+        region: Guild region identifier (e.g., 'eu').
+        data: Raw roster data containing the 'members' list.
 
+    Returns:
+        List of dictionaries containing profile links for each member.
+    """
     members = data.get("members", [])
     if not members:
-        return
+        return []
 
-    logger.info("Processing %d guild members for profile links", len(members))
+    logger.info("Building profile links for %d members", len(members))
     links_data = []
+
     for member in members:
         character = member.get("character", {})
         name = character.get("name")
@@ -207,197 +215,115 @@ def create_profile_links(region: str, realm: str, guild: str, data: dict):
             logger.warning("No name or realm found for member: %s", member)
             continue
 
+        fq_name = f"{region}/{realm}/{name.lower()}"
         links_data.append(
             {
                 "id": character.get("id"),
                 "name": name,
-                "rio_link": f"https://raider.io/characters/{region}/{realm}/{name.lower()}",
-                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{region}/{realm}/{name.lower()}",
-                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{region}/{realm}/{name.lower()}",
+                "rio_link": f"https://raider.io/characters/{fq_name}",
+                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{fq_name}",
+                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{fq_name}",
             }
         )
 
-    try:
-        df = pd.DataFrame(links_data)
-        df.to_csv(links_file, index=False, encoding="utf-8")
-        logger.info("Successfully created profile links file: %s", links_file.resolve())
-    except OSError:
-        logger.warning("Failed to write profile links file")
+    return links_data
 
 
-async def get_guild_ranks(region: str, realm: str, guild: str) -> dict:
-    """Get guild rank mappings from CSV or create default ranks.
-
-    Creates a ranks CSV file with default WoW guild ranks if it doesn't exist,
-    otherwise reads the existing file.
+async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, Any]]:
+    """Fetch playable classes from the Blizzard API.
 
     Args:
-        region: Region code for path construction.
-        realm: Realm slug for path construction.
-        guild: Guild slug for path construction.
+        client: Blizzard API client for making requests.
 
     Returns:
-        Dict mapping rank IDs (int) to rank names (str).
+        List of dictionaries containing class data, e.g.,
+            [{"id": 1, "name": "Warrior"}, ...]
     """
-    ranks_file = data_path(region, realm, guild, "ranks")
-    ranks_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        if not ranks_file.exists():
-            logger.info("Creating ranks file: %s", ranks_file)
-            ranks_mapping = create_rank_mapping()
-            ranks_data = [rank._asdict() for rank in ranks_mapping.values()]
-            df = pd.DataFrame(ranks_data)
-            df.to_csv(ranks_file, index=False, encoding="utf-8")
-            logger.info("Successfully created ranks file: %s", ranks_file.resolve())
-        else:
-            logger.info("Ranks file already exists: %s", ranks_file)
-            df = pd.read_csv(ranks_file)
-    except OSError as e:
-        logger.exception("Failed to process ranks data file for %s guild", guild)
-        raise RuntimeError("Failed to process ranks data file") from e
-
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+    logger.debug("Requesting playable classes from API")
+    classes_list = await client.get_playable_classes()
+    return [{"id": c["id"], "name": c["name"]} for c in classes_list]
 
 
-async def get_playable_classes(client: BlizzardAPIClient) -> dict:
-    """Get playable classes from the API."""
-    classes_file = data_path("classes")
-    classes_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        if not classes_file.exists():
-            logger.info("Creating classes file: %s", classes_file)
-            classes_list = await client.get_playable_classes()
-            classes = [{"id": c["id"], "name": c["name"]} for c in classes_list]
-            df = pd.DataFrame(classes)
-            df.to_csv(classes_file, index=False, encoding="utf-8")
-            logger.info("Successfully created classes file: %s", classes_file.resolve())
-        else:
-            logger.info("Classes file already exists: %s", classes_file)
-            df = pd.read_csv(classes_file)
-    except OSError as e:
-        logger.exception("Failed to process classes datafile")
-        raise RuntimeError("Failed to process classes data file") from e
-
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
-
-
-async def get_playable_races(client: BlizzardAPIClient) -> dict:
-    """Fetch playable race mappings from API or cached CSV.
-
-    Retrieves all playable races from the Blizzard API on first call and
-    caches to CSV. Subsequent calls read from the cached file.
+async def fetch_playable_races(client: BlizzardAPIClient) -> list[dict[str, Any]]:
+    """Fetch playable races from the Blizzard API.
 
     Args:
-        client: Blizzard API client for fetching race data.
+        client: Blizzard API client for making requests.
 
     Returns:
-        Dict mapping race IDs (int) to race names (str).
+        List of dictionaries containing race data, e.g.,
+            [{"id": 1, "name": "Human"}, ...]
     """
-    races_file = data_path("races")
-    races_file.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        if not races_file.exists():
-            logger.info("Creating races file: %s", races_file)
-            races_list = await client.get_playable_races()
-            races = [{"id": r["id"], "name": r["name"]} for r in races_list]
-            df = pd.DataFrame(races)
-            df.to_csv(races_file, index=False, encoding="utf-8")
-            logger.info("Successfully created races file: %s", races_file.resolve())
-        else:
-            logger.info("Races file already exists: %s", races_file)
-            df = pd.read_csv(races_file)
-    except OSError as e:
-        logger.exception("Failed to process races data file")
-        raise RuntimeError("Failed to process races data file") from e
-
-    return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+    logger.debug("Requesting playable races from API")
+    races_list = await client.get_playable_races()
+    return [{"id": r["id"], "name": r["name"]} for r in races_list]
 
 
 async def fetch_member_pets_summary(
     client: BlizzardAPIClient, member: dict
-) -> dict | None:
+) -> tuple[dict | None, dict | None]:
     """Fetch pet collection summary for one member.
-
-    Retrieves pet collection summary for one member from the Blizzard API
-    and caches to JSON file. Subsequent calls read from the cached file.
 
     Args:
         client: Blizzard API client for fetching pet data.
         member: Raw member dict from roster data containing character info.
 
     Returns:
-        Dict with 'id', 'name', 'realm', and 'pets' (int), or None if member data
-        is invalid.
+        Tuple of
+        - pet summary dict
+        - raw pet data dict
+        or (None, None) if member data is invalid.
     """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
     char_id = char_info.get("id")
     if not all([name, realm, char_id]):
-        return None
+        return None, None
 
     data = await client.get_character_pets(realm, name)
-
-    char_path = DATA_PATH / client.region / realm / name.lower()
-    try:
-        char_path.mkdir(parents=True, exist_ok=True)
-        with open(char_path / "pets.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    except OSError:
-        logger.warning("Failed to process pet data file for %s", name)
-        # we still can continue with the rest of the processing
-
-    return {
+    summary = {
         "id": char_id,
         "name": name,
         "realm": realm,
         "pets": len(data.get("pets", [])),
     }
 
+    return summary, data
+
 
 async def fetch_member_mounts_summary(
     client: BlizzardAPIClient, member: dict
-) -> dict | None:
+) -> tuple[dict | None, dict | None]:
     """Fetch mount collection summary for one member.
-
-    Retrieves mount collection summary for one member from the Blizzard API
-    and caches to JSON file. Subsequent calls read from the cached file.
 
     Args:
         client: Blizzard API client for fetching mount data.
         member: Raw member dict from roster data containing character info.
 
     Returns:
-        Dict with 'id', 'name', 'realm', and 'mounts' (int), or None if member data
-        is invalid.
+        Tuple of
+        - mount summary dict
+        - raw mount data dict
+        or (None, None) if member data is invalid.
     """
     char_info = member.get("character", {})
     name = char_info.get("name")
     realm = char_info.get("realm", {}).get("slug")
     char_id = char_info.get("id")
     if not all([name, realm, char_id]):
-        return None
+        return None, None
 
     data = await client.get_character_mounts(realm, name)
 
-    char_path = DATA_PATH / client.region / realm / name.lower()
-    try:
-        char_path.mkdir(parents=True, exist_ok=True)
-        with open(char_path / "mounts.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-    except OSError:
-        logger.warning("Failed to write mount data file for %s", name)
-        # we still can continue with the rest of the processing
-
-    return {
+    summary = {
         "id": char_id,
         "name": name,
         "realm": realm,
         "mounts": len(data.get("mounts", [])),
     }
+
+    return summary, data
 
 
 def _find_main_in_group(group: list[dict]) -> str:
@@ -415,34 +341,22 @@ def _find_main_in_group(group: list[dict]) -> str:
 
 async def identify_alts(  # noqa: C901
     client: BlizzardAPIClient,
-    region: str,
-    realm: str,
-    guild: str,
     roster_data: dict[str, Any],
-):
-    """Identify alt characters by fingerprinting achievements and collections.
-
-    Fetches achievements, pets, and mounts for all members, then clusters
-    characters by Jaccard similarity of achievement fingerprints. Groups
-    are assigned a main based on earliest Level 10 achievement.
-
-    Args:
-        client: Blizzard API client.
-        region: Region code.
-        realm: Realm slug.
-        guild: Guild slug.
-        roster_data: Raw roster data with members list.
-
-    Returns:
-        Tuple of (alts_data list, alts_file path) or (empty list, None) if no members.
-    """
+) -> tuple[
+    list[dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    """Identify alt characters by fingerprinting achievements and collections."""
     members = roster_data.get("members", [])
     if not members:
-        return [], None
+        return [], {}, {}, []
 
     logger.info("Fetching fingerprints for %d members to identify alts", len(members))
 
-    tasks_limit = 90
+    # Blizzard caps API requests at 100 per second
+    tasks_limit = 50
     all_tasks = []
     for member in members:
         all_tasks.append(fetch_member_fingerprint(client, member))
@@ -461,18 +375,39 @@ async def identify_alts(  # noqa: C901
     pet_summaries = {}
     mount_summaries = {}
     fingerprints_data = {}
+    achievements_summaries: list[dict[str, Any]] = []
+
+    all_raw_pets: dict[str, dict[str, Any]] = {}
+    all_raw_mounts: dict[str, dict[str, Any]] = {}
 
     for res in all_results:
         if res is None:
             continue
 
-        name = res["name"]
-        if "pets" in res:
-            pet_summaries[name] = res
-        elif "mounts" in res:
-            mount_summaries[name] = res
-        elif "fingerprint" in res:
-            fingerprints_data[name] = res
+        if isinstance(res, dict) and "fingerprint" in res:
+            fingerprints_data[res["name"]] = res
+            achievements_summaries.append(
+                {
+                    "id": res["id"],
+                    "name": res["name"],
+                    "total_quantity": res.get("total_quantity", 0),
+                    "total_points": res.get("total_points", 0),
+                }
+            )
+            continue
+
+        if isinstance(res, tuple) and len(res) == 2:
+            summary, raw_data = res
+            if summary is None or raw_data is None:
+                continue
+
+            name = summary["name"]
+            if "pets" in summary:
+                pet_summaries[name] = summary
+                all_raw_pets[name] = raw_data
+            elif "mounts" in summary:
+                mount_summaries[name] = summary
+                all_raw_mounts[name] = raw_data
 
     logger.info(
         "Found %d pet summaries for %d characters", len(pet_summaries), len(members)
@@ -568,12 +503,4 @@ async def identify_alts(  # noqa: C901
         for char in all_char_data
     ]
 
-    alts_file = data_path(region, realm, guild, "alts")
-    try:
-        df_alts = pd.DataFrame(alts_data).sort_values(by=["main", "name"])
-        df_alts.to_csv(alts_file, index=False, encoding="utf-8")
-        logger.info("Successfully created alts CSV: %s", alts_file.resolve())
-        return alts_data, alts_file
-    except OSError as e:
-        logger.exception("Failed to write alts file")
-        raise RuntimeError("Failed to write alts file") from e
+    return alts_data, all_raw_pets, all_raw_mounts, achievements_summaries
