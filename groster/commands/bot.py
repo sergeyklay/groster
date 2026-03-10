@@ -42,6 +42,7 @@ def _format_no_character_message(
     modified_at: datetime | None,
     user_id: str | None,
 ) -> str:
+    """Build a 'character not found' message for Discord."""
     mention = f"<@{user_id}>, " if user_id else ""
     if modified_at:
         formatted_date = modified_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -64,20 +65,38 @@ def _format_no_character_message(
 
 
 def format_character_info(
-    char_info: dict[str, Any],
+    char_info: dict[str, Any] | None,
     character_name: str,
     modified_at: datetime | None,
     user_id: str | None,
+    region: str = "eu",
 ) -> str:
-    """Format character information for Discord."""
+    """Format character information for a Discord message.
+
+    Args:
+        char_info: Character data dict, or None if not found.
+        character_name: The name the user searched for.
+        modified_at: Last roster update timestamp.
+        user_id: Discord user ID for mention, or None.
+        region: Game region identifier (e.g., 'eu', 'us').
+
+    Returns:
+        Formatted string ready to send as Discord message content.
+    """
     if not char_info:
-        return _format_no_character_message(character_name, modified_at, user_id)
+        return _format_no_character_message(
+            character_name,
+            modified_at,
+            user_id,
+        )
+
+    region_tag = region.upper()
 
     # Format main character
     main_emoji = get_class_emoji(char_info["class"])
     response = "**Main:**\n"
     response += f"{main_emoji} **{char_info['name']}** — {char_info['class']}\n"
-    response += f"Realm: {char_info['realm']} (EU)\n"
+    response += f"Realm: {char_info['realm']} ({region_tag})\n"
     response += f"iLvl: {char_info['ilvl']}\n"
     response += f"Last Login: {char_info['last_login']}\n"
 
@@ -87,7 +106,7 @@ def format_character_info(
         for alt in char_info["alts"]:
             alt_emoji = get_class_emoji(alt["class"])
             response += f"{alt_emoji} **{alt['name']}** — {alt['class']}\n"
-            response += f"Realm: {alt['realm']} (EU)\n"
+            response += f"Realm: {alt['realm']} ({region_tag})\n"
             response += f"iLvl: {alt['ilvl']}\n"
             response += f"Last Login: {alt['last_login']}\n\n"
 
@@ -174,7 +193,11 @@ async def interactions_handler(request: web.Request):
                     )
 
                 response_content = format_character_info(
-                    char_info, character_name, modified_at, user_id
+                    char_info,
+                    character_name,
+                    modified_at,
+                    user_id,
+                    region=request.app["bot_region"],
                 )
 
                 return web.json_response(
