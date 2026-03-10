@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from datetime import datetime, timedelta
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -14,19 +13,6 @@ from nacl.signing import VerifyKey
 from groster.repository import CsvRosterRepository, RosterRepository
 
 load_dotenv()
-
-PUBLIC_KEY = os.getenv("DISCORD_PUBLIC_KEY")
-if not PUBLIC_KEY:
-    raise ValueError("DISCORD_PUBLIC_KEY not found in environment variables")
-verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
-
-
-BOT_REGION = os.getenv("WOW_REGION", "eu")
-BOT_REALM = os.getenv("WOW_REALM", "terokkar")
-BOT_GUILD = os.getenv("WOW_GUILD", "darq-side-of-the-moon")
-
-base_path = Path(os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"))
-repo: RosterRepository = CsvRosterRepository(base_path=base_path)
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +104,10 @@ async def interactions_handler(request: web.Request):
     body = await request.read()
 
     try:
-        verify_key.verify(timestamp.encode() + body, bytes.fromhex(signature))
+        request.app["verify_key"].verify(
+            timestamp.encode() + body,
+            bytes.fromhex(signature),
+        )
     except BadSignatureError:
         logger.warning("Invalid request signature")
         return web.Response(text="Invalid request signature", status=401)
@@ -162,8 +151,12 @@ async def interactions_handler(request: web.Request):
                 )
 
             try:
+                repo: RosterRepository = request.app["repo"]
                 char_info, modified_at = await repo.get_character_info_by_name(
-                    character_name, BOT_REGION, BOT_REALM, BOT_GUILD
+                    character_name,
+                    request.app["bot_region"],
+                    request.app["bot_realm"],
+                    request.app["bot_guild"],
                 )
 
                 if not char_info:
@@ -205,17 +198,38 @@ async def interactions_handler(request: web.Request):
     return web.Response(text="Unhandled interaction type", status=400)
 
 
-@lru_cache(maxsize=1)
 def _create_app() -> web.Application:
-    """Create aiohttp application."""
+    """Create and configure the aiohttp application.
+
+    Reads configuration from environment variables and validates
+    that required values are present.
+
+    Raises:
+        ValueError: If DISCORD_PUBLIC_KEY is not set.
+    """
+    public_key = os.getenv("DISCORD_PUBLIC_KEY")
+    if not public_key:
+        raise ValueError("DISCORD_PUBLIC_KEY not found in environment variables")
+
+    base_path = Path(
+        os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"),
+    )
+
     app = web.Application()
+    app["verify_key"] = VerifyKey(bytes.fromhex(public_key))
+    app["repo"] = CsvRosterRepository(base_path=base_path)
+    app["bot_region"] = os.getenv("WOW_REGION", "eu")
+    app["bot_realm"] = os.getenv("WOW_REALM", "terokkar")
+    app["bot_guild"] = os.getenv(
+        "WOW_GUILD",
+        "darq-side-of-the-moon",
+    )
     app.router.add_post("/api/interactions", interactions_handler)
     return app
 
 
 def run_bot(host: str, port: int) -> None:
     """Main entry point for the bot application."""
-
     app = _create_app()
 
     logger.info("Starting aiohttp server on http://%s:%d", host, port)
