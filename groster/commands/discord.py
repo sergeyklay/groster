@@ -37,21 +37,20 @@ async def register_commands(
         headers = {"Authorization": f"Bot {bot_token}"}
 
         transport = httpx.AsyncHTTPTransport(retries=max_retries)
-        client = httpx.AsyncClient(
+        async with httpx.AsyncClient(
             transport=transport,
             timeout=timeout,
             headers={
                 "User-Agent": DEFAULT_USER_AGENT,
                 "Accept": "application/json",
             },
-        )
+        ) as client:
+            response = await client.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            logger.info("Discord commands registered successfully")
+            logger.debug("Response: %s", response.json())
 
-        response = await client.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        logger.info("Discord commands registered successfully")
-        logger.debug("Response: %s", response.json())
-
-        return response.json()
+            return response.json()
     except httpx.HTTPError as e:
         logger.exception("Failed to register Discord commands")
         raise RuntimeError("Failed to register Discord commands") from e
