@@ -8,9 +8,6 @@
 # Virtual Environments.
 /.venv
 
-# Do not ignore .cursor directory.
-!.cursor
-
 # Application and docker compose environment variables.
 .env
 
@@ -32,9 +29,6 @@ __pycache__
 
 # Build directory.
 /dist
-
-# Context for LLM.
-/docs/context.md
 
 # Local storage for the data.
 /data
