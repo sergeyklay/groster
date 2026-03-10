@@ -190,8 +190,25 @@ async def fetch_roster_details(
     return processed_data, raw_profiles
 
 
-def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
-    """Builds external profile links for each guild member.
+_REGION_LOCALE: dict[str, str] = {
+    "us": "en-us",
+    "eu": "en-gb",
+    "kr": "ko-kr",
+    "tw": "zh-tw",
+    "cn": "zh-cn",
+}
+
+
+def _armory_locale(region: str) -> str:
+    """Return the Blizzard Armory locale segment for a region."""
+    return _REGION_LOCALE.get(region, "en-us")
+
+
+def build_profile_links(
+    region: str,
+    data: dict,
+) -> list[dict[str, Any]]:
+    """Build external profile links for each guild member.
 
     Args:
         region: Guild region identifier (e.g., 'eu').
@@ -206,24 +223,33 @@ def build_profile_links(region: str, data: dict) -> list[dict[str, Any]]:
 
     logger.info("Building profile links for %d members", len(members))
     links_data = []
+    locale = _armory_locale(region)
+
+    armory_base = "https://worldofwarcraft.blizzard.com"
 
     for member in members:
         character = member.get("character", {})
         name = character.get("name")
         realm = character.get("realm", {}).get("slug")
         if not name or not realm:
-            logger.warning("No name or realm found for member: %s", member)
+            logger.warning(
+                "No name or realm found for member: %s",
+                member,
+            )
             continue
 
         fq_name = f"{region}/{realm}/{name.lower()}"
+        rio = f"https://raider.io/characters/{fq_name}"
+        armory = f"{armory_base}/{locale}/character/{fq_name}"
+        logs = f"https://www.warcraftlogs.com/character/{fq_name}"
         links_data.append(
             {
                 "id": character.get("id"),
                 "name": name,
-                "rio_link": f"https://raider.io/characters/{fq_name}",
-                "armory_link": f"https://worldofwarcraft.blizzard.com/en-gb/character/{fq_name}",
-                "warcraft_logs_link": f"https://www.warcraftlogs.com/character/{fq_name}",
-            }
+                "rio_link": rio,
+                "armory_link": armory,
+                "warcraft_logs_link": logs,
+            },
         )
 
     return links_data
