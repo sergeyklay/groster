@@ -128,8 +128,13 @@ def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
 
 
 def summary_report(
-    base_path: Path, region: str, realm: str, guild: str, time_diff: float
-):
+    base_path: Path,
+    region: str,
+    realm: str,
+    guild: str,
+    time_diff: float,
+) -> None:
+    """Log a summary of the roster processing run."""
     alts_file = data_path(base_path, region, realm, guild, "alts")
 
     try:
@@ -137,11 +142,9 @@ def summary_report(
         total_alts = alts_df["alt"].sum()
         total_mains = len(alts_df["main"].unique())
 
-        print("\n" + "=" * 50)
-        print(f"Processing completed in {time_diff:.2f} seconds")
-        print(f"Alts found: {total_alts}")
-        print(f"Main characters: {total_mains}")
-        print("=" * 50)
+        logger.info("Processing completed in %.2f seconds", time_diff)
+        logger.info("Alts found: %s", total_alts)
+        logger.info("Main characters: %s", total_mains)
     except (
         FileNotFoundError,
         pd.errors.EmptyDataError,
@@ -149,7 +152,10 @@ def summary_report(
         KeyError,
     ):
         logger.exception("Failed to generate summary report")
-        print(f"\nProcessing completed in {time_diff:.2f} seconds")
+        logger.info(
+            "Processing completed in %.2f seconds",
+            time_diff,
+        )
 
 
 async def _get_guild_ranks(
