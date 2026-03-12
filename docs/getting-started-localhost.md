@@ -2,6 +2,8 @@
 
 This guide walks you through the full process of running groster on your local machine, exposing it to the internet with Cloudflare Tunnel, and connecting it to Discord so your guild can use the `/whois` command. By the end, you'll have a working Discord bot that looks up WoW characters and shows their main/alt relationships.
 
+> **Prefer Docker?** If you want to run groster in a container instead of installing Python locally, see the [Docker guide](docker.md). The rest of this guide covers the local development setup.
+
 ## What you'll need
 
 Before you start, make sure you have:
