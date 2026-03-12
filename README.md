@@ -23,6 +23,7 @@ This tool automates the process by programmatically analyzing character data to 
 - [Getting Started (Localhost)](./docs/getting-started-localhost.md) - Guide for running groster locally with a Discord bot.
 - [Docker](./docs/docker.md) - Running groster with Docker and Docker Compose.
 - [Deploying a Local Server](./docs/deploy-local-server.md) - Guide for deploying groster on a local server with Cloudflare Tunnel and systemd.
+- [Sending groster Logs to Grafana via Loki](./docs/logging-grafana-loki.md) - Instructions for configuring groster to send structured logs to Grafana Loki for monitoring and analysis.
 - [Contributing](./CONTRIBUTING.md) - The project's contributing guidelines.
 
 ## License
