@@ -77,7 +77,17 @@ docker logs groster-bot --tail=3
 Expected output — each line is a single JSON object:
 
 ```json
-{"timestamp": "2026-03-12T14:23:45.123Z", "level": "INFO", "logger": "groster.commands.bot", "message": "Starting bot server on 0.0.0.0:5000", "module": "bot", "function": "_create_app", "line": 42, "service": "groster", "version": "0.5.0"}
+{
+  "timestamp": "2026-03-12T14:23:45.123Z",
+  "level": "INFO",
+  "logger": "groster.commands.bot",
+  "message": "Starting bot server on 0.0.0.0:5000",
+  "module": "bot",
+  "function": "_create_app",
+  "line": 42,
+  "service": "groster",
+  "version": "0.5.0"
+}
 ```
 
 If you see text-formatted logs (`[2026-03-12 14:23:45] [INFO] - Starting bot server...`), the `GROSTER_LOG_FORMAT` environment variable is not set to `json`. Check your `compose.yaml` or `compose.override.yaml`:
@@ -449,7 +459,7 @@ Save the following JSON to a file (e.g., `/tmp/groster-dashboard.json`) and impo
       {
         "title": "Log volume by level",
         "type": "timeseries",
-        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+        "gridPos": { "h": 8, "w": 16, "x": 0, "y": 0 },
         "targets": [
           {
             "expr": "sum by (level) (rate({job=\"groster\"} [5m]))",
@@ -464,12 +474,122 @@ Save the following JSON to a file (e.g., `/tmp/groster-dashboard.json`) and impo
             }
           },
           "overrides": [
-            { "matcher": { "id": "byName", "options": "ERROR" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] },
-            { "matcher": { "id": "byName", "options": "WARNING" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }] },
-            { "matcher": { "id": "byName", "options": "INFO" }, "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }] },
-            { "matcher": { "id": "byName", "options": "DEBUG" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }] }
+            {
+              "matcher": { "id": "byName", "options": "ERROR" },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": { "fixedColor": "red", "mode": "fixed" }
+                }
+              ]
+            },
+            {
+              "matcher": { "id": "byName", "options": "WARNING" },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": { "fixedColor": "orange", "mode": "fixed" }
+                }
+              ]
+            },
+            {
+              "matcher": { "id": "byName", "options": "INFO" },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": { "fixedColor": "green", "mode": "fixed" }
+                }
+              ]
+            },
+            {
+              "matcher": { "id": "byName", "options": "DEBUG" },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": { "fixedColor": "blue", "mode": "fixed" }
+                }
+              ]
+            }
           ]
         }
+      },
+      {
+        "title": "Top 10 users",
+        "description": "Discord users who invoked /whois or /ping commands, ranked by query count.",
+        "type": "table",
+        "gridPos": { "h": 8, "w": 4, "x": 16, "y": 0 },
+        "targets": [
+          {
+            "expr": "topk(10, sum by (user) (count_over_time({job=\"groster\"} |= \"Invoking user\" | pattern \"Invoking user: <user> (<_>)\" [$__range])))",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          { "id": "labelsToFields", "options": { "mode": "columns" } },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "container": true,
+                "detected_level": true,
+                "job": true,
+                "level": true,
+                "service": true,
+                "service_name": true,
+                "version": true
+              },
+              "renameByName": { "Value": "Queries", "user": "User" },
+              "indexByName": { "user": 0, "Value": 1 }
+            }
+          },
+          {
+            "id": "sortBy",
+            "options": { "sort": [{ "field": "Queries", "desc": true }] }
+          }
+        ],
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "options": { "showHeader": true, "footer": { "show": false } }
+      },
+      {
+        "title": "Top 10 searched characters",
+        "description": "WoW characters looked up via /whois, ranked by lookup count.",
+        "type": "table",
+        "gridPos": { "h": 8, "w": 4, "x": 20, "y": 0 },
+        "targets": [
+          {
+            "expr": "topk(10, sum by (character) (count_over_time({job=\"groster\"} |= \"Received character name\" | pattern \"Received character name: <character>\" [$__range])))",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          { "id": "labelsToFields", "options": { "mode": "columns" } },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "container": true,
+                "detected_level": true,
+                "job": true,
+                "level": true,
+                "service": true,
+                "service_name": true,
+                "version": true
+              },
+              "renameByName": { "Value": "Lookups", "character": "Character" },
+              "indexByName": { "character": 0, "Value": 1 }
+            }
+          },
+          {
+            "id": "sortBy",
+            "options": { "sort": [{ "field": "Lookups", "desc": true }] }
+          }
+        ],
+        "fieldConfig": { "defaults": {}, "overrides": [] },
+        "options": { "showHeader": true, "footer": { "show": false } }
       },
       {
         "title": "Errors",
@@ -519,7 +639,7 @@ Save the following JSON to a file (e.g., `/tmp/groster-dashboard.json`) and impo
         "gridPos": { "h": 4, "w": 6, "x": 12, "y": 8 },
         "targets": [
           {
-            "expr": "count_over_time({job=\"groster\"} | json | version!=\"\" [5m])",
+            "expr": "count_over_time({job=\"groster\", version=~\".+\"} [5m])",
             "legendFormat": "{{version}}"
           }
         ],
@@ -528,7 +648,7 @@ Save the following JSON to a file (e.g., `/tmp/groster-dashboard.json`) and impo
         }
       },
       {
-        "title": "Container uptime",
+        "title": "Container restarts",
         "type": "stat",
         "gridPos": { "h": 4, "w": 6, "x": 18, "y": 8 },
         "targets": [
@@ -576,14 +696,14 @@ Save the following JSON to a file (e.g., `/tmp/groster-dashboard.json`) and impo
 
 ### 8.2 What the dashboard shows
 
-| Panel | Purpose |
-| --- | --- |
+| Panel                   | Purpose                                                                                                        |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- |
 | **Log volume by level** | Stacked bar chart — shows the rate of INFO/WARNING/ERROR logs over time. A spike in red means something broke. |
-| **Errors** | Counter for the selected time range. Green = 0, red = 5+. |
-| **Warnings** | Same pattern for warnings. |
-| **Current version** | Shows the `version` field from logs — confirms which version is deployed. |
-| **Container restarts** | Counts "Starting bot server" messages — more than 1 in a range suggests crash loops. |
-| **Recent logs** | Live log stream with clickable detail expansion. |
+| **Errors**              | Counter for the selected time range. Green = 0, red = 5+.                                                      |
+| **Warnings**            | Same pattern for warnings.                                                                                     |
+| **Current version**     | Shows the `version` field from logs — confirms which version is deployed.                                      |
+| **Container restarts**  | Counts "Starting bot server" messages — more than 1 in a range suggests crash loops.                           |
+| **Recent logs**         | Live log stream with clickable detail expansion.                                                               |
 
 ---
 
@@ -727,29 +847,36 @@ sudo systemctl restart alloy
 Work backwards through the pipeline:
 
 1. **Is the container running?**
+
    ```bash
    docker ps | grep groster-bot
    ```
 
 2. **Is the container producing JSON logs?**
+
    ```bash
    docker logs groster-bot --tail=3
    ```
 
 3. **Is Promtail running and targeting the container?**
+
    ```bash
    sudo systemctl status promtail
    curl -s http://localhost:9080/targets
    ```
+
    Look for a target with `groster-bot` in the labels and state `Ready`.
 
 4. **Is Promtail sending to Loki?**
+
    ```bash
    journalctl -u promtail --since "5 min ago" | grep -i error
    ```
+
    Common errors: connection refused (Loki not running), 429 (Loki rate limit).
 
 5. **Is Loki receiving logs?**
+
    ```bash
    curl -s "http://localhost:3100/loki/api/v1/query_range" \
      --data-urlencode 'query={job="groster"}' \
