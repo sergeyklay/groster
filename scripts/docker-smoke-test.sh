@@ -35,7 +35,7 @@ fail() {
 
 test_image_builds_successfully() {
     echo "[1/8] test_image_builds_successfully"
-    if docker compose build --quiet >/dev/null 2>&1; then
+    if docker compose build --quiet "${COMPOSE_SERVICE}" >/dev/null 2>&1; then
         pass "Image builds successfully"
     else
         fail "Image build failed"
