@@ -34,3 +34,6 @@ __pycache__
 /data
 /data_*
 /tests/manual/data
+
+# Docker Compose override file for local development.
+compose.override.yaml
