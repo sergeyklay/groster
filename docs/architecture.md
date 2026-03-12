@@ -4,37 +4,48 @@ groster fetches a WoW guild roster from the Blizzard Battle.net API, identifies 
 
 ## System Context
 
-```
-                         ┌──────────────┐
-                         │  Blizzard    │
-                         │  Battle.net  │
-                         │  API         │
-                         └──────┬───────┘
-                                │ HTTPS (OAuth 2.0)
-                                │
-              ┌─────────────────┼──────────────────┐
-              │                 │                  │
-              │            groster                 │
-              │                 │                  │
-              │   CLI ──► Services ──► Repository  │
-              │                 │          │       │
-              │            Bot ─┘      data/*.csv  │
-              └─────────────────┬──────────────────┘
-                                │
-                          Ed25519 sig
-                                │
-                         ┌──────┴───────┐
-                         │   Discord    │
-                         │   Webhooks   │
-                         └──────────────┘
+```mermaid
+---
+title: System Context
+---
+flowchart TB
+    blizzard(["Blizzard Battle.net API"])
+
+    subgraph system [" groster "]
+        direction TB
+
+        cli["CLI
+        update · register"]
+        bot["Bot
+        serve · aiohttp :5000"]
+        svc["Services
+        fingerprinting · alt grouping · links"]
+        http["HTTP Client
+        OAuth 2.0 · retries · rate limiting"]
+        repo["Repository
+        CsvRosterRepository"]
+        data[("data/*.csv
+        roster · alts · dashboard")]
+
+        cli & bot --> svc
+        svc --> http
+        svc --> repo
+        repo --> data
+    end
+
+    discord(["Discord Interactions API"])
+
+    http -. "HTTPS · OAuth 2.0
+    roster · profiles · achievements" .-> blizzard
+    discord -. "POST /api/interactions
+    Ed25519 verified" .-> bot
 ```
 
-Two entry points use the same core:
+Three commands share the same service and repository layers:
 
 - **`groster update`** — batch CLI that fetches the full roster, computes alt groups, writes CSVs.
 - **`groster serve`** — long-running aiohttp server that answers Discord `/whois` by reading the CSVs.
-
-A third command, **`groster register`**, is a one-shot call to register slash commands with the Discord API.
+- **`groster register`** — one-shot call to register slash commands with the Discord API.
 
 ## Module Map
 
