@@ -1,0 +1,65 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Python artifacts
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+dist
+build
+
+# Virtual environments
+.venv
+.tox
+
+# Testing & coverage
+tests
+coverage
+.pytest_cache
+htmlcov
+.coverage
+
+# IDE & editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Dev tools
+.pre-commit-config.yaml
+.ruff_cache
+Makefile
+defaults.mk
+node_modules
+
+# Documentation
+*.md
+!README.md
+docs
+
+# Generated data
+data
+data_*
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Misc project management
+*.deb
+.tasks
+.tool-versions
+.specs
+.plans
+AGENTS.md
+scripts
+groster.code-workspace

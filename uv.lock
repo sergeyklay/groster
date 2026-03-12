@@ -819,6 +819,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pynacl" },
     { name = "python-dotenv" },
+    { name = "python-json-logger" },
 ]
 
 [package.dev-dependencies]
@@ -842,6 +843,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.3.3" },
     { name = "pynacl", specifier = ">=1.6.0" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
+    { name = "python-json-logger", specifier = ">=3.3.0" },
 ]
 
 [package.metadata.requires-dev]

@@ -20,6 +20,7 @@ This tool automates the process by programmatically analyzing character data to 
 ## Documentation
 
 - [Coding Standards](./docs/coding-standards.md) - The project's coding standards and guidelines.
+- [Docker](./docs/docker.md) - Running groster with Docker and Docker Compose.
 - [Contributing](./CONTRIBUTING.md) - The project's contributing guidelines.
 
 ## License
