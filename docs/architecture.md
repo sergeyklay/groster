@@ -56,7 +56,7 @@ groster/
 ├── models.py             PlayableClass / PlayableRace TypedDicts, row→dict factory
 ├── ranks.py              Guild rank namedtuples, immutable default mapping
 ├── utils.py              data_path(), format_timestamp()
-├── logging.py            One-call logging setup
+├── logging.py            One-call logging setup (text or structured JSON)
 ├── http_client.py        BlizzardAPIClient — OAuth, retries, rate limiting
 ├── services.py           Fingerprinting, alt grouping, profile link building
 ├── commands/
@@ -207,15 +207,16 @@ The `data/` directory is gitignored. It exists only after a successful `groster 
 
 ## Technology Choices
 
-| Role                   | Choice  | Rationale                                      |
-| ---------------------- | ------- | ---------------------------------------------- |
-| HTTP client (Blizzard) | httpx   | Async, retry transport, clean API              |
-| HTTP server (Discord)  | aiohttp | Lightweight webhook server, speedups extras    |
-| Data processing        | pandas  | DataFrame merges for dashboard generation      |
-| CLI                    | click   | Subcommands, env var defaults, type validation |
-| Crypto                 | pynacl  | Ed25519 for Discord signature verification     |
-| Dep management         | uv      | Fast resolver, lockfile-based reproducibility  |
-| Linting                | ruff    | Single tool for format, lint, import sort      |
+| Role                   | Choice             | Rationale                                      |
+| ---------------------- | ------------------ | ---------------------------------------------- |
+| HTTP client (Blizzard) | httpx              | Async, retry transport, clean API              |
+| HTTP server (Discord)  | aiohttp            | Lightweight webhook server, speedups extras    |
+| Data processing        | pandas             | DataFrame merges for dashboard generation      |
+| CLI                    | click              | Subcommands, env var defaults, type validation |
+| Structured logging     | python-json-logger | JSON formatter for container log aggregation   |
+| Crypto                 | pynacl             | Ed25519 for Discord signature verification     |
+| Dep management         | uv                 | Fast resolver, lockfile-based reproducibility  |
+| Linting                | ruff               | Single tool for format, lint, import sort      |
 
 ## Known Limitations
 
