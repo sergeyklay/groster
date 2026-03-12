@@ -19,8 +19,9 @@ This tool automates the process by programmatically analyzing character data to 
 
 ## Documentation
 
-- [Coding Standards](./docs/coding-standards.md) - The project's coding standards and guidelines.
+- [Architecture](./docs/architecture.md) - Overview of the project's architecture and design decisions.
 - [Docker](./docs/docker.md) - Running groster with Docker and Docker Compose.
+- [Getting Started (Localhost)](./docs/getting-started-localhost.md) - Guide for running groster locally with a Discord bot.
 - [Contributing](./CONTRIBUTING.md) - The project's contributing guidelines.
 
 ## License
