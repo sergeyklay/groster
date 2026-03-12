@@ -20,8 +20,9 @@ This tool automates the process by programmatically analyzing character data to 
 ## Documentation
 
 - [Architecture](./docs/architecture.md) - Overview of the project's architecture and design decisions.
-- [Docker](./docs/docker.md) - Running groster with Docker and Docker Compose.
 - [Getting Started (Localhost)](./docs/getting-started-localhost.md) - Guide for running groster locally with a Discord bot.
+- [Docker](./docs/docker.md) - Running groster with Docker and Docker Compose.
+- [Deploying a Local Server](./docs/deploy-local-server.md) - Guide for deploying groster on a local server with Cloudflare Tunnel and systemd.
 - [Contributing](./CONTRIBUTING.md) - The project's contributing guidelines.
 
 ## License
