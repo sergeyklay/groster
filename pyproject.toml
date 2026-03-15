@@ -7,7 +7,7 @@ packages = ["groster"]
 
 [project]
 name = "groster"
-version = "0.5.0"
+version = "0.6.0"
 description = "A tool to fetch and process World of Warcraft guild rosters, identifying player info via the Blizzard API."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -59,7 +59,12 @@ dev = [
     "ruff>=0.14.2",
     "jupyter>=1.1.1",
 ]
-testing = ["coverage[toml]>=7.10.6", "pytest>=8.4.2", "pytest-mock>=3.15.1"]
+testing = [
+    "coverage[toml]>=7.10.6",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=0.25.1",
+    "pytest-mock>=3.15.1",
+]
 
 [tool.uv]
 package = true
@@ -74,6 +79,7 @@ markers = [
 log_cli = false
 log_level = "WARNING"
 log_cli_level = "WARNING"
+asyncio_mode = "auto"
 
 [tool.coverage.report]
 # Set the number of decimal places in coverage percentage
