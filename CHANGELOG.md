@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Discord autocomplete for the `/whois` command — typing a partial name shows matching character suggestions.
+- Fuzzy "Did you mean?" suggestions when `/whois` finds no exact match, powered by `difflib.get_close_matches()`.
+- `search_character_names()` method on `RosterRepository` for prefix-based character name lookup.
 - `build_dashboard()` and `get_alt_summary()` methods on `RosterRepository`.
 - `InMemoryRosterRepository` with async test support via `pytest-asyncio`.
 - Pull request template.
@@ -16,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `/whois` command handler extracted into `_handle_whois()` helper to reduce `interactions_handler()` complexity.
+- `_format_no_character_message()` accepts optional `suggestions` parameter for fuzzy match results.
 - Dashboard generation and alt summary logic moved behind `RosterRepository`; `summary_report()` accepts a repository instance instead of reading CSVs directly.
 - Dependabot schedule changed from daily to weekly with labels.
 - Updated CODEOWNERS.

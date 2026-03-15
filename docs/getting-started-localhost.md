@@ -197,12 +197,14 @@ This sends a request to the Discord API to create the `/whois` command in your s
 Open Discord, navigate to a channel in your server, and type:
 
 ```
-/whois player:CharacterName
+/whois CharacterName
 ```
+
+As you type the character name, Discord shows autocomplete suggestions from your guild roster. Select one, or finish typing manually.
 
 Replace `CharacterName` with an actual character name from your guild roster. The bot responds with the character's information: class, realm, item level, last login date, and a list of alts if any were detected.
 
-If the character isn't found, the bot tells you so and shows when the roster was last updated.
+If the character isn't found, the bot suggests similar names (fuzzy matching) and shows when the roster was last updated.
 
 A note on testing: don't try to open the tunnel URL in a browser or send a `GET` request to it. The `/api/interactions` endpoint only accepts `POST` requests with Discord's specific payload format. A browser visit returns an error; that's expected. The way to test is through the `/whois` command inside Discord.
 
@@ -230,7 +232,7 @@ Check the terminal where `groster serve` is running. The server logs every incom
 
 - The roster data hasn't been fetched yet. Run `uv run --frozen groster update` first.
 - The `cloudflared` tunnel URL has changed (happens on restart). Update the Interactions Endpoint URL in the Discord Developer Portal.
-- The character name has a typo or doesn't exist in the guild roster.
+- The character name has a typo or doesn't exist in the guild roster. Use the autocomplete suggestions to pick the right name.
 
 ### `cloudflared` tunnel URL changed
 
