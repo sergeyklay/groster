@@ -125,6 +125,83 @@ class InMemoryRosterRepository(RosterRepository):
         """Save the summary of achievements for all members."""
         self._achievements[self._guild_key(region, realm, guild)] = list(summary_data)
 
+    async def build_dashboard(self, region: str, realm: str, guild: str) -> None:
+        """Build and persist a consolidated dashboard from source data."""
+        key = self._guild_key(region, realm, guild)
+        roster = self._roster.get(key)
+        if not roster:
+            raise RuntimeError(
+                "Failed to generate dashboard: a source CSV file is missing"
+            )
+
+        links = self._links.get(key, [])
+        alts = self._alts.get(key, [])
+        achievements = self._achievements.get(key, [])
+        ranks = self._ranks.get(key, [])
+
+        links_map: dict[tuple[Any, str], dict[str, Any]] = {
+            (r["id"], r["name"]): r for r in links
+        }
+        alts_map: dict[tuple[Any, str], dict[str, Any]] = {
+            (r["id"], r["name"]): r for r in alts
+        }
+        achievements_map: dict[tuple[Any, str], dict[str, Any]] = {
+            (r["id"], r["name"]): r for r in achievements
+        }
+        classes_map = {r["id"]: r["name"] for r in self._classes}
+        races_map = {r["id"]: r["name"] for r in self._races}
+        ranks_map = {r["id"]: r["name"] for r in ranks}
+
+        dashboard_rows: list[dict[str, Any]] = []
+        for row in roster:
+            row_key = (row["id"], row["name"])
+
+            link_row = links_map.get(row_key)
+            if link_row is None:
+                continue
+
+            alt_row = alts_map.get(row_key)
+            if alt_row is None:
+                continue
+
+            ach_row = achievements_map.get(row_key, {})
+
+            dashboard_rows.append(
+                {
+                    "Name": row["name"],
+                    "Realm": row.get("realm"),
+                    "Level": row.get("level"),
+                    "Class": classes_map.get(row.get("class_id")),
+                    "Race": races_map.get(row.get("race_id")),
+                    "Rank": ranks_map.get(row.get("rank")),
+                    "AQ": ach_row.get("total_quantity"),
+                    "AP": ach_row.get("total_points"),
+                    "Alt?": alt_row.get("alt"),
+                    "Main": alt_row.get("main"),
+                    "iLvl": row.get("ilvl"),
+                    "Last Login": row.get("last_login"),
+                    "Raider.io": link_row.get("rio_link"),
+                    "Armory": link_row.get("armory_link"),
+                    "Logs": link_row.get("warcraft_logs_link"),
+                }
+            )
+
+        self._dashboard[key] = dashboard_rows
+        self._dashboard_modified[key] = datetime.now(tz=UTC)
+
+    async def get_alt_summary(
+        self, region: str, realm: str, guild: str
+    ) -> tuple[int, int] | None:
+        """Retrieve a summary of alt detection results."""
+        key = self._guild_key(region, realm, guild)
+        alts = self._alts.get(key)
+        if not alts:
+            return None
+
+        total_alts = sum(1 for row in alts if row.get("alt"))
+        total_mains = len({row["main"] for row in alts})
+        return (total_alts, total_mains)
+
     async def get_character_info_by_name(
         self, name: str, region: str, realm: str, guild: str
     ) -> tuple[dict[str, Any] | None, datetime | None]:
