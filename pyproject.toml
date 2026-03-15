@@ -164,6 +164,7 @@ extend-select = [
 [tool.ruff.lint.per-file-ignores]
 # Modules where it is expected for there to be no __init.py__
 "**/tests/**/" = ["INP001"]
+".github/skills/**/" = ["C901", "INP001"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["groster"]
