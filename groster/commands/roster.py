@@ -4,8 +4,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
-
 from groster.http_client import BlizzardAPIClient
 from groster.ranks import create_rank_mapping
 from groster.repository import CsvRosterRepository, RosterRepository
@@ -16,146 +14,25 @@ from groster.services import (
     fetch_roster_details,
     identify_alts,
 )
-from groster.utils import data_path
 
 logger = logging.getLogger(__name__)
 
 
-def generate_dashboard(base_path: Path, region: str, realm: str, guild: str):
-    """
-    Generates a consolidated dashboard.csv by merging all other data files.
-    """
-    logger.info("Generating consolidated dashboard...")
-
-    try:
-        # Define paths to all source CSV files
-        roster_file = base_path / f"{region}-{realm}-{guild}-roster.csv"
-        links_file = base_path / f"{region}-{realm}-{guild}-links.csv"
-        alts_file = base_path / f"{region}-{realm}-{guild}-alts.csv"
-        achievements_file = base_path / f"{region}-{realm}-{guild}-achievements.csv"
-
-        # Paths to static mapping files
-        classes_file = base_path / "classes.csv"
-        races_file = base_path / "races.csv"
-        ranks_file = base_path / f"{region}-{realm}-{guild}-ranks.csv"
-
-        # Read all necessary files into pandas DataFrames
-        df_roster = pd.read_csv(roster_file)
-        df_links = pd.read_csv(links_file)
-        df_alts = pd.read_csv(alts_file)
-        df_achievements = pd.read_csv(
-            achievements_file,
-            usecols=[  # type: ignore
-                "id",
-                "name",
-                "total_quantity",
-                "total_points",
-            ],
-        )
-
-        df_classes = pd.read_csv(classes_file).rename(
-            columns={"id": "class_id", "name": "Class"}
-        )
-        df_races = pd.read_csv(races_file).rename(
-            columns={"id": "race_id", "name": "Race"}
-        )
-        df_ranks = pd.read_csv(ranks_file).rename(
-            columns={"id": "rank", "name": "Rank"}
-        )
-
-        # Merge the main data files
-        dashboard_df = pd.merge(df_roster, df_links, on=["id", "name"])
-        dashboard_df = pd.merge(dashboard_df, df_alts, on=["id", "name"])
-        dashboard_df = pd.merge(
-            dashboard_df, df_achievements, on=["id", "name"], how="left"
-        )
-
-        # Map IDs to names
-        dashboard_df = pd.merge(dashboard_df, df_classes, on="class_id", how="left")
-        dashboard_df = pd.merge(dashboard_df, df_races, on="race_id", how="left")
-        dashboard_df = pd.merge(dashboard_df, df_ranks, on="rank", how="left")
-
-        # Rename columns to match the desired output
-        dashboard_df = dashboard_df.rename(
-            columns={
-                "name": "Name",
-                "realm": "Realm",
-                "level": "Level",
-                "total_quantity": "AQ",
-                "total_points": "AP",
-                "alt": "Alt?",
-                "main": "Main",
-                "ilvl": "iLvl",
-                "last_login": "Last Login",
-                "rio_link": "Raider.io",
-                "armory_link": "Armory",
-                "warcraft_logs_link": "Logs",
-            }
-        )
-
-        # Select and order the final columns
-        final_columns = [
-            "Name",
-            "Realm",
-            "Level",
-            "Class",
-            "Race",
-            "Rank",
-            "AQ",
-            "AP",
-            "Alt?",
-            "Main",
-            "iLvl",
-            "Last Login",
-            "Raider.io",
-            "Armory",
-            "Logs",
-        ]
-        dashboard_df = dashboard_df[final_columns]
-
-        # Save the final dashboard file
-        dashboard_file = base_path / f"{region}-{realm}-{guild}-dashboard.csv"
-        dashboard_df.to_csv(dashboard_file, index=False, encoding="utf-8")
-        logger.info("Successfully created dashboard CSV: %s", dashboard_file.resolve())
-    except FileNotFoundError as e:
-        raise RuntimeError(
-            "Failed to generate dashboard: a source CSV file is missing"
-        ) from e
-    except Exception as e:
-        raise RuntimeError(
-            "An unexpected error occurred during dashboard generation"
-        ) from e
-
-
-def summary_report(
-    base_path: Path,
+async def summary_report(
+    repo: RosterRepository,
     region: str,
     realm: str,
     guild: str,
     time_diff: float,
 ) -> None:
     """Log a summary of the roster processing run."""
-    alts_file = data_path(base_path, region, realm, guild, "alts")
+    result = await repo.get_alt_summary(region, realm, guild)
 
-    try:
-        alts_df = pd.read_csv(alts_file)
-        total_alts = alts_df["alt"].sum()
-        total_mains = len(alts_df["main"].unique())
-
-        logger.info("Processing completed in %.2f seconds", time_diff)
+    logger.info("Processing completed in %.2f seconds", time_diff)
+    if result is not None:
+        total_alts, total_mains = result
         logger.info("Alts found: %s", total_alts)
         logger.info("Main characters: %s", total_mains)
-    except (
-        FileNotFoundError,
-        pd.errors.EmptyDataError,
-        pd.errors.ParserError,
-        KeyError,
-    ):
-        logger.exception("Failed to generate summary report")
-        logger.info(
-            "Processing completed in %.2f seconds",
-            time_diff,
-        )
 
 
 async def _get_guild_ranks(
@@ -304,11 +181,11 @@ async def update_roster(region: str, realm: str, guild: str, locale: str):
         for name, mounts_json in all_raw_mounts.items():
             await repo.save_character_mounts(mounts_json, region, realm, name)
 
-        generate_dashboard(base_path, region, realm, guild)
+        await repo.build_dashboard(region, realm, guild)
 
         end_time = time.time()
         time_diff = end_time - start_time
 
-        summary_report(base_path, region, realm, guild, time_diff)
+        await summary_report(repo, region, realm, guild, time_diff)
     finally:
         await client.close()

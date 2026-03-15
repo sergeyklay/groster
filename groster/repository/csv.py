@@ -405,3 +405,146 @@ class CsvRosterRepository(RosterRepository):
             raise RuntimeError("Failed to write achievements summary file") from e
         except KeyError as e:
             raise RuntimeError("Invalid achievement summary data structure") from e
+
+    async def build_dashboard(self, region: str, realm: str, guild: str) -> None:
+        """Build and persist a consolidated dashboard from source data files.
+
+        Reads roster, links, alts, achievements, classes, races, and ranks
+        data, merges them into a single dashboard, and persists the result.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Raises:
+            RuntimeError: If a required source data file is missing or
+                an error occurs during dashboard generation.
+        """
+        logger.info("Generating consolidated dashboard...")
+
+        try:
+            roster_file = data_path(self.base_path, region, realm, guild, "roster")
+            links_file = data_path(self.base_path, region, realm, guild, "links")
+            alts_file = data_path(self.base_path, region, realm, guild, "alts")
+            achievements_file = data_path(
+                self.base_path, region, realm, guild, "achievements"
+            )
+            classes_file = data_path(self.base_path, "classes")
+            races_file = data_path(self.base_path, "races")
+            ranks_file = data_path(self.base_path, region, realm, guild, "ranks")
+
+            df_roster = pd.read_csv(roster_file)
+            df_links = pd.read_csv(links_file)
+            df_alts = pd.read_csv(alts_file)
+            df_achievements = pd.read_csv(
+                achievements_file,
+                usecols=[  # type: ignore
+                    "id",
+                    "name",
+                    "total_quantity",
+                    "total_points",
+                ],
+            )
+
+            df_classes = pd.read_csv(classes_file).rename(
+                columns={"id": "class_id", "name": "Class"}
+            )
+            df_races = pd.read_csv(races_file).rename(
+                columns={"id": "race_id", "name": "Race"}
+            )
+            df_ranks = pd.read_csv(ranks_file).rename(
+                columns={"id": "rank", "name": "Rank"}
+            )
+
+            dashboard_df = pd.merge(df_roster, df_links, on=["id", "name"])
+            dashboard_df = pd.merge(dashboard_df, df_alts, on=["id", "name"])
+            dashboard_df = pd.merge(
+                dashboard_df, df_achievements, on=["id", "name"], how="left"
+            )
+
+            dashboard_df = pd.merge(dashboard_df, df_classes, on="class_id", how="left")
+            dashboard_df = pd.merge(dashboard_df, df_races, on="race_id", how="left")
+            dashboard_df = pd.merge(dashboard_df, df_ranks, on="rank", how="left")
+
+            dashboard_df = dashboard_df.rename(
+                columns={
+                    "name": "Name",
+                    "realm": "Realm",
+                    "level": "Level",
+                    "total_quantity": "AQ",
+                    "total_points": "AP",
+                    "alt": "Alt?",
+                    "main": "Main",
+                    "ilvl": "iLvl",
+                    "last_login": "Last Login",
+                    "rio_link": "Raider.io",
+                    "armory_link": "Armory",
+                    "warcraft_logs_link": "Logs",
+                }
+            )
+
+            final_columns = [
+                "Name",
+                "Realm",
+                "Level",
+                "Class",
+                "Race",
+                "Rank",
+                "AQ",
+                "AP",
+                "Alt?",
+                "Main",
+                "iLvl",
+                "Last Login",
+                "Raider.io",
+                "Armory",
+                "Logs",
+            ]
+            dashboard_df = dashboard_df[final_columns]
+
+            dashboard_file = data_path(
+                self.base_path, region, realm, guild, "dashboard"
+            )
+            dashboard_df.to_csv(dashboard_file, index=False, encoding="utf-8")
+            logger.info(
+                "Successfully created dashboard CSV: %s", dashboard_file.resolve()
+            )
+        except FileNotFoundError as e:
+            raise RuntimeError(
+                "Failed to generate dashboard: a source CSV file is missing"
+            ) from e
+        except Exception as e:
+            raise RuntimeError(
+                "An unexpected error occurred during dashboard generation"
+            ) from e
+
+    async def get_alt_summary(
+        self, region: str, realm: str, guild: str
+    ) -> tuple[int, int] | None:
+        """Retrieve a summary of alt detection results.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            A tuple of (total_alts, total_mains), or None if the alts
+            data is not available or cannot be read.
+        """
+        alts_file = data_path(self.base_path, region, realm, guild, "alts")
+
+        try:
+            alts_df = pd.read_csv(alts_file)
+            total_alts = int(alts_df["alt"].sum())
+            total_mains = len(alts_df["main"].unique())
+            return (total_alts, total_mains)
+        except (
+            FileNotFoundError,
+            pd.errors.EmptyDataError,
+            pd.errors.ParserError,
+            KeyError,
+        ):
+            logger.exception("Failed to read alts data for summary")
+            return None

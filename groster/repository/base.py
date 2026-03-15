@@ -194,3 +194,36 @@ class RosterRepository(ABC):
             realm: The realm slug.
             guild: The guild slug.
         """
+
+    @abstractmethod
+    async def build_dashboard(self, region: str, realm: str, guild: str) -> None:
+        """Build and persist a consolidated dashboard from source data files.
+
+        Reads roster, links, alts, achievements, classes, races, and ranks
+        data, merges them into a single dashboard, and persists the result.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Raises:
+            RuntimeError: If a required source data file is missing or
+                an error occurs during dashboard generation.
+        """
+
+    @abstractmethod
+    async def get_alt_summary(
+        self, region: str, realm: str, guild: str
+    ) -> tuple[int, int] | None:
+        """Retrieve a summary of alt detection results.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            A tuple of (total_alts, total_mains), or None if the alts
+            data is not available or cannot be read.
+        """
