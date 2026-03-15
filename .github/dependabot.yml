@@ -1,25 +1,29 @@
 version: 2
 
 updates:
-  # Python dependencies
   - package-ecosystem: uv
     versioning-strategy: increase
-    directory: "/" # lock file lives at the repo root
+    directory: /
     schedule:
-      interval: daily
+      interval: weekly
     assignees: [cicdbot]
     target-branch: main
     open-pull-requests-limit: 20
+    labels:
+      - dependencies
+      - python:uv
     commit-message:
       prefix: "chore(deps): "
       prefix-development: "chore(deps-dev): "
 
-  # GitHub Actions dependencies
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: /
     schedule:
-      interval: daily
+      interval: weekly
     target-branch: main
     assignees: [cicdbot]
+    labels:
+      - dependencies
+      - github_actions
     commit-message:
       prefix: "ci: "

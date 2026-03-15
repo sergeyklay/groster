@@ -37,3 +37,8 @@ __pycache__
 
 # Docker Compose override file for local development.
 compose.override.yaml
+
+# Local task files, specs, and plans.
+.tasks
+.specs
+.plans
