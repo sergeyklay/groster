@@ -5,6 +5,8 @@ test:
 	@echo $(CS)Running all tests$(CE)
 	uv run --frozen coverage erase
 	uv run --frozen coverage run -m pytest -v ./tests
+	uv run --frozen coverage combine
+	uv run --frozen coverage report
 	@echo
 
 .PHONY: test-unit
@@ -24,11 +26,11 @@ test-integration:
 ccov:
 	@echo $(CS)Combine coverage reports$(CE)
 	uv run --frozen coverage combine
-ifneq ($(CI_ENV),1)
 	uv run --frozen coverage report
-	uv run --frozen coverage html
-else
+ifeq ($(CI_ENV),1)
 	uv run --frozen coverage xml
+else
+	uv run --frozen coverage html
 endif
 	@echo
 

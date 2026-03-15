@@ -83,6 +83,9 @@ log_cli_level = "WARNING"
 asyncio_mode = "auto"
 
 [tool.coverage.report]
+# Minimum coverage percentage required. Raise incrementally as coverage improves.
+fail_under = 55
+
 # Set the number of decimal places in coverage percentage
 precision = 2
 
