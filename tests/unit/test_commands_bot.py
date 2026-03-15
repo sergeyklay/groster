@@ -189,6 +189,26 @@ async def test_handle_whois_not_found_no_fuzzy_matches_returns_standard_message(
     assert "not found in guild roster" in payload["data"]["content"]
 
 
+async def test_handle_whois_fuzzy_search_is_case_insensitive(
+    seeded_repo: InMemoryRosterRepository,
+):
+    data = {
+        "data": {
+            "name": "whois",
+            "options": [{"name": "player", "value": "alicestrom"}],
+        }
+    }
+
+    response = await _handle_whois(
+        data, seeded_repo, REGION, REALM, GUILD, user_id=None
+    )
+
+    payload = json.loads(response.body)
+
+    assert payload["type"] == 4
+    assert "Did you mean: **Alicestorm**" in payload["data"]["content"]
+
+
 async def test_handle_whois_exact_match_returns_character_info(
     seeded_repo: InMemoryRosterRepository,
 ):
