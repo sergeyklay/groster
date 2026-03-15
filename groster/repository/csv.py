@@ -548,3 +548,36 @@ class CsvRosterRepository(RosterRepository):
         ):
             logger.exception("Failed to read alts data for summary")
             return None
+
+    async def search_character_names(
+        self,
+        prefix: str,
+        region: str,
+        realm: str,
+        guild: str,
+        *,
+        limit: int = 25,
+    ) -> list[str]:
+        """Search character names in the dashboard by case-insensitive prefix.
+
+        Args:
+            prefix: Case-insensitive prefix to match against character names.
+                Empty string matches all names.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+            limit: Maximum number of results to return (default 25, Discord max).
+
+        Returns:
+            List of matching character names sorted alphabetically,
+            up to ``limit`` entries. Empty list if dashboard is unavailable.
+        """
+        dashboard_file = data_path(self.base_path, region, realm, guild, "dashboard")
+        if not dashboard_file.exists():
+            logger.debug("Dashboard file does not exist: %s", dashboard_file)
+            return []
+
+        df = pd.read_csv(dashboard_file, usecols=["Name"])
+        lower_prefix = prefix.lower()
+        matches = df[df["Name"].str.lower().str.startswith(lower_prefix)]
+        return matches["Name"].sort_values().head(limit).tolist()

@@ -227,3 +227,28 @@ class RosterRepository(ABC):
             A tuple of (total_alts, total_mains), or None if the alts
             data is not available or cannot be read.
         """
+
+    @abstractmethod
+    async def search_character_names(
+        self,
+        prefix: str,
+        region: str,
+        realm: str,
+        guild: str,
+        *,
+        limit: int = 25,
+    ) -> list[str]:
+        """Search character names in the dashboard by case-insensitive prefix.
+
+        Args:
+            prefix: Case-insensitive prefix to match against character names.
+                Empty string matches all names.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+            limit: Maximum number of results to return (default 25, Discord max).
+
+        Returns:
+            List of matching character names sorted alphabetically,
+            up to ``limit`` entries. Empty list if dashboard is unavailable.
+        """
