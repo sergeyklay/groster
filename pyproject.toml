@@ -48,6 +48,7 @@ Homepage = "https://github.com/sergeyklay/groster"
 Repository = "https://github.com/sergeyklay/groster"
 Issues = "https://github.com/sergeyklay/groster/issues"
 Download = "https://github.com/sergeyklay/groster/releases"
+Changelog = "https://github.com/sergeyklay/groster/blob/main/CHANGELOG.md"
 
 [project.scripts]
 groster = "groster.cli:cli"
