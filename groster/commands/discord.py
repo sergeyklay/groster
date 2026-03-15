@@ -29,6 +29,7 @@ async def register_commands(
                     "description": "The player to get information about.",
                     "type": 3,
                     "required": True,
+                    "autocomplete": True,
                 }
             ],
             "type": 1,

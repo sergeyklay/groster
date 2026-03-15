@@ -1,3 +1,4 @@
+import difflib
 import json
 import logging
 import os
@@ -41,6 +42,7 @@ def _format_no_character_message(
     character_name: str,
     modified_at: datetime | None,
     user_id: str | None,
+    suggestions: list[str] | None = None,
 ) -> str:
     """Build a 'character not found' message for Discord."""
     mention = f"<@{user_id}>, " if user_id else ""
@@ -56,11 +58,17 @@ def _format_no_character_message(
             )
     else:
         modified_message = ""
+
+    suggestion_message = ""
+    if suggestions:
+        names = ", ".join(f"**{name}**" for name in suggestions)
+        suggestion_message = f"\nDid you mean: {names}?"
+
     return (
         f"{mention}character **{character_name}** not found in guild roster. "
         "Please check the character name and try again. "
         "If the character name is correct, please contact the server administrator."
-        f"{modified_message}"
+        f"{modified_message}{suggestion_message}"
     )
 
 
@@ -113,6 +121,123 @@ def format_character_info(
     return response.strip()
 
 
+async def _handle_autocomplete(
+    data: dict[str, Any],
+    repo: RosterRepository,
+    region: str,
+    realm: str,
+    guild: str,
+) -> web.Response:
+    """Handle Discord autocomplete interaction (type 4).
+
+    Args:
+        data: Parsed interaction JSON body.
+        repo: Repository instance for name lookup.
+        region: Bot region.
+        realm: Bot realm.
+        guild: Bot guild.
+
+    Returns:
+        aiohttp JSON response with type 8 and choices array.
+    """
+    options = data.get("data", {}).get("options", [])
+    focused_value = ""
+    for option in options:
+        if option.get("focused"):
+            focused_value = option.get("value", "")
+            break
+
+    logger.debug("Autocomplete focused value: %s", focused_value)
+
+    names = await repo.search_character_names(focused_value, region, realm, guild)
+    choices = [{"name": name[:100], "value": name} for name in names]
+    return web.json_response({"type": 8, "data": {"choices": choices}})
+
+
+async def _handle_whois(
+    data: dict[str, Any],
+    repo: RosterRepository,
+    region: str,
+    realm: str,
+    guild: str,
+    user_id: str | None,
+) -> web.Response:
+    """Handle the /whois slash command.
+
+    Args:
+        data: Parsed interaction JSON body.
+        repo: Repository instance for character lookup.
+        region: Bot region.
+        realm: Bot realm.
+        guild: Bot guild.
+        user_id: Discord user ID for mention, or None.
+
+    Returns:
+        aiohttp JSON response with type 4 containing character info.
+    """
+    character_name = data.get("data", {}).get("options", [{}])[0].get("value")
+    logger.info("Received character name: %s", character_name)
+
+    if not character_name:
+        logger.warning("No character name provided")
+        return web.json_response(
+            {
+                "type": 4,
+                "data": {"content": "Please provide a character name."},
+            }
+        )
+
+    try:
+        char_info, modified_at = await repo.get_character_info_by_name(
+            character_name, region, realm, guild
+        )
+
+        if not char_info:
+            all_names = await repo.search_character_names(
+                "", region, realm, guild, limit=200
+            )
+            suggestions = difflib.get_close_matches(
+                character_name, all_names, n=3, cutoff=0.6
+            )
+            return web.json_response(
+                {
+                    "type": 4,
+                    "data": {
+                        "content": _format_no_character_message(
+                            character_name,
+                            modified_at,
+                            user_id,
+                            suggestions=suggestions,
+                        )
+                    },
+                }
+            )
+
+        response_content = format_character_info(
+            char_info,
+            character_name,
+            modified_at,
+            user_id,
+            region=region,
+        )
+
+        return web.json_response(
+            {
+                "type": 4,
+                "data": {"content": response_content},
+            }
+        )
+    except Exception:
+        logger.exception("Error getting character info")
+        error_message = "An error occurred while retrieving character information."
+        return web.json_response(
+            {
+                "type": 4,
+                "data": {"content": error_message},
+            }
+        )
+
+
 async def interactions_handler(request: web.Request):
     signature = request.headers.get("X-Signature-Ed25519")
     timestamp = request.headers.get("X-Signature-Timestamp")
@@ -157,66 +282,25 @@ async def interactions_handler(request: web.Request):
                 }
             )
         if command_name == "whois":
-            character_name = data.get("data", {}).get("options", [{}])[0].get("value")
-            logger.info("Received character name: %s", character_name)
+            return await _handle_whois(
+                data,
+                request.app["repo"],
+                request.app["bot_region"],
+                request.app["bot_realm"],
+                request.app["bot_guild"],
+                user_id,
+            )
 
-            if not character_name:
-                logger.warning("No character name provided")
-                return web.json_response(
-                    {
-                        "type": 4,
-                        "data": {"content": "Please provide a character name."},
-                    }
-                )
-
-            try:
-                repo: RosterRepository = request.app["repo"]
-                char_info, modified_at = await repo.get_character_info_by_name(
-                    character_name,
-                    request.app["bot_region"],
-                    request.app["bot_realm"],
-                    request.app["bot_guild"],
-                )
-
-                if not char_info:
-                    return web.json_response(
-                        {
-                            "type": 4,
-                            "data": {
-                                "content": _format_no_character_message(
-                                    character_name,
-                                    modified_at,
-                                    user_id,
-                                )
-                            },
-                        }
-                    )
-
-                response_content = format_character_info(
-                    char_info,
-                    character_name,
-                    modified_at,
-                    user_id,
-                    region=request.app["bot_region"],
-                )
-
-                return web.json_response(
-                    {
-                        "type": 4,
-                        "data": {"content": response_content},
-                    }
-                )
-            except Exception:
-                logger.exception("Error getting character info")
-                error_message = (
-                    "An error occurred while retrieving character information."
-                )
-                return web.json_response(
-                    {
-                        "type": 4,
-                        "data": {"content": error_message},
-                    }
-                )
+    # Autocomplete
+    if interaction_type == 4:
+        logger.info("Received autocomplete interaction")
+        return await _handle_autocomplete(
+            data,
+            request.app["repo"],
+            request.app["bot_region"],
+            request.app["bot_realm"],
+            request.app["bot_guild"],
+        )
 
     return web.Response(text="Unhandled interaction type", status=400)
 
