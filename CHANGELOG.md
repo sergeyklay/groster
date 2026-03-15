@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `in_memory_repo` pytest fixture in `tests/conftest.py`.
 - `pytest-asyncio` test dependency with `asyncio_mode = "auto"`.
 - Pull request template.
+- Agentic framework: agent modes, coding instructions, prompts, and workflow skills.
 
 ### Changed
 
