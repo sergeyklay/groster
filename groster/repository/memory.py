@@ -246,6 +246,29 @@ class InMemoryRosterRepository(RosterRepository):
         main_info["alts"] = alts
         return main_info, modified_at
 
+    async def search_character_names(
+        self,
+        prefix: str,
+        region: str,
+        realm: str,
+        guild: str,
+        *,
+        limit: int = 25,
+    ) -> list[str]:
+        """Search character names in the dashboard by case-insensitive prefix."""
+        key = self._guild_key(region, realm, guild)
+        dashboard = self._dashboard.get(key)
+        if not dashboard:
+            return []
+
+        lower_prefix = prefix.lower()
+        names = [
+            row["Name"]
+            for row in dashboard
+            if row["Name"].lower().startswith(lower_prefix)
+        ]
+        return sorted(names)[:limit]
+
     @staticmethod
     def _build_character_info(row: dict[str, Any]) -> dict[str, Any]:
         """Build character info dict from a plain dictionary row.
