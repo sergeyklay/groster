@@ -65,7 +65,7 @@ groster/
 │   ├── bot.py            aiohttp handler for Discord interactions
 │   └── discord.py        Slash command registration
 └── repository/
-    ├── base.py           RosterRepository ABC (14 abstract async methods)
+    ├── base.py           RosterRepository ABC (17 abstract async methods)
     ├── csv.py            CsvRosterRepository — pandas-backed file I/O
     └── memory.py         InMemoryRosterRepository — dict-backed, for testing
 ```
@@ -157,8 +157,8 @@ Each character gets a row in the alts CSV:
 ```
 RosterRepository (ABC)
 ─────────────────────
-14 abstract async methods: get/save for classes, races, ranks, roster,
-profiles, links, alts, achievements, dashboard lookup.
+17 abstract async methods: get/save for classes, races, ranks, roster,
+profiles, links, alts, achievements, dashboard lookup, character name search.
 
 CsvRosterRepository                    InMemoryRosterRepository
 ──────────────────────                 ────────────────────────
@@ -196,7 +196,8 @@ The `data/` directory is gitignored. It exists only after a successful `groster 
 
 1. Validate `X-Signature-Ed25519` + `X-Signature-Timestamp` headers using PyNaCl `VerifyKey`. Reject on failure (401).
 2. Parse JSON body. Respond to Discord PING (type 1) with PONG.
-3. For `/whois <player>` (type 2): call `repo.get_character_info_by_name()`, format response with class emojis and main/alt tree, return as interaction response (type 4).
+3. For autocomplete (type 4): call `repo.search_character_names()` with the current input prefix, return up to 25 matching names as choices (type 8 response).
+4. For `/whois <player>` (type 2): call `repo.get_character_info_by_name()`, format response with class emojis and main/alt tree, return as interaction response (type 4). If no exact match is found, fall back to fuzzy search via `difflib.get_close_matches()` and suggest up to 3 similar names.
 
 **Configuration**: all via environment variables. The `_create_app()` factory reads env vars and wires the verify key, repository, and guild coordinates into `app[]` state.
 
