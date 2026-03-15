@@ -196,9 +196,11 @@ async def _handle_whois(
             all_names = await repo.search_character_names(
                 "", region, realm, guild, limit=200
             )
-            suggestions = difflib.get_close_matches(
-                character_name, all_names, n=3, cutoff=0.6
+            lower_names = [n.lower() for n in all_names]
+            lower_matches = difflib.get_close_matches(
+                character_name.lower(), lower_names, n=3, cutoff=0.6
             )
+            suggestions = [all_names[lower_names.index(m)] for m in lower_matches]
             return web.json_response(
                 {
                     "type": 4,
