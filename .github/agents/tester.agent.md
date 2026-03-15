@@ -7,6 +7,8 @@ tools:
    - read
    - edit
    - search
+   - web
+   - context7/*
 ---
 
 ## Role
