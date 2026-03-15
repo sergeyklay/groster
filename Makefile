@@ -27,11 +27,7 @@ ccov:
 	@echo $(CS)Combine coverage reports$(CE)
 	uv run --frozen coverage combine
 	uv run --frozen coverage report
-ifeq ($(CI_ENV),1)
-	uv run --frozen coverage xml
-else
-	uv run --frozen coverage html
-endif
+	@if [ -n "$$CI" ]; then uv run --frozen coverage xml; else uv run --frozen coverage html; fi
 	@echo
 
 .PHONY: format

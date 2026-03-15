@@ -12,7 +12,6 @@ on:
 
 env:
   PYTHONUNBUFFERED: "1"
-  CI_ENV: "1"
 
 jobs:
   test:

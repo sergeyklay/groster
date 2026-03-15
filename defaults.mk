@@ -7,11 +7,9 @@ MAKEFLAGS += --no-print-directory
 endif
 
 # Terminal color support detection and configuration
-# Check if we're in a CI environment (GitHub Actions)
-CI_ENV := $(if $(GITHUB_ACTIONS),1,$(if $(CI),1,0))
-
+# CI is set automatically by GitHub Actions (CI=true) and most CI providers.
 # Only use tput if we have a valid TERM and not in CI
-COLORIZE := $(shell if [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && [ "$(CI_ENV)" != "1" ]; then command -v tput >/dev/null 2>&1 && echo 1 || echo 0; else echo 0; fi)
+COLORIZE := $(shell if [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && [ -z "$$CI" ]; then command -v tput >/dev/null 2>&1 && echo 1 || echo 0; else echo 0; fi)
 
 ifeq ($(COLORIZE),1)
 	# Regular colors
