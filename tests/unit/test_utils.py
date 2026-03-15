@@ -29,7 +29,7 @@ def test_format_timestamp_valid_input_returns_formatted_string(
     [
         # Test different timezones
         (1704067200000, "UTC", "2024-01-01 00:00:00"),
-        (1704067200000, "US/Eastern", "2023-12-31 19:00:00"),  # UTC-5
+        (1704067200000, "America/New_York", "2023-12-31 19:00:00"),  # UTC-5
         (1704067200000, "Asia/Tokyo", "2024-01-01 09:00:00"),  # UTC+9
     ],
 )
