@@ -312,3 +312,118 @@ async def test_summary_report_no_data_logs_time_only(
     assert "Processing completed in 5.67 seconds" in caplog.text
     assert "Alts found" not in caplog.text
     assert "Main characters" not in caplog.text
+
+
+# ── search_character_names ───────────────────────────────────────────────────
+
+
+def _make_dashboard_row(name: str) -> dict:
+    return {
+        "Name": name,
+        "Realm": "terokkar",
+        "Level": 80,
+        "Class": "Warrior",
+        "Race": "Human",
+        "Rank": "GM",
+        "AQ": 100,
+        "AP": 500,
+        "Alt?": False,
+        "Main": name,
+        "iLvl": 600,
+        "Last Login": "2026-01-01",
+        "Raider.io": "",
+        "Armory": "",
+        "Logs": "",
+    }
+
+
+async def test_search_character_names_prefix_match_returns_filtered_names(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Alice"),
+            _make_dashboard_row("Alicestorm"),
+            _make_dashboard_row("Bob"),
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.search_character_names("ali", REGION, REALM, GUILD)
+
+    assert result == ["Alice", "Alicestorm"]
+
+
+async def test_search_character_names_empty_prefix_returns_all_sorted(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Charlie"),
+            _make_dashboard_row("Alice"),
+            _make_dashboard_row("Bob"),
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.search_character_names("", REGION, REALM, GUILD)
+
+    assert result == ["Alice", "Bob", "Charlie"]
+
+
+async def test_search_character_names_no_dashboard_returns_empty_list(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    result = await in_memory_repo.search_character_names("ali", REGION, REALM, GUILD)
+
+    assert result == []
+
+
+async def test_search_character_names_limit_caps_results(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    rows = [_make_dashboard_row(f"Player{i:02d}") for i in range(30)]
+    in_memory_repo.seed_dashboard(rows, REGION, REALM, GUILD)
+
+    result = await in_memory_repo.search_character_names(
+        "", REGION, REALM, GUILD, limit=5
+    )
+
+    assert len(result) == 5
+
+
+async def test_search_character_names_case_insensitive_matching(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Alice"),
+            _make_dashboard_row("Bob"),
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.search_character_names("ALI", REGION, REALM, GUILD)
+
+    assert result == ["Alice"]
+
+
+async def test_search_character_names_no_match_returns_empty_list(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [_make_dashboard_row("Alice")],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.search_character_names("zzz", REGION, REALM, GUILD)
+
+    assert result == []
