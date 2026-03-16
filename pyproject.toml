@@ -7,7 +7,7 @@ packages = ["groster"]
 
 [project]
 name = "groster"
-version = "0.6.0"
+version = "0.7.0"
 description = "CLI and Discord bot for WoW guild roster management — alt detection via achievement fingerprinting."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -84,7 +84,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.report]
 # Minimum coverage percentage required. Raise incrementally as coverage improves.
-fail_under = 55
+fail_under = 62
 
 # Set the number of decimal places in coverage percentage
 precision = 2
