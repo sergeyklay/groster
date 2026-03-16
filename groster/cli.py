@@ -109,6 +109,15 @@ def cli(ctx: click.Context, debug: bool) -> None:
     show_default=True,
     help="The locale for the API request (e.g., 'en_US').",
 )
+@click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    help=(
+        "Force a full refresh, re-fetching all member data regardless of "
+        "cached state from the previous run."
+    ),
+)
 @click.pass_context
 def update(
     ctx: click.Context,
@@ -116,11 +125,12 @@ def update(
     realm: str,
     guild: str,
     locale: str,
+    force: bool,
 ) -> None:
     """Fetch and process a WoW guild roster from the Battle.net API."""
     logger.info("Starting update for %s@%s.%s...", guild, realm, region)
     try:
-        asyncio.run(update_roster(region, realm, guild, locale))
+        asyncio.run(update_roster(region, realm, guild, locale, force=force))
     except Exception:
         logger.exception("Failed to update guild roster")
 

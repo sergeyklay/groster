@@ -97,6 +97,25 @@ class RosterRepository(ABC):
         """
 
     @abstractmethod
+    async def get_roster_details(
+        self, region: str, realm: str, guild: str
+    ) -> list[dict[str, Any]] | None:
+        """Retrieve previously saved roster details for a specific guild.
+
+        Used to snapshot the last-known member state for incremental diffing.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            List of roster record dicts (keys: id, name, realm, level,
+            class_id, race_id, rank, ilvl, last_login), or None if the
+            roster file does not yet exist (first run).
+        """
+
+    @abstractmethod
     async def save_character_profile(
         self,
         profile_data: dict[str, Any],
@@ -145,6 +164,52 @@ class RosterRepository(ABC):
             region: The region identifier (e.g., 'eu', 'us').
             realm: The realm slug.
             character_name: The character's name.
+        """
+
+    @abstractmethod
+    async def save_character_achievements(
+        self,
+        achievements_data: dict[str, Any],
+        region: str,
+        realm: str,
+        char_name: str,
+    ) -> None:
+        """Save per-character achievement fingerprint data.
+
+        Persists the fingerprint, timestamps, and summary totals needed to
+        reconstruct alt-detection data for incremental runs without API calls.
+
+        Args:
+            achievements_data: Dict with keys: id, name, fingerprint
+                (list of [id, ts] pairs), timestamps (dict), total_quantity,
+                total_points.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            char_name: The character's name.
+        """
+
+    @abstractmethod
+    async def get_member_fingerprints(
+        self,
+        region: str,
+        realm: str,
+        member_names: list[str],
+    ) -> dict[str, dict[str, Any]]:
+        """Bulk-load cached achievement fingerprints for listed members.
+
+        Reads per-character achievement data for each name in member_names.
+        Missing entries are silently skipped.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            member_names: List of character names to load.
+
+        Returns:
+            Dict mapping character name to achievement data dict. The
+            ``fingerprint`` field is returned as tuple[tuple[int, int], ...]
+            (deserialised from the JSON list-of-lists representation).
+            Characters with no cached data are absent from the result.
         """
 
     @abstractmethod

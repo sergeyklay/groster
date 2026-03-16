@@ -43,7 +43,7 @@ async def fetch_member_fingerprint(
     total_points = ach_data.get("total_points", 0)
 
     if not ach_data.get("achievements"):
-        logger.warning("No achievements found for %s", name)
+        logger.info("No achievements found for %s", name)
         return {
             "id": char_id,
             "name": name,
@@ -88,14 +88,50 @@ async def fetch_member_fingerprint(
     }
 
 
+def _build_member_records(
+    members: list[dict[str, Any]],
+    profile_data: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Build processed roster records from raw member and profile data."""
+    processed: list[dict[str, Any]] = []
+    for member in members:
+        character = member.get("character", {})
+        name = character.get("name")
+        profile = profile_data.get(name, {})
+
+        if not profile:
+            continue
+
+        processed.append(
+            {
+                "id": character.get("id"),
+                "name": name,
+                "realm": character.get("realm", {}).get("slug"),
+                "level": character.get("level"),
+                "class_id": character.get("playable_class", {}).get("id"),
+                "race_id": character.get("playable_race", {}).get("id"),
+                "rank": member.get("rank"),
+                "ilvl": profile.get("ilvl", 0),
+                "last_login": format_timestamp(profile.get("last_login")),
+            }
+        )
+    return processed
+
+
 async def fetch_roster_details(
-    client: BlizzardAPIClient, roster_data: dict[str, Any]
+    client: BlizzardAPIClient,
+    roster_data: dict[str, Any],
+    *,
+    cached_records: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
-    """Fetch detailed profiles for all roster members.
+    """Fetch detailed profiles for roster members.
 
     Args:
         client: Blizzard API client for making requests.
         roster_data: Raw roster data containing member list.
+        cached_records: Previously saved roster records for unchanged members.
+            When provided, only members not in this dict are fetched from the
+            API. Their cached records are merged into the result.
 
     Returns:
         Tuple of
@@ -108,7 +144,22 @@ async def fetch_roster_details(
         logger.warning("No members found in roster data")
         return [], {}
 
-    logger.info("Fetching profiles for %d members", len(members))
+    if cached_records is not None:
+        members_to_fetch = [
+            m
+            for m in members
+            if m.get("character", {}).get("name") not in cached_records
+        ]
+        logger.info(
+            "Incremental roster update: %d members to fetch, "
+            "%d cached (skipping API calls)",
+            len(members_to_fetch),
+            len(cached_records),
+        )
+    else:
+        members_to_fetch = members
+
+    logger.info("Fetching profiles for %d members", len(members_to_fetch))
 
     # Blizzard caps API requests at 100 per second
     tasks_limit = 50
@@ -142,7 +193,7 @@ async def fetch_roster_details(
         }
 
     # Split tasks into batches to respect rate limits
-    tasks = [fetch_profile(member) for member in members]
+    tasks = [fetch_profile(member) for member in members_to_fetch]
     profile_results = []
 
     for i in range(0, len(tasks), tasks_limit):
@@ -157,35 +208,16 @@ async def fetch_roster_details(
     profile_data = {p["name"]: p for p in profile_results if p}
 
     logger.info("Processing %d guild members", len(members))
-    processed_data = []
-
-    for member in members:
-        character = member.get("character", {})
-        name = character.get("name")
-        profile = profile_data.get(name, {})
-
-        if not profile:
-            continue
-
-        processed_data.append(
-            {
-                "id": character.get("id"),
-                "name": name,
-                "realm": character.get("realm", {}).get("slug"),
-                "level": character.get("level"),
-                "class_id": character.get("playable_class", {}).get("id"),
-                "race_id": character.get("playable_race", {}).get("id"),
-                "rank": member.get("rank"),
-                "ilvl": profile.get("ilvl", 0),
-                "last_login": format_timestamp(profile.get("last_login")),
-            }
-        )
+    processed_data = _build_member_records(members, profile_data)
 
     logger.info(
         "Successfully processed details for %d out of %d members.",
         len(processed_data),
         len(members),
     )
+
+    if cached_records:
+        processed_data.extend(cached_records.values())
 
     return processed_data, raw_profiles
 
@@ -253,6 +285,52 @@ def build_profile_links(
         )
 
     return links_data
+
+
+def diff_roster_members(
+    current_members: list[dict[str, Any]],
+    previous_records: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Diff current Blizzard roster members against previously saved records.
+
+    A member is considered unchanged if it exists in previous_records with
+    the same character id, rank, AND level. Changed or new members require
+    fresh API calls; unchanged members can reuse cached data.
+
+    Args:
+        current_members: Raw Blizzard API member dicts from get_guild_roster.
+        previous_records: Saved roster records from get_roster_details.
+
+    Returns:
+        Tuple of:
+        - members_to_fetch: list of raw Blizzard member dicts needing
+          fresh API calls (new or changed since last run).
+        - cached_records: dict mapping character name to the previous
+          record for members whose rank and level are unchanged.
+    """
+    prev_by_id: dict[int, dict[str, Any]] = {rec["id"]: rec for rec in previous_records}
+    members_to_fetch: list[dict[str, Any]] = []
+    cached_records: dict[str, dict[str, Any]] = {}
+
+    for member in current_members:
+        character = member.get("character", {})
+        char_id = character.get("id")
+        name = character.get("name")
+        if not char_id or not name:
+            members_to_fetch.append(member)
+            continue
+
+        prev = prev_by_id.get(char_id)
+        if prev is None:
+            members_to_fetch.append(member)
+        elif prev["rank"] != member.get("rank") or prev["level"] != character.get(
+            "level"
+        ):
+            members_to_fetch.append(member)
+        else:
+            cached_records[name] = prev
+
+    return members_to_fetch, cached_records
 
 
 async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, Any]]:
@@ -496,23 +574,44 @@ def _classify_fetch_results(
 async def identify_alts(
     client: BlizzardAPIClient,
     roster_data: dict[str, Any],
+    *,
+    cached_fingerprints: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     dict[str, dict[str, Any]],
     dict[str, dict[str, Any]],
     list[dict[str, Any]],
+    dict[str, dict[str, Any]],
 ]:
     """Identify alt characters by fingerprinting achievements and collections."""
     members = roster_data.get("members", [])
     if not members:
-        return [], {}, {}, []
+        return [], {}, {}, [], {}
 
-    logger.info("Fetching fingerprints for %d members to identify alts", len(members))
+    if cached_fingerprints is not None:
+        members_to_fetch = [
+            m
+            for m in members
+            if m.get("character", {}).get("name") not in cached_fingerprints
+        ]
+        logger.info(
+            "Incremental alt detection: %d members to fingerprint, "
+            "%d cached (skipping API calls)",
+            len(members_to_fetch),
+            len(cached_fingerprints),
+        )
+    else:
+        members_to_fetch = members
+
+    logger.info(
+        "Fetching fingerprints for %d members to identify alts",
+        len(members_to_fetch),
+    )
 
     # Blizzard caps API requests at 100 per second
     tasks_limit = 50
     all_tasks = []
-    for member in members:
+    for member in members_to_fetch:
         all_tasks.append(fetch_member_fingerprint(client, member))
         all_tasks.append(fetch_member_pets_summary(client, member))
         all_tasks.append(fetch_member_mounts_summary(client, member))
@@ -546,6 +645,30 @@ async def identify_alts(
         len(fingerprints_data),
         len(members),
     )
+
+    # Build fingerprint_cache from freshly-fetched entries only
+    if cached_fingerprints is not None:
+        freshly_fetched_names = {
+            m.get("character", {}).get("name") for m in members_to_fetch
+        }
+        fingerprint_cache = {
+            name: data
+            for name, data in fingerprints_data.items()
+            if name in freshly_fetched_names
+        }
+        # Merge cached fingerprints into the working data
+        for name, cached in cached_fingerprints.items():
+            fingerprints_data[name] = cached
+            achievements_summaries.append(
+                {
+                    "id": cached.get("id"),
+                    "name": name,
+                    "total_quantity": cached.get("total_quantity", 0),
+                    "total_points": cached.get("total_points", 0),
+                }
+            )
+    else:
+        fingerprint_cache = dict(fingerprints_data)
 
     logger.info("Building character data for grouping")
 
@@ -587,4 +710,10 @@ async def identify_alts(
         for char in all_char_data
     ]
 
-    return alts_data, all_raw_pets, all_raw_mounts, achievements_summaries
+    return (
+        alts_data,
+        all_raw_pets,
+        all_raw_mounts,
+        achievements_summaries,
+        fingerprint_cache,
+    )

@@ -20,6 +20,7 @@ class InMemoryRosterRepository(RosterRepository):
         self._profiles: dict[str, dict[str, Any]] = {}
         self._pets: dict[str, dict[str, Any]] = {}
         self._mounts: dict[str, dict[str, Any]] = {}
+        self._char_achievements: dict[str, dict[str, Any]] = {}
         self._alts: dict[str, list[dict[str, Any]]] = {}
         self._achievements: dict[str, list[dict[str, Any]]] = {}
         self._dashboard: dict[str, list[dict[str, Any]]] = {}
@@ -83,6 +84,16 @@ class InMemoryRosterRepository(RosterRepository):
         """Save processed roster details for a specific guild."""
         self._roster[self._guild_key(region, realm, guild)] = list(roster_data)
 
+    async def get_roster_details(
+        self, region: str, realm: str, guild: str
+    ) -> list[dict[str, Any]] | None:
+        """Retrieve previously saved roster details for a specific guild."""
+        key = self._guild_key(region, realm, guild)
+        roster = self._roster.get(key)
+        if not roster:
+            return None
+        return list(roster)
+
     async def save_character_profile(
         self,
         profile_data: dict[str, Any],
@@ -112,6 +123,38 @@ class InMemoryRosterRepository(RosterRepository):
     ) -> None:
         """Save mount collection data for a single character."""
         self._mounts[self._char_key(region, realm, character_name)] = dict(mounts_data)
+
+    async def save_character_achievements(
+        self,
+        achievements_data: dict[str, Any],
+        region: str,
+        realm: str,
+        char_name: str,
+    ) -> None:
+        """Save per-character achievement fingerprint data."""
+        self._char_achievements[self._char_key(region, realm, char_name)] = dict(
+            achievements_data
+        )
+
+    async def get_member_fingerprints(
+        self,
+        region: str,
+        realm: str,
+        member_names: list[str],
+    ) -> dict[str, dict[str, Any]]:
+        """Bulk-load cached achievement fingerprints for listed members."""
+        result: dict[str, dict[str, Any]] = {}
+        for name in member_names:
+            key = self._char_key(region, realm, name)
+            cached = self._char_achievements.get(key)
+            if cached is None:
+                continue
+            entry = dict(cached)
+            fp = entry.get("fingerprint", ())
+            if isinstance(fp, list):
+                entry["fingerprint"] = tuple(tuple(pair) for pair in fp)
+            result[name] = entry
+        return result
 
     async def save_alts_data(
         self, alts_data: list[dict[str, Any]], region: str, realm: str, guild: str
