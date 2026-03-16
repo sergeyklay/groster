@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Runtime storage paths are now resolved through shared configuration helpers: `GROSTER_DATA_PATH` controls generated data, `GROSTER_LOG_DIR` controls app log files, and Docker defaults now follow the same path rules.
 - `_classify_fetch_results()` return type annotation corrected from 5-tuple to 6-tuple to match actual return value.
 - `register_commands()` in `discord.py` now has an explicit `-> dict[str, Any]` return type.
 - Architecture docs updated to describe the multi-factor main-selection scoring model.
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Removed `aiohttp` `NotAppKeyWarning` noise from the Discord bot by switching app state to typed `web.AppKey` values.
 - Silent `{}` returns from failed Blizzard API requests no longer mask HTTP errors or produce partial data without a visible failure path.
 
 ## [0.6.0] - 2026-03-16
