@@ -1,5 +1,5 @@
 ---
-name: plan
+name: make-plan
 description: Generate a detailed implementation plan from a specification
 argument-hint: Path to spec file or feature description
 agent: Planner

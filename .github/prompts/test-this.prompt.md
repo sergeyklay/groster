@@ -1,5 +1,5 @@
 ---
-name: test
+name: test-this
 description: Generate comprehensive test coverage for implemented features
 argument-hint: Path to spec/plan, or description of what to test
 agent: Tester
