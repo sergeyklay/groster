@@ -5,7 +5,10 @@ import pytest
 from groster.constants import LEVEL_10_ACHIEVEMENT_ID
 from groster.http_client import BlizzardAPIClient
 from groster.services import (
+    _apply_hidden_profile_fallback,
     _armory_locale,
+    _build_fingerprint_cache,
+    _classify_fetch_results,
     _find_main_in_group,
     assign_main_characters,
     build_profile_links,
@@ -962,3 +965,418 @@ def test_identify_alts_cached_summaries_in_achievements_summaries(mock_client):
     names = {s["name"] for s in ach_summaries}
     assert "Cached" in names
     assert "Fresh" in names
+
+
+# ---------------------------------------------------------------------------
+# _classify_fetch_results — fingerprint_source
+# ---------------------------------------------------------------------------
+
+
+def test_classify_fetch_results_fingerprint_entries_have_api_source():
+    results = [
+        {
+            "id": 1,
+            "name": "Alpha",
+            "fingerprint": ((9670, 100),),
+            "timestamps": {9670: 100},
+            "total_quantity": 50,
+            "total_points": 500,
+        },
+    ]
+
+    _, _, _, _, _, summaries = _classify_fetch_results(results)
+
+    assert len(summaries) == 1
+    assert summaries[0]["fingerprint_source"] == "api"
+
+
+# ---------------------------------------------------------------------------
+# _apply_hidden_profile_fallback
+# ---------------------------------------------------------------------------
+
+
+def _make_fingerprint_data(
+    name, char_id, total_quantity, *, fingerprint=(), timestamps=None
+):
+    return {
+        "id": char_id,
+        "name": name,
+        "fingerprint": fingerprint,
+        "timestamps": timestamps or {},
+        "total_quantity": total_quantity,
+        "total_points": total_quantity * 10,
+    }
+
+
+def test_apply_hidden_profile_fallback_hidden_char_gets_cached_data():
+    fingerprints_data = {
+        "Hidden": _make_fingerprint_data("Hidden", 1, 0),
+    }
+    summaries = [
+        {
+            "id": 1,
+            "name": "Hidden",
+            "total_quantity": 0,
+            "total_points": 0,
+            "fingerprint_source": "api",
+        },
+    ]
+    cached = {
+        "Hidden": _make_fingerprint_data(
+            "Hidden",
+            1,
+            300,
+            fingerprint=((9670, 100), (10681, 200), (10693, 300)),
+            timestamps={9670: 100, 10681: 200, 10693: 300},
+        ),
+    }
+
+    result = _apply_hidden_profile_fallback(fingerprints_data, summaries, cached)
+
+    assert fingerprints_data["Hidden"]["total_quantity"] == 300
+    assert len(fingerprints_data["Hidden"]["fingerprint"]) == 3
+    hidden_summary = next(s for s in result if s["name"] == "Hidden")
+    assert hidden_summary["fingerprint_source"] == "cache"
+    assert hidden_summary["total_quantity"] == 300
+
+
+def test_apply_hidden_profile_fallback_visible_char_not_replaced():
+    fingerprints_data = {
+        "Visible": _make_fingerprint_data(
+            "Visible",
+            2,
+            500,
+            fingerprint=((9670, 100),),
+            timestamps={9670: 100},
+        ),
+    }
+    summaries = [
+        {
+            "id": 2,
+            "name": "Visible",
+            "total_quantity": 500,
+            "total_points": 5000,
+            "fingerprint_source": "api",
+        },
+    ]
+    cached = {
+        "Visible": _make_fingerprint_data("Visible", 2, 200),
+    }
+
+    result = _apply_hidden_profile_fallback(fingerprints_data, summaries, cached)
+
+    assert fingerprints_data["Visible"]["total_quantity"] == 500
+    visible_summary = next(s for s in result if s["name"] == "Visible")
+    assert visible_summary["fingerprint_source"] == "api"
+
+
+def test_apply_hidden_profile_fallback_cache_also_empty_no_substitution():
+    fingerprints_data = {
+        "AlwaysHidden": _make_fingerprint_data("AlwaysHidden", 3, 0),
+    }
+    summaries = [
+        {
+            "id": 3,
+            "name": "AlwaysHidden",
+            "total_quantity": 0,
+            "total_points": 0,
+            "fingerprint_source": "api",
+        },
+    ]
+    cached = {
+        "AlwaysHidden": _make_fingerprint_data("AlwaysHidden", 3, 0),
+    }
+
+    result = _apply_hidden_profile_fallback(fingerprints_data, summaries, cached)
+
+    assert fingerprints_data["AlwaysHidden"]["total_quantity"] == 0
+    summary = next(s for s in result if s["name"] == "AlwaysHidden")
+    assert summary["fingerprint_source"] == "api"
+
+
+def test_apply_hidden_profile_fallback_mixed_members():
+    fingerprints_data = {
+        "Hidden": _make_fingerprint_data("Hidden", 1, 0),
+        "Visible": _make_fingerprint_data(
+            "Visible",
+            2,
+            400,
+            fingerprint=((9670, 100),),
+        ),
+    }
+    summaries = [
+        {
+            "id": 1,
+            "name": "Hidden",
+            "total_quantity": 0,
+            "total_points": 0,
+            "fingerprint_source": "api",
+        },
+        {
+            "id": 2,
+            "name": "Visible",
+            "total_quantity": 400,
+            "total_points": 4000,
+            "fingerprint_source": "api",
+        },
+    ]
+    cached = {
+        "Hidden": _make_fingerprint_data(
+            "Hidden",
+            1,
+            250,
+            fingerprint=((9670, 100), (10681, 200), (10693, 300)),
+        ),
+        "Visible": _make_fingerprint_data("Visible", 2, 100),
+    }
+
+    result = _apply_hidden_profile_fallback(fingerprints_data, summaries, cached)
+
+    assert fingerprints_data["Hidden"]["total_quantity"] == 250
+    assert fingerprints_data["Visible"]["total_quantity"] == 400
+    hidden_s = next(s for s in result if s["name"] == "Hidden")
+    visible_s = next(s for s in result if s["name"] == "Visible")
+    assert hidden_s["fingerprint_source"] == "cache"
+    assert visible_s["fingerprint_source"] == "api"
+
+
+def test_apply_hidden_profile_fallback_replaces_existing_summary():
+    fingerprints_data = {
+        "Hidden": _make_fingerprint_data("Hidden", 1, 0),
+    }
+    summaries = [
+        {
+            "id": 1,
+            "name": "Hidden",
+            "total_quantity": 0,
+            "total_points": 0,
+            "fingerprint_source": "api",
+        },
+    ]
+    cached = {
+        "Hidden": _make_fingerprint_data("Hidden", 1, 100),
+    }
+
+    result = _apply_hidden_profile_fallback(fingerprints_data, summaries, cached)
+
+    hidden_entries = [s for s in result if s["name"] == "Hidden"]
+    assert len(hidden_entries) == 1
+
+
+# ---------------------------------------------------------------------------
+# _build_fingerprint_cache
+# ---------------------------------------------------------------------------
+
+
+def test_build_fingerprint_cache_includes_fallback_restored_entries():
+    restored_fp = _make_fingerprint_data("Restored", 6, 50, fingerprint=((300, 400),))
+    fingerprints_data = {
+        "Fresh": _make_fingerprint_data("Fresh", 5, 10, fingerprint=((100, 200),)),
+        "Restored": restored_fp,
+    }
+    members_to_fetch = [{"character": {"name": "Fresh"}}]
+    all_cached = {"Restored": restored_fp}
+
+    fp_cache, _ = _build_fingerprint_cache(
+        fingerprints_data,
+        [],
+        members_to_fetch,
+        cached_fingerprints={},
+        all_cached_fingerprints=all_cached,
+    )
+
+    assert "Fresh" in fp_cache
+    assert "Restored" in fp_cache
+
+
+def test_build_fingerprint_cache_no_cached_fingerprints_returns_all():
+    fp_data = {
+        "CharA": _make_fingerprint_data("CharA", 1, 100),
+        "CharB": _make_fingerprint_data("CharB", 2, 200),
+    }
+    members = [{"character": {"name": "CharA"}}, {"character": {"name": "CharB"}}]
+
+    fp_cache, _ = _build_fingerprint_cache(
+        fp_data,
+        [],
+        members,
+        cached_fingerprints=None,
+        all_cached_fingerprints=None,
+    )
+
+    assert set(fp_cache) == {"CharA", "CharB"}
+
+
+def test_build_fingerprint_cache_merges_incremental_summaries():
+    fresh_fp = _make_fingerprint_data("Fresh", 1, 50)
+    cached_fp = _make_fingerprint_data("Cached", 2, 300)
+    fingerprints_data = {"Fresh": fresh_fp}
+    summaries: list[dict] = []
+    members_to_fetch = [{"character": {"name": "Fresh"}}]
+
+    _, updated = _build_fingerprint_cache(
+        fingerprints_data,
+        summaries,
+        members_to_fetch,
+        cached_fingerprints={"Cached": cached_fp},
+        all_cached_fingerprints=None,
+    )
+
+    cached_entry = next(s for s in updated if s["name"] == "Cached")
+    assert cached_entry["fingerprint_source"] == "api"
+    assert cached_entry["total_quantity"] == 300
+
+
+def test_build_fingerprint_cache_no_all_cached_skips_fallback_merge():
+    fresh_fp = _make_fingerprint_data("Fresh", 1, 50)
+    fingerprints_data = {"Fresh": fresh_fp}
+    members_to_fetch = [{"character": {"name": "Fresh"}}]
+
+    fp_cache, _ = _build_fingerprint_cache(
+        fingerprints_data,
+        [],
+        members_to_fetch,
+        cached_fingerprints={},
+        all_cached_fingerprints=None,
+    )
+
+    assert "Fresh" in fp_cache
+    assert len(fp_cache) == 1
+
+
+# ---------------------------------------------------------------------------
+# identify_alts — hidden-profile fallback (integration)
+# ---------------------------------------------------------------------------
+
+
+def test_identify_alts_hidden_profile_uses_cached_fingerprint(mock_client):
+    hidden_member = _make_member("Hidden", char_id=1)
+    visible_member = _make_member("Visible", char_id=2)
+    roster = {"members": [hidden_member, visible_member]}
+
+    mock_client.get_character_achievements.side_effect = [
+        {"achievements": [], "total_quantity": 0, "total_points": 0},
+        _make_achievements({9670: 100, 10693: 200, 10691: 300}),
+    ]
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    all_cached = {
+        "Hidden": {
+            "id": 1,
+            "name": "Hidden",
+            "fingerprint": ((9670, 100), (10693, 200), (10691, 300)),
+            "timestamps": {9670: 100, 10693: 200, 10691: 300, 6: 500},
+            "total_quantity": 200,
+            "total_points": 2000,
+        },
+    }
+
+    _, _, _, ach_summaries, fp_cache = asyncio.run(
+        identify_alts(mock_client, roster, all_cached_fingerprints=all_cached)
+    )
+
+    hidden_summary = next(s for s in ach_summaries if s["name"] == "Hidden")
+    assert hidden_summary["fingerprint_source"] == "cache"
+    assert hidden_summary["total_quantity"] == 200
+    assert "Hidden" in fp_cache
+
+
+def test_identify_alts_visible_profile_not_overwritten_by_cache(mock_client):
+    member = _make_member("NowVisible", char_id=1)
+    roster = {"members": [member]}
+
+    mock_client.get_character_achievements.return_value = _make_achievements(
+        {9670: 100, 10693: 200, 10691: 300}
+    )
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    all_cached = {
+        "NowVisible": _make_fingerprint_data("NowVisible", 1, 50),
+    }
+
+    _, _, _, ach_summaries, _ = asyncio.run(
+        identify_alts(mock_client, roster, all_cached_fingerprints=all_cached)
+    )
+
+    summary = next(s for s in ach_summaries if s["name"] == "NowVisible")
+    assert summary["fingerprint_source"] == "api"
+    assert summary["total_quantity"] > 0
+
+
+def test_identify_alts_no_cache_no_data_remains_singleton(mock_client):
+    member = _make_member("Ghost", char_id=1)
+    roster = {"members": [member]}
+
+    mock_client.get_character_achievements.return_value = {
+        "achievements": [],
+        "total_quantity": 0,
+        "total_points": 0,
+    }
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    alts, _, _, _, _ = asyncio.run(
+        identify_alts(mock_client, roster, all_cached_fingerprints={})
+    )
+
+    assert len(alts) == 1
+    assert alts[0]["name"] == "Ghost"
+    assert alts[0]["alt"] is False
+    assert alts[0]["main"] == "Ghost"
+
+
+def test_identify_alts_hidden_profile_restored_groups_with_visible(mock_client):
+    hidden = _make_member("Hidden", char_id=1)
+    visible = _make_member("Visible", char_id=2)
+    roster = {"members": [hidden, visible]}
+
+    shared_fp = ((9670, 100), (10693, 200), (10691, 300))
+    shared_ts = {9670: 100, 10693: 200, 10691: 300}
+
+    mock_client.get_character_achievements.side_effect = [
+        {"achievements": [], "total_quantity": 0, "total_points": 0},
+        _make_achievements({9670: 100, 10693: 200, 10691: 300}),
+    ]
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    all_cached = {
+        "Hidden": {
+            "id": 1,
+            "name": "Hidden",
+            "fingerprint": shared_fp,
+            "timestamps": {**shared_ts, 6: 500},
+            "total_quantity": 200,
+            "total_points": 2000,
+        },
+    }
+
+    alts, _, _, _, _ = asyncio.run(
+        identify_alts(mock_client, roster, all_cached_fingerprints=all_cached)
+    )
+
+    mains = {a["name"]: a["main"] for a in alts}
+    assert mains["Hidden"] == mains["Visible"]
+
+
+def test_identify_alts_all_cached_none_skips_fallback(mock_client):
+    member = _make_member("Solo", char_id=1)
+    roster = {"members": [member]}
+
+    mock_client.get_character_achievements.return_value = {
+        "achievements": [],
+        "total_quantity": 0,
+        "total_points": 0,
+    }
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    _, _, _, ach_summaries, _ = asyncio.run(
+        identify_alts(mock_client, roster, all_cached_fingerprints=None)
+    )
+
+    summary = next(s for s in ach_summaries if s["name"] == "Solo")
+    assert summary["fingerprint_source"] == "api"
+    assert summary["total_quantity"] == 0

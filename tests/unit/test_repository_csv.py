@@ -1,5 +1,6 @@
 import json
 
+import pandas as pd
 import pytest
 
 from groster.repository.csv import CsvRosterRepository
@@ -154,3 +155,52 @@ async def test_get_member_fingerprints_multiple_names_returns_found_only(csv_rep
 
     assert set(result) == {"Alpha", "Beta"}
     assert "Missing" not in result
+
+
+# ---------------------------------------------------------------------------
+# save_achievements_summary — fingerprint_source column
+# ---------------------------------------------------------------------------
+
+
+async def test_save_achievements_summary_writes_fingerprint_source_column(csv_repo):
+    summaries = [
+        {
+            "id": 1,
+            "name": "Alpha",
+            "total_quantity": 100,
+            "total_points": 1000,
+            "fingerprint_source": "api",
+        },
+        {
+            "id": 2,
+            "name": "Beta",
+            "total_quantity": 200,
+            "total_points": 2000,
+            "fingerprint_source": "cache",
+        },
+    ]
+
+    await csv_repo.save_achievements_summary(summaries, REGION, REALM, GUILD)
+
+    from groster.utils import data_path
+
+    csv_path = data_path(csv_repo.base_path, REGION, REALM, GUILD, "achievements")
+    df = pd.read_csv(csv_path)
+    assert "fingerprint_source" in df.columns
+    sources = dict(zip(df["name"], df["fingerprint_source"], strict=True))
+    assert sources["Alpha"] == "api"
+    assert sources["Beta"] == "cache"
+
+
+async def test_save_achievements_summary_defaults_fingerprint_source_to_api(csv_repo):
+    summaries = [
+        {"id": 1, "name": "Legacy", "total_quantity": 50, "total_points": 500},
+    ]
+
+    await csv_repo.save_achievements_summary(summaries, REGION, REALM, GUILD)
+
+    from groster.utils import data_path
+
+    csv_path = data_path(csv_repo.base_path, REGION, REALM, GUILD, "achievements")
+    df = pd.read_csv(csv_path)
+    assert df.loc[0, "fingerprint_source"] == "api"
