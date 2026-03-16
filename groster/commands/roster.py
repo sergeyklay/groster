@@ -9,6 +9,7 @@ from groster.ranks import create_rank_mapping
 from groster.repository import CsvRosterRepository, RosterRepository
 from groster.services import (
     build_profile_links,
+    diff_roster_members,
     fetch_playable_classes,
     fetch_playable_races,
     fetch_roster_details,
@@ -93,15 +94,31 @@ async def _get_roster_details(
     region: str,
     realm: str,
     guild: str,
-) -> dict[str, Any]:
-    """Get roster details from the repository or API."""
+    *,
+    force: bool = False,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    """Get roster details, returning (roster_data, cached_profile_records).
+
+    cached_profile_records is empty when force=True or on first run.
+    """
     roster_data: dict[str, Any] = await client.get_guild_roster(realm, guild)
     if not roster_data:
         raise RuntimeError("Failed to get guild roster data.")
 
+    cached_profile_records: dict[str, dict[str, Any]] = {}
+    if not force:
+        prev = await repo.get_roster_details(region, realm, guild)
+        if prev is not None:
+            _, cached_profile_records = diff_roster_members(
+                roster_data.get("members", []), prev
+            )
+
     logger.info("Processing roster details for all members")
 
-    details_data, raw_profiles = await fetch_roster_details(client, roster_data)
+    details_data, raw_profiles = await fetch_roster_details(
+        client,
+        roster_data,
+    )
     if details_data:
         await repo.save_roster_details(details_data, region, realm, guild)
     else:
@@ -112,10 +129,17 @@ async def _get_roster_details(
         for name, profile_json in raw_profiles.items():
             await repo.save_character_profile(profile_json, region, realm, name)
 
-    return roster_data
+    return roster_data, cached_profile_records
 
 
-async def update_roster(region: str, realm: str, guild: str, locale: str):
+async def update_roster(
+    region: str,
+    realm: str,
+    guild: str,
+    locale: str,
+    *,
+    force: bool = False,
+) -> None:
     """Main entry point for the application."""
     start_time = time.time()
     base_path = Path(os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"))
@@ -141,18 +165,33 @@ async def update_roster(region: str, realm: str, guild: str, locale: str):
         await _get_playable_classes(repo, client)
         await _get_playable_races(repo, client)
 
-        roster_data = await _get_roster_details(repo, client, region, realm, guild)
+        roster_data, cached_profile_records = await _get_roster_details(
+            repo, client, region, realm, guild, force=force
+        )
 
         logger.info("Building profile links")
         links_data = build_profile_links(region, roster_data)
         await repo.save_profile_links(links_data, region, realm, guild)
+
+        unchanged_names = list(cached_profile_records)
+        if unchanged_names and not force:
+            cached_fingerprints = await repo.get_member_fingerprints(
+                region, realm, unchanged_names
+            )
+        else:
+            cached_fingerprints = {}
 
         (
             alts_data,
             all_raw_pets,
             all_raw_mounts,
             achievements_summaries,
-        ) = await identify_alts(client, roster_data)
+            new_fp_cache,
+        ) = await identify_alts(
+            client,
+            roster_data,
+            cached_fingerprints=cached_fingerprints or None,
+        )
 
         if not alts_data:
             raise RuntimeError("Failed to identify alts")
@@ -172,6 +211,11 @@ async def update_roster(region: str, realm: str, guild: str, locale: str):
                 "No achievement summaries found. "
                 "Skipping achievement summary file creation"
             )
+
+        if new_fp_cache:
+            logger.info("Caching fingerprint data for %d characters", len(new_fp_cache))
+            for name, fp_data in new_fp_cache.items():
+                await repo.save_character_achievements(fp_data, region, realm, name)
 
         logger.info("Saving raw pets data for %d characters", len(all_raw_pets))
         for name, pets_json in all_raw_pets.items():

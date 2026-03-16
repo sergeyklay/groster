@@ -206,6 +206,38 @@ class CsvRosterRepository(RosterRepository):
         except OSError as e:
             raise RuntimeError("Failed to write roster file") from e
 
+    async def get_roster_details(
+        self, region: str, realm: str, guild: str
+    ) -> list[dict[str, Any]] | None:
+        """Retrieve previously saved roster details for a specific guild.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            List of roster record dicts, or None if file does not exist.
+        """
+        roster_file = data_path(self.base_path, region, realm, guild, "roster")
+
+        if not roster_file.exists():
+            logger.info("Roster file does not exist yet: %s", roster_file)
+            return None
+
+        try:
+            logger.info("Loading roster from file: %s", roster_file)
+            df = pd.read_csv(roster_file)
+            if df.empty:
+                logger.warning("Roster file is empty: %s", roster_file)
+                return None
+            return df.to_dict(orient="records")  # type: ignore[return-value]
+        except (pd.errors.EmptyDataError, FileNotFoundError, OSError) as e:
+            logger.warning(
+                "Failed to read roster file, will perform full refresh: %s", e
+            )
+            return None
+
     async def save_character_profile(
         self, profile_data: dict[str, Any], region: str, realm: str, char_name: str
     ) -> None:
@@ -288,6 +320,78 @@ class CsvRosterRepository(RosterRepository):
             logger.warning(
                 "Failed to process mounts file for %s: %s", character_name, exc
             )
+
+    async def save_character_achievements(
+        self,
+        achievements_data: dict[str, Any],
+        region: str,
+        realm: str,
+        char_name: str,
+    ) -> None:
+        """Save per-character achievement fingerprint data.
+
+        Args:
+            achievements_data: Dict with fingerprint, timestamps, and totals.
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            char_name: The character's name.
+        """
+        char_path = self.base_path / region / realm / char_name.lower()
+        char_path.mkdir(parents=True, exist_ok=True)
+        achievements_file = char_path / "achievements.json"
+
+        try:
+            logger.debug(
+                "Creating achievements file for %s: %s",
+                char_name,
+                achievements_file,
+            )
+            with open(achievements_file, "w", encoding="utf-8") as f:
+                json.dump(achievements_data, f, ensure_ascii=False, indent=4)
+            logger.debug(
+                "Achievements file successfully created: %s",
+                achievements_file.resolve(),
+            )
+        except OSError as exc:
+            logger.warning(
+                "Failed to process achievements file for %s: %s", char_name, exc
+            )
+
+    async def get_member_fingerprints(
+        self,
+        region: str,
+        realm: str,
+        member_names: list[str],
+    ) -> dict[str, dict[str, Any]]:
+        """Bulk-load cached achievement fingerprints for listed members.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            member_names: List of character names to load.
+
+        Returns:
+            Dict mapping character name to achievement data dict.
+        """
+        result: dict[str, dict[str, Any]] = {}
+        for name in member_names:
+            ach_file = (
+                self.base_path / region / realm / name.lower() / "achievements.json"
+            )
+            if not ach_file.exists():
+                continue
+            try:
+                with open(ach_file, encoding="utf-8") as f:
+                    data = json.load(f)
+                raw_fp = data.get("fingerprint", ())
+                if isinstance(raw_fp, list):
+                    data["fingerprint"] = tuple(tuple(pair) for pair in raw_fp)
+                result[name] = data
+            except (json.JSONDecodeError, OSError, KeyError) as exc:
+                logger.warning(
+                    "Failed to load achievements cache for %s: %s", name, exc
+                )
+        return result
 
     async def save_alts_data(
         self, alts_data: list[dict[str, Any]], region: str, realm: str, guild: str
