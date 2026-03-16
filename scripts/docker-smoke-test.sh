@@ -34,7 +34,7 @@ fail() {
 # ---------------------------------------------------------------------------
 
 test_image_builds_successfully() {
-    echo "[1/8] test_image_builds_successfully"
+    echo "[1/9] test_image_builds_successfully"
     if docker compose build --quiet "${COMPOSE_SERVICE}" >/dev/null 2>&1; then
         pass "Image builds successfully"
     else
@@ -43,7 +43,7 @@ test_image_builds_successfully() {
 }
 
 test_image_size_under_limit() {
-    echo "[2/8] test_image_size_under_limit"
+    echo "[2/9] test_image_size_under_limit"
     local raw_size
     raw_size=$(docker images "${IMAGE_NAME}" --format '{{.Size}}' | head -1)
 
@@ -68,7 +68,7 @@ test_image_size_under_limit() {
 }
 
 test_runs_as_nonroot_user() {
-    echo "[3/8] test_runs_as_nonroot_user"
+    echo "[3/9] test_runs_as_nonroot_user"
     local user
     user=$(docker run --rm --entrypoint whoami "${IMAGE_NAME}" 2>/dev/null)
     if [[ "$user" == "$EXPECTED_USER" ]]; then
@@ -79,7 +79,7 @@ test_runs_as_nonroot_user() {
 }
 
 test_cli_version_outputs_version_string() {
-    echo "[4/8] test_cli_version_outputs_version_string"
+    echo "[4/9] test_cli_version_outputs_version_string"
     local output
     output=$(docker run --rm "${IMAGE_NAME}" --version 2>&1)
     if echo "$output" | grep -q "$EXPECTED_VERSION"; then
@@ -90,7 +90,7 @@ test_cli_version_outputs_version_string() {
 }
 
 test_cli_help_exits_zero() {
-    echo "[5/8] test_cli_help_exits_zero"
+    echo "[5/9] test_cli_help_exits_zero"
     if docker run --rm "${IMAGE_NAME}" --help >/dev/null 2>&1; then
         pass "CLI --help exits 0"
     else
@@ -99,7 +99,7 @@ test_cli_help_exits_zero() {
 }
 
 test_no_secrets_in_image_history() {
-    echo "[6/8] test_no_secrets_in_image_history"
+    echo "[6/9] test_no_secrets_in_image_history"
     local history
     history=$(docker history "${IMAGE_NAME}" --no-trunc 2>/dev/null)
     if echo "$history" | grep -qiE 'CLIENT_SECRET|PUBLIC_KEY|BOT_TOKEN'; then
@@ -110,17 +110,17 @@ test_no_secrets_in_image_history() {
 }
 
 test_volume_mount_persists_data() {
-    echo "[7/8] test_volume_mount_persists_data"
+    echo "[7/9] test_volume_mount_persists_data"
     local vol_name="groster-smoke-test-vol-$$"
     local marker="smoke-test-marker-$$"
 
     # Write a marker file
-    docker run --rm -v "${vol_name}:/app/data" --entrypoint sh "${IMAGE_NAME}" \
+    docker run --rm -e GROSTER_DATA_PATH=/app/data -v "${vol_name}:/app/data" --entrypoint sh "${IMAGE_NAME}" \
         -c "echo '${marker}' > /app/data/test-marker.txt" 2>/dev/null
 
     # Read it back from a fresh container
     local content
-    content=$(docker run --rm -v "${vol_name}:/app/data" --entrypoint cat "${IMAGE_NAME}" \
+    content=$(docker run --rm -e GROSTER_DATA_PATH=/app/data -v "${vol_name}:/app/data" --entrypoint cat "${IMAGE_NAME}" \
         /app/data/test-marker.txt 2>/dev/null || true)
 
     # Cleanup
@@ -134,7 +134,7 @@ test_volume_mount_persists_data() {
 }
 
 test_json_log_format_emits_valid_json() {
-    echo "[8/8] test_json_log_format_emits_valid_json"
+    echo "[8/9] test_json_log_format_emits_valid_json"
     local output
     output=$(docker run --rm -e GROSTER_LOG_FORMAT=json "${IMAGE_NAME}" --help 2>&1 || true)
 
@@ -153,6 +153,29 @@ test_json_log_format_emits_valid_json() {
     fi
 }
 
+test_text_log_format_writes_to_configured_log_dir() {
+    echo "[9/9] test_text_log_format_writes_to_configured_log_dir"
+    local log_dir="groster-smoke-test-logs-$$"
+    local log_file="${log_dir}/groster.log"
+
+    docker run --rm \
+        -e GROSTER_LOG_FORMAT=text \
+        -e GROSTER_LOG_DIR=/app/logs \
+        -v "${log_dir}:/app/logs" \
+        --entrypoint python \
+        "${IMAGE_NAME}" \
+        -c "from groster.logging import setup_logging; import logging; setup_logging(); logging.getLogger('groster.smoke').info('smoke test')" \
+        >/dev/null 2>&1 || true
+
+    if [[ -f "$log_file" ]] && grep -q "smoke test" "$log_file"; then
+        pass "Text log format writes to configured log directory"
+    else
+        fail "Text log format did not write expected log file"
+    fi
+
+    rm -rf "$log_dir"
+}
+
 # ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
@@ -168,6 +191,7 @@ test_cli_help_exits_zero
 test_no_secrets_in_image_history
 test_volume_mount_persists_data
 test_json_log_format_emits_valid_json
+test_text_log_format_writes_to_configured_log_dir
 
 echo ""
 echo "=== Results: ${PASSED} passed, ${FAILED} failed (total $((PASSED + FAILED))) ==="

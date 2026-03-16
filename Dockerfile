@@ -28,11 +28,13 @@ COPY --from=builder /app/groster /app/groster
 COPY --from=builder /app/pyproject.toml /app/pyproject.toml
 
 ENV PATH="/app/.venv/bin:$PATH"
+ENV GROSTER_DATA_PATH=/app/data
+ENV GROSTER_LOG_DIR=/app/logs
 ENV GROSTER_LOG_FORMAT=json
 
 RUN groupadd --gid 1000 groster && \
     useradd --uid 1000 --gid groster --shell /bin/sh --create-home groster && \
-    mkdir -p /app/data && chown groster:groster /app/data
+    mkdir -p /app/data /app/logs && chown groster:groster /app/data /app/logs
 
 USER groster
 
