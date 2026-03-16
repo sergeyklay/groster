@@ -1,5 +1,8 @@
 # groster
 
+[![CI](https://github.com/sergeyklay/groster/actions/workflows/ci.yml/badge.svg)](https://github.com/sergeyklay/groster/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/sergeyklay/groster/graph/badge.svg?token=t2SlaQow9Z)](https://codecov.io/gh/sergeyklay/groster)
+
 A tool for fetching and processing a World of Warcraft guild roster via the official Blizzard API. Its primary feature is to identify and group alternate characters (_alts_) with their main characters based on shared account-wide data.
 
 ## Problem Statement
