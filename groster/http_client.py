@@ -173,12 +173,18 @@ class BlizzardAPIClient:
                 )
                 await asyncio.sleep(min(0.5 * 2 ** (attempt - 1), 5))
             except httpx.HTTPStatusError as e:
-                logger.warning(
-                    "API request to %s failed with status %d: %s",
-                    e.request.url,
-                    e.response.status_code,
-                    e.response.text,
-                )
+                if e.response.status_code == 404:
+                    logger.info(
+                        "Character data unavailable (hidden or missing) at %s",
+                        e.request.url,
+                    )
+                else:
+                    logger.warning(
+                        "API request to %s failed with status %d: %s",
+                        e.request.url,
+                        e.response.status_code,
+                        e.response.text,
+                    )
                 break
 
         return {}  # Return empty dict on failure
