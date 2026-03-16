@@ -513,3 +513,64 @@ async def test_get_alts_per_main_same_count_sorts_by_name_ascending(
         ("Alpha", "Warrior", 1),
         ("Zara", "Warrior", 1),
     ]
+
+
+# ---------------------------------------------------------------------------
+# get_roster_details / save_character_achievements / get_member_fingerprints
+# ---------------------------------------------------------------------------
+
+
+async def test_get_roster_details_returns_none_when_no_data(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    result = await in_memory_repo.get_roster_details(REGION, REALM, GUILD)
+
+    assert result is None
+
+
+async def test_get_roster_details_returns_saved_roster(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    roster = [
+        {"id": 1, "name": "Thrall", "rank": 0, "level": 80},
+        {"id": 2, "name": "Jaina", "rank": 1, "level": 80},
+    ]
+    await in_memory_repo.save_roster_details(roster, REGION, REALM, GUILD)
+
+    result = await in_memory_repo.get_roster_details(REGION, REALM, GUILD)
+
+    assert result is not None
+    assert len(result) == 2
+    assert result[0]["name"] == "Thrall"
+
+
+async def test_save_and_get_member_fingerprints_round_trips_tuple(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    fp_data = {
+        "id": 1,
+        "name": "Thrall",
+        "fingerprint": [[9670, 100], [10693, 200]],
+        "timestamps": {"9670": 100, "10693": 200, "6": 1000},
+        "total_quantity": 50,
+        "total_points": 500,
+    }
+    await in_memory_repo.save_character_achievements(fp_data, REGION, REALM, "Thrall")
+
+    result = await in_memory_repo.get_member_fingerprints(REGION, REALM, ["Thrall"])
+
+    assert "Thrall" in result
+    fp = result["Thrall"]["fingerprint"]
+    assert isinstance(fp, tuple)
+    assert all(isinstance(pair, tuple) for pair in fp)
+    assert fp == ((9670, 100), (10693, 200))
+
+
+async def test_get_member_fingerprints_skips_unknown_names(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    result = await in_memory_repo.get_member_fingerprints(
+        REGION, REALM, ["NonExistent"]
+    )
+
+    assert result == {}
