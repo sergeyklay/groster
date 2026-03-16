@@ -137,7 +137,9 @@ def format_alts_embed(
     Returns:
         Embed dict with title, description, footer, and color.
     """
-    max_description = 4096
+    # Discord documents 4096 but the exact counting method is unspecified.
+    # 3900 leaves headroom for encoding differences (emoji surrogate pairs).
+    max_description = 3900
     total_mains = len(alts_data)
     total_alts = sum(c for _, _, c in alts_data)
     total_characters = total_mains + total_alts
@@ -149,10 +151,7 @@ def format_alts_embed(
         line = f"{emoji} **{main_name}** \u2014 {alt_count} {label}\n"
         remaining = total_mains - i
         suffix = f"\n\u2026 and {remaining} more mains"
-        if (
-            _utf16_len(description) + _utf16_len(line) + _utf16_len(suffix)
-            > max_description
-        ):
+        if len(description) + len(line) + len(suffix) > max_description:
             description += suffix
             break
         description += line
