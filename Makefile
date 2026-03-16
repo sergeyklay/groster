@@ -51,7 +51,7 @@ lint:
 
 .PHONY: clean
 clean:
-	@echo $(CS)Remove build and tests artefacts and directories$(CE)
+	@echo $(CS)Remove build and tests artifacts and directories$(CE)
 	find ./ -name '__pycache__' -delete -o -name '*.pyc' -delete
 	$(RM) -r ./.pytest_cache
 	$(RM) -r ./coverage
