@@ -362,9 +362,14 @@ DISCORD_GUILD_ID="your-discord-server-id"
 WOW_REGION="eu"
 WOW_REALM="your-realm"
 WOW_GUILD="your-guild-name"
+
+GROSTER_DATA_PATH="/app/data"
+# GROSTER_LOG_DIR="/app/logs"
 ```
 
 Replace all placeholder values with your actual credentials and guild information. The `WOW_REALM` and `WOW_GUILD` values should be URL-slugified (lowercase, hyphens instead of spaces).
+
+Set `GROSTER_DATA_PATH` to `/app/data` so the application writes CSVs into the bind-mounted host directory. Leave `GROSTER_LOG_DIR` commented unless you switch from Docker JSON logs to text file logging. If you do switch, point it to a mounted container path such as `/app/logs`. In the default Docker setup, do not add a dedicated logs volume: Docker already stores and rotates container stdout logs via `json-file`.
 
 Protect the file:
 
@@ -376,7 +381,7 @@ chmod 600 /opt/groster/.env
 
 ## Step 7: Override compose.yaml for production
 
-The repo's `compose.yaml` uses a Docker volume (`groster-data`). For a local server deployment, you want a host bind mount instead, so the CSVs live on the host filesystem where they're accessible to backups and the scheduled update job.
+The repo's `compose.yaml` uses a Docker volume (`groster-data`). For a local server deployment, you want a host bind mount instead, so the CSVs live on the host filesystem where they're accessible to backups and the scheduled update job. Keep logs on Docker's default stdout pipeline unless you intentionally switch to app-managed text files.
 
 Create `/opt/groster/compose.override.yaml`:
 
@@ -388,6 +393,8 @@ services:
     network_mode: host
     volumes:
       - /opt/groster/data:/app/data
+      # Uncomment if you switch to GROSTER_LOG_FORMAT=text
+      # - /opt/groster/logs:/app/logs
     logging:
       driver: json-file
       options:
@@ -401,7 +408,8 @@ What this does:
 - **`restart: always`** - overrides `unless-stopped` so the container always restarts, including after a full reboot.
 - **`ports: []` + `network_mode: host`** - the bot listens on `localhost:5000` directly, which is what the cloudflared config points to. No port mapping needed.
 - **`volumes: /opt/groster/data:/app/data`** - bind mount replaces the Docker volume. Your CSVs are used directly from the host filesystem.
-- **`logging: json-file`** - Docker logs are JSON with rotation (20 MB per file, 5 files max). Combined with `GROSTER_LOG_FORMAT=json` already set in the base compose, you get structured JSON logging all the way through.
+- **`# - /opt/groster/logs:/app/logs`** - optional bind mount for app-managed text log files. Do not enable it in the default setup.
+- **`logging: json-file`** - Docker logs are JSON with rotation (20 MB per file, 5 files max). Combined with `GROSTER_LOG_FORMAT=json` already set in the base compose, you get structured JSON logging all the way through. In this setup, do not create a separate log volume: Docker, not the app, owns log storage.
 
 ---
 

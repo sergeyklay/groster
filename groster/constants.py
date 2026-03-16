@@ -1,9 +1,95 @@
+import os
 from pathlib import Path
 
 from groster import __version__
 
+
+def _default_data_path() -> Path:
+    """Return the default directory for generated runtime data."""
+    return Path.cwd() / "data"
+
+
+def _default_log_dir() -> Path:
+    """Return the default directory for application log files."""
+    return Path.cwd() / "logs"
+
+
+def _resolve_directory(
+    env_var: str,
+    default_path: Path,
+    *,
+    label: str,
+) -> Path:
+    """Resolve and validate a runtime directory from the environment."""
+    raw_path = os.getenv(env_var)
+    path = Path(raw_path).expanduser() if raw_path else default_path
+
+    if path.exists() and not path.is_dir():
+        raise RuntimeError(f"{env_var} must point to a directory: {path}")
+
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        raise RuntimeError(f"Failed to create {label} directory: {path}") from exc
+
+    return path
+
+
+def resolve_data_path() -> Path:
+    """Resolve and validate the runtime data directory.
+
+    The directory is controlled by the GROSTER_DATA_PATH environment variable.
+    If the variable is unset, the default remains ./data relative to the
+    current working directory.
+
+    Returns:
+        The validated data directory path.
+
+    Raises:
+        RuntimeError: If the resolved path is not a directory or cannot be
+            created.
+    """
+    return _resolve_directory(
+        "GROSTER_DATA_PATH",
+        _default_data_path(),
+        label="data",
+    )
+
+
+def resolve_log_dir() -> Path:
+    """Resolve and validate the runtime log directory.
+
+    The directory is controlled by the GROSTER_LOG_DIR environment variable.
+    If the variable is unset, the default remains ./logs relative to the
+    current working directory.
+
+    Returns:
+        The validated log directory path.
+
+    Raises:
+        RuntimeError: If the resolved path is not a directory or cannot be
+            created.
+    """
+    return _resolve_directory(
+        "GROSTER_LOG_DIR",
+        _default_log_dir(),
+        label="log",
+    )
+
+
+def resolve_log_path() -> Path:
+    """Resolve the application log file path from the log directory."""
+    return resolve_log_dir() / "groster.log"
+
+
 # Path for storing generated data files.
-DATA_PATH = Path().cwd() / "data"
+DATA_PATH = resolve_data_path()
+
+# Directory for storing log files.
+LOG_DIR = resolve_log_dir()
+
+# Default log file path.
+LOG_PATH = LOG_DIR / "groster.log"
 
 # Achievement ID for "Level 10" achievement, used to identify characters.
 LEVEL_10_ACHIEVEMENT_ID = 6

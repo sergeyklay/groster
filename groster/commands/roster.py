@@ -1,9 +1,9 @@
 import logging
 import os
 import time
-from pathlib import Path
 from typing import Any
 
+from groster.constants import resolve_data_path
 from groster.http_client import BlizzardAPIClient, BlizzardAPIError
 from groster.ranks import create_rank_mapping
 from groster.repository import CsvRosterRepository, RosterRepository
@@ -143,7 +143,7 @@ async def update_roster(
 ) -> None:
     """Main entry point for the application."""
     start_time = time.time()
-    base_path = Path(os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"))
+    base_path = resolve_data_path()
 
     client_id = os.getenv("BLIZZARD_CLIENT_ID")
     client_secret = os.getenv("BLIZZARD_CLIENT_SECRET")

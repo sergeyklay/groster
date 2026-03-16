@@ -3,7 +3,6 @@ import json
 import logging
 import os
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Any
 
 from aiohttp import web
@@ -11,11 +10,18 @@ from dotenv import load_dotenv
 from nacl.exceptions import BadSignatureError
 from nacl.signing import VerifyKey
 
+from groster.constants import resolve_data_path
 from groster.repository import CsvRosterRepository, RosterRepository
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
+
+VERIFY_KEY_APP_KEY = web.AppKey("verify_key", VerifyKey)
+REPO_APP_KEY = web.AppKey("repo", RosterRepository)
+BOT_REGION_APP_KEY = web.AppKey("bot_region", str)
+BOT_REALM_APP_KEY = web.AppKey("bot_realm", str)
+BOT_GUILD_APP_KEY = web.AppKey("bot_guild", str)
 
 
 def get_class_emoji(class_name: str) -> str:
@@ -364,7 +370,7 @@ async def interactions_handler(request: web.Request) -> web.Response:
     body = await request.read()
 
     try:
-        request.app["verify_key"].verify(
+        request.app[VERIFY_KEY_APP_KEY].verify(
             timestamp.encode() + body,
             bytes.fromhex(signature),
         )
@@ -400,18 +406,18 @@ async def interactions_handler(request: web.Request) -> web.Response:
         if command_name == "whois":
             return await _handle_whois(
                 data,
-                request.app["repo"],
-                request.app["bot_region"],
-                request.app["bot_realm"],
-                request.app["bot_guild"],
+                request.app[REPO_APP_KEY],
+                request.app[BOT_REGION_APP_KEY],
+                request.app[BOT_REALM_APP_KEY],
+                request.app[BOT_GUILD_APP_KEY],
                 user_id,
             )
         if command_name == "alts":
             return await _handle_alts(
-                request.app["repo"],
-                request.app["bot_region"],
-                request.app["bot_realm"],
-                request.app["bot_guild"],
+                request.app[REPO_APP_KEY],
+                request.app[BOT_REGION_APP_KEY],
+                request.app[BOT_REALM_APP_KEY],
+                request.app[BOT_GUILD_APP_KEY],
             )
 
     # Autocomplete
@@ -419,10 +425,10 @@ async def interactions_handler(request: web.Request) -> web.Response:
         logger.info("Received autocomplete interaction")
         return await _handle_autocomplete(
             data,
-            request.app["repo"],
-            request.app["bot_region"],
-            request.app["bot_realm"],
-            request.app["bot_guild"],
+            request.app[REPO_APP_KEY],
+            request.app[BOT_REGION_APP_KEY],
+            request.app[BOT_REALM_APP_KEY],
+            request.app[BOT_GUILD_APP_KEY],
         )
 
     return web.Response(text="Unhandled interaction type", status=400)
@@ -441,16 +447,14 @@ def _create_app() -> web.Application:
     if not public_key:
         raise ValueError("DISCORD_PUBLIC_KEY not found in environment variables")
 
-    base_path = Path(
-        os.getenv("GROSTER_DATA_PATH", Path.cwd() / "data"),
-    )
+    base_path = resolve_data_path()
 
     app = web.Application()
-    app["verify_key"] = VerifyKey(bytes.fromhex(public_key))
-    app["repo"] = CsvRosterRepository(base_path=base_path)
-    app["bot_region"] = os.getenv("WOW_REGION", "eu")
-    app["bot_realm"] = os.getenv("WOW_REALM", "terokkar")
-    app["bot_guild"] = os.getenv(
+    app[VERIFY_KEY_APP_KEY] = VerifyKey(bytes.fromhex(public_key))
+    app[REPO_APP_KEY] = CsvRosterRepository(base_path=base_path)
+    app[BOT_REGION_APP_KEY] = os.getenv("WOW_REGION", "eu")
+    app[BOT_REALM_APP_KEY] = os.getenv("WOW_REALM", "terokkar")
+    app[BOT_GUILD_APP_KEY] = os.getenv(
         "WOW_GUILD",
         "darq-side-of-the-moon",
     )

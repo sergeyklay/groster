@@ -50,6 +50,9 @@ DISCORD_GUILD_ID="your-discord-server-id"
 WOW_REGION="eu"
 WOW_REALM="terokkar"
 WOW_GUILD="darq-side-of-the-moon"
+
+GROSTER_DATA_PATH="./data"
+GROSTER_LOG_DIR="./logs"
 ```
 
 Where to find each value:
@@ -59,6 +62,7 @@ Where to find each value:
 - **Discord bot token**: in the same portal, go to the "Bot" section of your application and click "Reset Token" to generate a new one. Copy it immediately because Discord only shows it once.
 - **Discord guild (server) ID**: enable Developer Mode in Discord (Settings > App Settings > Advanced > Developer Mode). Then right-click your server name in the sidebar and select "Copy Server ID".
 - **WoW settings**: adjust `WOW_REGION`, `WOW_REALM`, and `WOW_GUILD` to match your guild. Use slug format for realm and guild names (lowercase, hyphens instead of spaces).
+- **Runtime paths**: `GROSTER_DATA_PATH` controls where groster writes CSV data. `GROSTER_LOG_DIR` controls where text log files go. The defaults are `./data` and `./logs`.
 
 ## Step 3: fetch the guild roster
 
@@ -68,7 +72,7 @@ Before the bot can answer questions, it needs roster data. Run the update comman
 uv run --frozen groster update
 ```
 
-This contacts the Blizzard API, downloads your guild's roster and achievement data, processes alt relationships, and writes CSV files into the `data/` directory. The process can take a few minutes depending on guild size because it fetches individual character profiles and achievements.
+This contacts the Blizzard API, downloads your guild's roster and achievement data, processes alt relationships, and writes CSV files into the `data/` directory by default. The process can take a few minutes depending on guild size because it fetches individual character profiles and achievements.
 
 You can also pass options directly instead of relying on environment variables:
 
@@ -83,6 +87,12 @@ ls data/
 ```
 
 The dashboard CSV contains the consolidated view with all character information, alt groupings, and profile links.
+
+If you're using text logging, groster also writes `groster.log` into the `logs/` directory by default:
+
+```bash
+ls logs/
+```
 
 ## Step 4: start the bot server
 
@@ -242,7 +252,7 @@ Quick tunnels generate a new URL every time you restart `cloudflared`. After res
 
 ### Roster data is outdated
 
-Run `uv run --frozen groster update` again to pull fresh data from the Blizzard API. The bot uses CSV files in `data/`, and those files only update when you run this command.
+Run `uv run --frozen groster update` again to pull fresh data from the Blizzard API. The bot uses CSV files in `data/` by default, and those files only update when you run this command.
 
 ### Debug mode
 

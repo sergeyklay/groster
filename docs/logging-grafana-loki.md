@@ -102,6 +102,8 @@ It must be `GROSTER_LOG_FORMAT=json`. If it's missing or set to `text`, add it t
 docker compose -f compose.yaml -f compose.override.yaml up -d
 ```
 
+`GROSTER_LOG_DIR` does not affect this Loki setup. Docker collects stdout from the container, and Promtail reads Docker's `json-file` logs from the host. Keep `GROSTER_LOG_FORMAT=json` and leave file log paths out of the collection path unless you intentionally switch away from Docker-managed logs. That also means you should not add a dedicated Compose log volume for Loki in the default setup.
+
 Also verify that Docker's log driver is `json-file` (the default) and that log rotation is configured:
 
 ```bash

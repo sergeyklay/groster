@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 
@@ -10,6 +11,7 @@ os.environ.setdefault(
 )
 
 from groster.commands.bot import (
+    _create_app,
     _format_no_character_message,
     _handle_alts,
     _handle_autocomplete,
@@ -63,6 +65,26 @@ def seeded_repo(repo: InMemoryRosterRepository) -> InMemoryRosterRepository:
         modified_at=datetime.now(),
     )
     return repo
+
+
+def test_create_app_uses_resolved_data_path_for_repository(
+    mocker, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    resolved_path = tmp_path / "bot-data"
+    monkeypatch.setenv("DISCORD_PUBLIC_KEY", "0" * 64)
+    mocker.patch(
+        "groster.commands.bot.resolve_data_path",
+        autospec=True,
+        return_value=resolved_path,
+    )
+    repo_class = mocker.patch(
+        "groster.commands.bot.CsvRosterRepository",
+        autospec=True,
+    )
+
+    _create_app()
+
+    repo_class.assert_called_once_with(base_path=resolved_path)
 
 
 # ── _format_no_character_message ─────────────────────────────────────────────

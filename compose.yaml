@@ -12,11 +12,11 @@ services:
     env_file:
       - .env
     environment:
-      GROSTER_HOST: "0.0.0.0"
-      GROSTER_PORT: "5000"
-      GROSTER_LOG_FORMAT: json
+      GROSTER_DATA_PATH: "${GROSTER_DATA_PATH:-/app/data}"
+      GROSTER_LOG_DIR: "${GROSTER_LOG_DIR:-/app/logs}"
+      GROSTER_LOG_FORMAT: "${GROSTER_LOG_FORMAT:-json}"
     volumes:
-      - groster-data:/app/data
+      - groster-data:${GROSTER_DATA_PATH:-/app/data}
     healthcheck:
       test:
         [
