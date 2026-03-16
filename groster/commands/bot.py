@@ -354,7 +354,7 @@ async def _handle_whois(
         )
 
 
-async def interactions_handler(request: web.Request):
+async def interactions_handler(request: web.Request) -> web.Response:
     signature = request.headers.get("X-Signature-Ed25519")
     timestamp = request.headers.get("X-Signature-Timestamp")
 

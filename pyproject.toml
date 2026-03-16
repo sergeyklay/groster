@@ -55,10 +55,12 @@ groster = "groster.cli:cli"
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.3.0",
     "chardet>=5.2.0",
-    "ruff>=0.14.2",
     "jupyter>=1.1.1",
+    "mypy>=1.19.1",
+    "pandas-stubs>=2.2.3",
+    "pre-commit>=4.3.0",
+    "ruff>=0.14.2",
 ]
 testing = [
     "coverage[toml]>=7.10.6",
@@ -140,6 +142,18 @@ omit = [
 [tool.ruff]
 target-version = "py312"
 extend-exclude = ["build", "scripts"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["groster"]
+strict = false
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
 
 [tool.ruff.lint]
 extend-select = [
