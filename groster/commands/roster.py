@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from groster.http_client import BlizzardAPIClient
+from groster.http_client import BlizzardAPIClient, BlizzardAPIError
 from groster.ranks import create_rank_mapping
 from groster.repository import CsvRosterRepository, RosterRepository
 from groster.services import (
@@ -101,9 +101,10 @@ async def _get_roster_details(
 
     cached_profile_records is empty when force=True or on first run.
     """
-    roster_data: dict[str, Any] = await client.get_guild_roster(realm, guild)
-    if not roster_data:
-        raise RuntimeError("Failed to get guild roster data.")
+    try:
+        roster_data: dict[str, Any] = await client.get_guild_roster(realm, guild)
+    except BlizzardAPIError as exc:
+        raise RuntimeError("Failed to get guild roster data.") from exc
 
     cached_profile_records: dict[str, dict[str, Any]] = {}
     if not force:

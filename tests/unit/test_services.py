@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from groster.constants import LEVEL_10_ACHIEVEMENT_ID, MAIN_SCORE_WEIGHTS
-from groster.http_client import BlizzardAPIClient
+from groster.http_client import BlizzardAPIClient, BlizzardAPIError
 from groster.services import (
     _apply_hidden_profile_fallback,
     _armory_locale,
@@ -575,6 +575,21 @@ def test_fetch_member_fingerprint_non_fingerprint_achievements_ignored(mock_clie
     assert 9670 in fp_ids
 
 
+def test_fetch_member_fingerprint_api_error_returns_empty_fingerprint(mock_client):
+    member = _make_member("Darq")
+    mock_client.get_character_achievements.side_effect = BlizzardAPIError(
+        503, "Request failed"
+    )
+
+    result = asyncio.run(fetch_member_fingerprint(mock_client, member))
+
+    assert result is not None
+    assert result["fingerprint"] == ()
+    assert result["timestamps"] == {}
+    assert result["total_quantity"] == 0
+    assert result["total_points"] == 0
+
+
 # ---------------------------------------------------------------------------
 # fetch_playable_classes / fetch_playable_races
 # ---------------------------------------------------------------------------
@@ -600,6 +615,24 @@ def test_fetch_playable_races_returns_id_name_dicts(mock_client):
     result = asyncio.run(fetch_playable_races(mock_client))
 
     assert result == [{"id": 1, "name": "Human"}, {"id": 2, "name": "Orc"}]
+
+
+def test_fetch_playable_classes_api_error_returns_empty_list(mock_client):
+    mock_client.get_playable_classes.side_effect = BlizzardAPIError(
+        503, "Request failed"
+    )
+
+    result = asyncio.run(fetch_playable_classes(mock_client))
+
+    assert result == []
+
+
+def test_fetch_playable_races_api_error_returns_empty_list(mock_client):
+    mock_client.get_playable_races.side_effect = BlizzardAPIError(503, "Request failed")
+
+    result = asyncio.run(fetch_playable_races(mock_client))
+
+    assert result == []
 
 
 # ---------------------------------------------------------------------------
@@ -638,6 +671,16 @@ def test_fetch_member_pets_summary_empty_pets_returns_zero(mock_client):
     assert summary["pets"] == 0
 
 
+def test_fetch_member_pets_summary_api_error_returns_none(mock_client):
+    member = _make_member("Darq")
+    mock_client.get_character_pets.side_effect = BlizzardAPIError(503, "Request failed")
+
+    summary, raw = asyncio.run(fetch_member_pets_summary(mock_client, member))
+
+    assert summary is None
+    assert raw is None
+
+
 # ---------------------------------------------------------------------------
 # fetch_member_mounts_summary
 # ---------------------------------------------------------------------------
@@ -656,6 +699,18 @@ def test_fetch_member_mounts_summary_valid_member_returns_summary(mock_client):
 
 def test_fetch_member_mounts_summary_missing_info_returns_none(mock_client):
     member = {"character": {"name": "Darq", "realm": {"slug": "terokkar"}}}
+
+    summary, raw = asyncio.run(fetch_member_mounts_summary(mock_client, member))
+
+    assert summary is None
+    assert raw is None
+
+
+def test_fetch_member_mounts_summary_api_error_returns_none(mock_client):
+    member = _make_member("Darq")
+    mock_client.get_character_mounts.side_effect = BlizzardAPIError(
+        503, "Request failed"
+    )
 
     summary, raw = asyncio.run(fetch_member_mounts_summary(mock_client, member))
 
@@ -701,13 +756,16 @@ def test_fetch_roster_details_no_members_key_returns_empty(mock_client):
     assert raw_profiles == {}
 
 
-def test_fetch_roster_details_profile_returns_none_skipped(mock_client):
+def test_fetch_roster_details_profile_api_error_skipped(mock_client):
     roster = {"members": [_make_member("Darq")]}
-    mock_client.get_character_profile.return_value = None
+    mock_client.get_character_profile.side_effect = BlizzardAPIError(
+        503, "Request failed"
+    )
 
-    processed, _ = asyncio.run(fetch_roster_details(mock_client, roster))
+    processed, raw_profiles = asyncio.run(fetch_roster_details(mock_client, roster))
 
     assert processed == []
+    assert raw_profiles == {}
 
 
 def test_fetch_roster_details_member_missing_realm_skipped(mock_client):

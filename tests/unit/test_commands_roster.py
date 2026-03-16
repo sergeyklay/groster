@@ -1,7 +1,7 @@
 import pytest
 
 from groster.commands.roster import _get_roster_details
-from groster.http_client import BlizzardAPIClient
+from groster.http_client import BlizzardAPIClient, BlizzardAPIError
 from groster.repository import InMemoryRosterRepository
 
 REGION = "eu"
@@ -114,8 +114,8 @@ async def test_get_roster_details_incremental_caches_unchanged(mock_client, repo
     assert mock_client.get_character_profile.call_count == 2
 
 
-async def test_get_roster_details_empty_roster_raises_runtime_error(mock_client, repo):
-    mock_client.get_guild_roster.return_value = {}
+async def test_get_roster_details_api_failure_raises_runtime_error(mock_client, repo):
+    mock_client.get_guild_roster.side_effect = BlizzardAPIError(503, "Request failed")
 
     with pytest.raises(RuntimeError, match="Failed to get guild roster data"):
         await _get_roster_details(repo, mock_client, REGION, REALM, GUILD)

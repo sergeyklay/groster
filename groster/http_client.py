@@ -35,6 +35,14 @@ def _validate_region(region: str) -> None:
         )
 
 
+class BlizzardAPIError(Exception):
+    """Raised when a Blizzard API request fails after retries."""
+
+    def __init__(self, status_code: int, message: str):
+        self.status_code = status_code
+        super().__init__(message)
+
+
 class BlizzardAPIClient:
     """An HTTP client for the Blizzard Battle.net API."""
 
@@ -132,10 +140,18 @@ class BlizzardAPIClient:
             raise
 
     async def _request(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
-        """Make a HTTP request to the Blizzard API."""
+        """Make a HTTP request to the Blizzard API.
+
+        Raises:
+            BlizzardAPIError: When the request fails after all retries or
+                encounters a non-retryable HTTP error.
+        """
         token = await self._get_access_token()
         headers = kwargs.pop("headers", {})
         headers["Authorization"] = f"Bearer {token}"
+
+        last_status = 0
+        last_message = ""
 
         for attempt in range(1, self.max_retries + 1):
             try:
@@ -143,6 +159,8 @@ class BlizzardAPIClient:
                     method, url, headers=headers, **kwargs
                 )
                 if response.status_code in (429, 500, 502, 503, 504):
+                    last_status = response.status_code
+                    last_message = f"HTTP {response.status_code}"
                     retry_after = response.headers.get("Retry-After")
                     if retry_after and retry_after.isdigit():
                         delay = int(retry_after)
@@ -164,6 +182,8 @@ class BlizzardAPIClient:
                 return response.json()  # type: ignore[no-any-return]
             except httpx.RequestError as e:
                 req_url = e.request.url if getattr(e, "request", None) else url
+                last_status = 0
+                last_message = str(e)
                 logger.warning(
                     "API request to %s failed (attempt %d/%d): %s",
                     req_url,
@@ -185,9 +205,16 @@ class BlizzardAPIClient:
                         e.response.status_code,
                         e.response.text,
                     )
-                break
+                raise BlizzardAPIError(
+                    e.response.status_code,
+                    f"Request to {e.request.url} failed with status"
+                    f" {e.response.status_code}",
+                ) from e
 
-        return {}  # Return empty dict on failure
+        raise BlizzardAPIError(
+            last_status,
+            f"Request to {url} failed after {self.max_retries} retries: {last_message}",
+        )
 
     async def _get_static_data(self, data_key: str) -> dict:
         path = f"data/wow/{data_key}/index"
@@ -202,7 +229,10 @@ class BlizzardAPIClient:
             guild_slug: The guild slug (e.g., 'darq-side-of-the-moon').
 
         Returns:
-            A dict containing the guild roster data, or an empty dict on failure.
+            A dict containing the guild roster data.
+
+        Raises:
+            BlizzardAPIError: When the request fails.
         """
         logger.debug("Fetching guild roster")
         url = self._format_url(f"data/wow/guild/{realm_slug}/{guild_slug}/roster")
@@ -217,7 +247,10 @@ class BlizzardAPIClient:
             char_name: The character name (case-insensitive).
 
         Returns:
-            A dict containing the character profile data, or an empty dict on failure.
+            A dict containing the character profile data.
+
+        Raises:
+            BlizzardAPIError: When the request fails.
         """
         logger.debug("Fetching character profile for %s on %s", char_name, realm_slug)
 
@@ -234,8 +267,10 @@ class BlizzardAPIClient:
             char_name: The character name (case-insensitive).
 
         Returns:
-            A dict containing the character achievements data, or an empty dict on
-            failure.
+            A dict containing the character achievements data.
+
+        Raises:
+            BlizzardAPIError: When the request fails.
         """
         logger.debug(
             "Fetching character achievements for %s on %s", char_name, realm_slug
@@ -256,7 +291,10 @@ class BlizzardAPIClient:
             char_name: The character name (case-insensitive).
 
         Returns:
-            A dict containing the character pets data, or an empty dict on failure.
+            A dict containing the character pets data.
+
+        Raises:
+            BlizzardAPIError: When the request fails.
         """
         logger.debug("Fetching character pets for %s on %s", char_name, realm_slug)
 
@@ -275,7 +313,10 @@ class BlizzardAPIClient:
             char_name: The character name (case-insensitive).
 
         Returns:
-            A dict containing the character mounts data, or an empty dict on failure.
+            A dict containing the character mounts data.
+
+        Raises:
+            BlizzardAPIError: When the request fails.
         """
         logger.debug("Fetching character mounts for %s on %s", char_name, realm_slug)
 
