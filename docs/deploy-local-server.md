@@ -42,7 +42,7 @@ flowchart TB
         tunnel["cloudflared<br>(systemd service)"]
         bot["groster-bot<br>(Docker container)"]
         data[("/opt/groster/data/*.csv<br>(host filesystem)")]
-        timer["groster update<br>(systemd timer, daily 04:00)"]
+        timer["groster update<br>(systemd timers)<br>daily incremental + weekly full"]
     end
 
     subgraph blizzard [" "]
@@ -78,7 +78,7 @@ What auto-restarts:
 - **Docker daemon** - systemd `docker.service`, enabled
 - **groster-bot container** - `restart: always` in compose
 - **cloudflared** - systemd service, enabled, auto-reconnects
-- **Roster update** - systemd timer, runs daily, catches up after downtime (`Persistent=true`)
+- **Roster update** - two systemd timers: daily incremental at 04:00, weekly full refresh (`--force`) on Sundays at 05:00. Both use `Persistent=true` to catch up after downtime
 
 What doesn't change:
 
@@ -460,16 +460,20 @@ docker compose -f compose.yaml -f compose.override.yaml run --rm bot register
 
 ---
 
-## Step 10: Set up the daily roster update
+## Step 10: Set up scheduled roster updates
 
-The bot needs fresh roster data from the Blizzard API. Use a systemd timer to run the update daily - it's native, supports persistent scheduling (catches up after missed runs), and logs go straight to the journal.
+The bot needs fresh roster data from the Blizzard API. Two systemd timers handle this: a daily incremental update that only fetches new or changed members, and a weekly full refresh that re-fetches everything.
 
-### Create the service unit
+Why two timers? Incremental updates are fast and cheap - they diff the current guild roster against the previous snapshot and only call the API for members whose rank or level changed. A 500-member guild with 5% daily churn makes ~200 API calls instead of ~2000. The weekly full refresh (`--force`) ensures nothing drifts: it re-fetches all profiles, achievements, pets, and mounts regardless of what changed.
+
+### Create the service units
+
+The daily incremental update:
 
 ```bash
 sudo tee /etc/systemd/system/groster-update.service << 'EOF'
 [Unit]
-Description=Groster roster update
+Description=Groster incremental roster update
 Requires=docker.service
 After=docker.service
 
@@ -480,14 +484,32 @@ ExecStart=/usr/bin/docker compose -f compose.yaml -f compose.override.yaml run -
 EOF
 ```
 
-This defines a one-shot job: it spins up a temporary container from the same `groster-bot` image, runs `groster update` (fetches the roster from Blizzard API, recomputes alts, writes CSVs to `/opt/groster/data`), and exits. The `--rm` flag removes the container after it finishes.
+The weekly full refresh:
 
-### Create the timer unit
+```bash
+sudo tee /etc/systemd/system/groster-update-full.service << 'EOF'
+[Unit]
+Description=Groster full roster update (force refresh)
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/groster
+ExecStart=/usr/bin/docker compose -f compose.yaml -f compose.override.yaml run --rm -e GROSTER_LOG_FORMAT=json bot update --force
+EOF
+```
+
+Both are one-shot jobs: spin up a temporary container, run the update, write CSVs to `/opt/groster/data`, and exit. The only difference is `--force`, which bypasses all cached data and re-fetches every member from scratch.
+
+### Create the timer units
+
+Daily incremental at 04:00:
 
 ```bash
 sudo tee /etc/systemd/system/groster-update.timer << 'EOF'
 [Unit]
-Description=Daily groster roster update
+Description=Daily groster incremental roster update
 
 [Timer]
 OnCalendar=*-*-* 04:00:00
@@ -498,13 +520,30 @@ WantedBy=timers.target
 EOF
 ```
 
-`Persistent=true` means if the server was off at 04:00, the job runs at next boot.
+Weekly full refresh on Sundays at 05:00:
 
-### Enable the timer
+```bash
+sudo tee /etc/systemd/system/groster-update-full.timer << 'EOF'
+[Unit]
+Description=Weekly groster full roster update
+
+[Timer]
+OnCalendar=Sun *-*-* 05:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+```
+
+`Persistent=true` means if the server was off at the scheduled time, the job runs at next boot. The one-hour gap between the timers avoids overlap if the server reboots and both catch up.
+
+### Enable the timers
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now groster-update.timer
+sudo systemctl enable --now groster-update-full.timer
 ```
 
 ### Verify
@@ -513,13 +552,22 @@ sudo systemctl enable --now groster-update.timer
 systemctl list-timers | grep groster
 ```
 
+You should see two timers listed: one firing daily, one firing weekly.
+
 ### Manual run
 
-To trigger a roster update immediately:
+To trigger an incremental update immediately:
 
 ```bash
 sudo systemctl start groster-update.service
 journalctl -u groster-update.service --no-pager -n 50
+```
+
+To trigger a full refresh:
+
+```bash
+sudo systemctl start groster-update-full.service
+journalctl -u groster-update-full.service --no-pager -n 50
 ```
 
 ---
@@ -545,7 +593,7 @@ docker compose -f /opt/groster/compose.yaml -f /opt/groster/compose.override.yam
 # 5. Data directory has CSVs (after first update run)
 ls -la /opt/groster/data/*.csv
 
-# 6. Timer is scheduled
+# 6. Timers are scheduled
 systemctl list-timers | grep groster
 
 # 7. Test from Discord
@@ -562,8 +610,11 @@ systemctl list-timers | grep groster
 # Bot logs (JSON, from Docker)
 docker logs groster-bot --tail=100
 
-# Roster update logs
+# Roster update logs (daily incremental)
 journalctl -u groster-update.service --since "1 hour ago"
+
+# Full refresh logs (weekly)
+journalctl -u groster-update-full.service --since "1 hour ago"
 
 # Cloudflared logs
 journalctl -u cloudflared --since "1 hour ago"
@@ -571,9 +622,18 @@ journalctl -u cloudflared --since "1 hour ago"
 
 ### Manual roster update
 
+Incremental (only new/changed members):
+
 ```bash
 cd /opt/groster
 docker compose -f compose.yaml -f compose.override.yaml run --rm bot update
+```
+
+Full refresh (re-fetch everything):
+
+```bash
+cd /opt/groster
+docker compose -f compose.yaml -f compose.override.yaml run --rm bot update --force
 ```
 
 ### Rebuild after code changes
