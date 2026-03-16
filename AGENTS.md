@@ -8,14 +8,18 @@ CLI + Discord bot that fetches WoW guild rosters via the Blizzard API and identi
 - Run tests: `make test` (NOT `pytest` — bare pytest skips coverage instrumentation)
 - Quality gate: `make format lint test` (run before every commit)
 - Python runtime: managed by `asdf` (version in `.tool-versions`). Run `asdf reshim python` after fresh installs or version changes.
+- Deploy: `docker compose down --remove-orphans && docker build --no-cache . && docker compose up -d` — always use `--no-cache` to avoid stale `COPY` layers.
 
 ## Gotchas
 
 - `data/` is gitignored. CSV output files only exist after a roster update run — never assume they are present.
 - `[project.dependencies]` in `pyproject.toml` must stay in **sorted alphabetical order** (see inline comment).
 - Never use `print()` — use the `logging` module. Never use f-strings in log calls — use `%` formatting.
-- `groster/commands/bot.py` reads env vars and creates a repository instance **at module level**. Importing it without `DISCORD_PUBLIC_KEY` set raises `ValueError` immediately.
+- `groster/commands/bot.py` reads env vars and creates a repository instance **at module level**. Importing it without `DISCORD_PUBLIC_KEY` set raises `ValueError` immediately. Tests must `os.environ.setdefault("DISCORD_PUBLIC_KEY", "0" * 64)` before importing from this module.
 - `uv run --frozen` is used everywhere — the lockfile is the source of truth for dependency resolution.
+- `register_commands()` in `discord.py` uses **bulk PUT overwrite**. Adding a new slash command requires listing it alongside all existing commands in the payload array — omitting one deletes it from Discord.
+- Discord documents embed description limit as 4096 characters but enforces a stricter internal limit. Use 3900 as the safe ceiling for any embed description content.
+- `scripts/` is excluded from Ruff linting (in `pyproject.toml` `extend-exclude`). Throwaway scripts there won't block CI but also won't be checked.
 
 ## Boundaries
 
@@ -44,6 +48,6 @@ CLI + Discord bot that fetches WoW guild rosters via the Blizzard API and identi
 
 ---
 
-Last updated: 2025-03-12
+Last updated: 2026-03-16
 
 Maintained by: AI Agents under human supervision
