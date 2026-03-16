@@ -167,6 +167,78 @@ Each character gets a row in the alts CSV:
 | 123 | Thrall   | False | Thrall |
 | 456 | Grommash | True  | Thrall |
 
+## Guild Membership Changes and Alt Groupings
+
+The alt-detection algorithm is stateless: it only sees the characters currently
+in the guild. This is intentional — the system cannot query the Blizzard API
+for players who have already left. As a result, guild membership churn
+produces predictable, non-algorithmic changes to the alt groupings output.
+Understanding these patterns is essential when diffing snapshots across time.
+
+### Scenario: when a group leader leaves
+
+Consider a player — call them **Stoneback** — who has five alts in the guild.
+The system sees a group of six characters; the earliest-Level-10 character
+(say, Stoneback) is designated the main:
+
+```
+Stoneback  (main)
+  ├── Hammerfist
+  ├── Ironkeep
+  ├── Cinderveil
+  ├── Duskmantle
+  └── Vaultbreaker
+```
+
+One day Stoneback leaves the guild. So do two of the alts
+(Duskmantle and Vaultbreaker). The remaining three alts —
+Hammerfist, Ironkeep, and Cinderveil — are still in the guild.
+
+On the next `groster update` run:
+
+1. Stoneback is not in the roster, so the system has no entry for them.
+2. Hammerfist, Ironkeep, and Cinderveil are still present and still share
+   the same achievement fingerprints.
+3. The grouping algorithm clusters them together as before (Jaccard ≥ 0.8).
+4. A new main is selected from among the three remaining characters —
+   whichever has the earliest Level 10 timestamp (say, Hammerfist).
+
+The resulting output:
+
+```
+Hammerfist  (new main)
+  ├── Ironkeep
+  └── Cinderveil
+```
+
+Duskmantle and Vaultbreaker — who left with Stoneback — simply do not
+appear in the roster at all.
+
+**This is the algorithm working correctly.** It makes no attempt to remember
+Stoneback or to detect that these characters used to belong to a larger group.
+It only clusters what it can see and picks the best available main. The
+apparent "reassignment" from Stoneback → Hammerfist is not a regression; it
+is the natural outcome of the roster shrinking.
+
+### Why this matters for regression testing
+
+The `scripts/diff_alts.py` regression tool classifies every changed
+assignment between two alts CSV snapshots. Changes caused by membership
+churn are categorised separately from potential algorithm regressions:
+
+| Category | What it means |
+|---|---|
+| `standalone-left` | A solo character (no alts) left the guild. No alt-detection aspect. |
+| `main-left-guild` | A group **leader** left; remaining alts were re-grouped under a new main. |
+| `member-left-guild` | One alt left the guild; the group leader and other alts remain unchanged. |
+| `hidden-profile` | The Blizzard API returns 0 achievements for at least one group member (profile hidden by the player). The system cannot fingerprint them. |
+| `main-selection-change` | The group membership is identical but the algorithm chose a different main (e.g., the Level 10 timestamp data changed). |
+| `group-absorbed` | Two previously separate groups were merged in the new snapshot (old main demoted to alt of a different main). |
+| `unknown` | None of the above rules matched. Any entry here is a potential algorithm regression and requires investigation. |
+
+The goal is an empty `unknown` bucket after every algorithm change. Run
+`make diff-alts` to verify against the v0.4.0 baseline.
+
 ## Blizzard API Client
 
 `http_client.py` → `BlizzardAPIClient`
