@@ -290,13 +290,13 @@ def test_format_alts_embed_truncation_appends_remaining_count():
 
     embed = format_alts_embed(data)
 
-    assert len(embed["description"]) <= 4096
+    assert len(embed["description"]) <= 3900
     assert "more mains" in embed["description"]
 
 
-def test_format_alts_embed_truncation_utf16_length_does_not_exceed_discord_limit():
-    # 💀 (U+1F480) is a supplementary-plane emoji: Python len() = 1, Discord UTF-16 = 2.
-    # 500 Death Knight entries guarantee truncation and exercise the UTF-16 guard.
+def test_format_alts_embed_truncation_never_exceeds_discord_limit():
+    # Emoji-heavy data: each 💀 is 2 UTF-16 code units but 1 Python char.
+    # Even with the encoding overhead, the description must stay under 4096.
     data = [(f"MainChar{i:04d}", "Death Knight", 5) for i in range(500)]
 
     embed = format_alts_embed(data)
