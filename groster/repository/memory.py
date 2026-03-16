@@ -202,6 +202,33 @@ class InMemoryRosterRepository(RosterRepository):
         total_mains = len({row["main"] for row in alts})
         return (total_alts, total_mains)
 
+    async def get_alts_per_main(
+        self, region: str, realm: str, guild: str
+    ) -> list[tuple[str, str, int]] | None:
+        """Return per-main alt counts from the dashboard."""
+        key = self._guild_key(region, realm, guild)
+        dashboard = self._dashboard.get(key)
+        if not dashboard:
+            return None
+
+        mains: dict[str, str] = {}
+        for row in dashboard:
+            if not row.get("Alt?"):
+                mains[row["Name"]] = row.get("Class") or "Unknown"
+
+        alt_counts: dict[str, int] = {}
+        for row in dashboard:
+            if row.get("Alt?"):
+                main_name = row.get("Main", "")
+                alt_counts[main_name] = alt_counts.get(main_name, 0) + 1
+
+        result = [
+            (name, class_name, alt_counts.get(name, 0))
+            for name, class_name in mains.items()
+        ]
+        result.sort(key=lambda x: (-x[2], x[0]))
+        return result
+
     async def get_character_info_by_name(
         self, name: str, region: str, realm: str, guild: str
     ) -> tuple[dict[str, Any] | None, datetime | None]:

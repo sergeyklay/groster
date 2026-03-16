@@ -11,8 +11,10 @@ os.environ.setdefault(
 
 from groster.commands.bot import (
     _format_no_character_message,
+    _handle_alts,
     _handle_autocomplete,
     _handle_whois,
+    format_alts_embed,
 )
 from groster.repository import InMemoryRosterRepository
 
@@ -241,3 +243,139 @@ async def test_handle_whois_no_character_name_returns_prompt(
 
     assert payload["type"] == 4
     assert "provide a character name" in payload["data"]["content"].lower()
+
+
+# ── format_alts_embed ────────────────────────────────────────────────────────
+
+
+def test_format_alts_embed_normal_returns_sorted_lines():
+    data = [
+        ("Alicestorm", "Warrior", 5),
+        ("Bobhunter", "Hunter", 2),
+        ("Charlie", "Mage", 0),
+    ]
+
+    embed = format_alts_embed(data)
+
+    assert embed["title"] == "Guild Alt Summary"
+    assert embed["color"] == 0x00AAFF
+    assert "**Alicestorm**" in embed["description"]
+    assert "**Bobhunter**" in embed["description"]
+    assert "**Charlie**" in embed["description"]
+    assert embed["description"].index("Alicestorm") < embed["description"].index(
+        "Bobhunter"
+    )
+
+
+def test_format_alts_embed_singular_alt_uses_correct_label():
+    data = [("Alicestorm", "Warrior", 1)]
+
+    embed = format_alts_embed(data)
+
+    assert "1 alt\n" in embed["description"]
+    assert "1 alts" not in embed["description"]
+
+
+def test_format_alts_embed_zero_alts_included():
+    data = [("Alicestorm", "Warrior", 0)]
+
+    embed = format_alts_embed(data)
+
+    assert "0 alts" in embed["description"]
+
+
+def test_format_alts_embed_truncation_appends_remaining_count():
+    data = [(f"MainCharacter{i:04d}", "Warrior", 5) for i in range(500)]
+
+    embed = format_alts_embed(data)
+
+    assert len(embed["description"]) <= 4096
+    assert "more mains" in embed["description"]
+
+
+def test_format_alts_embed_empty_list_returns_empty_description():
+    embed = format_alts_embed([])
+
+    assert embed["description"] == ""
+    assert "0 mains" in embed["footer"]["text"]
+    assert "0 alts" in embed["footer"]["text"]
+
+
+def test_format_alts_embed_footer_shows_correct_totals():
+    data = [
+        ("Alice", "Warrior", 2),
+        ("Bob", "Hunter", 1),
+        ("Charlie", "Mage", 0),
+    ]
+
+    embed = format_alts_embed(data)
+
+    assert "3 mains" in embed["footer"]["text"]
+    assert "3 alts" in embed["footer"]["text"]
+    assert "6 total characters" in embed["footer"]["text"]
+
+
+def test_format_alts_embed_class_emoji_appears_in_description():
+    data = [("Darq", "Death Knight", 3)]
+
+    embed = format_alts_embed(data)
+
+    assert "\U0001f480" in embed["description"]
+    assert "**Darq**" in embed["description"]
+
+
+# ── _handle_alts ─────────────────────────────────────────────────────────────
+
+
+async def test_handle_alts_seeded_repo_returns_embed_response(
+    seeded_repo: InMemoryRosterRepository,
+):
+    response = await _handle_alts(seeded_repo, REGION, REALM, GUILD)
+
+    payload = json.loads(response.body)
+
+    assert payload["type"] == 4
+    assert payload["data"]["flags"] == 64
+    assert len(payload["data"]["embeds"]) == 1
+    assert "Alicestorm" in payload["data"]["embeds"][0]["description"]
+
+
+async def test_handle_alts_seeded_repo_footer_shows_correct_totals(
+    seeded_repo: InMemoryRosterRepository,
+):
+    response = await _handle_alts(seeded_repo, REGION, REALM, GUILD)
+
+    payload = json.loads(response.body)
+    footer = payload["data"]["embeds"][0]["footer"]["text"]
+
+    assert "2 mains" in footer
+    assert "1 alts" in footer
+    assert "3 total characters" in footer
+
+
+async def test_handle_alts_no_dashboard_returns_error_message(
+    repo: InMemoryRosterRepository,
+):
+    response = await _handle_alts(repo, REGION, REALM, GUILD)
+
+    payload = json.loads(response.body)
+
+    assert payload["type"] == 4
+    assert payload["data"]["flags"] == 64
+    assert "not available yet" in payload["data"]["content"]
+
+
+async def test_handle_alts_repo_exception_returns_error_message():
+    class BrokenRepo(InMemoryRosterRepository):
+        async def get_alts_per_main(self, region, realm, guild):
+            raise RuntimeError("test error")
+
+    repo = BrokenRepo()
+
+    response = await _handle_alts(repo, REGION, REALM, GUILD)
+
+    payload = json.loads(response.body)
+
+    assert payload["type"] == 4
+    assert payload["data"]["flags"] == 64
+    assert "error occurred" in payload["data"]["content"]

@@ -229,6 +229,23 @@ class RosterRepository(ABC):
         """
 
     @abstractmethod
+    async def get_alts_per_main(
+        self, region: str, realm: str, guild: str
+    ) -> list[tuple[str, str, int]] | None:
+        """Return per-main alt counts from the dashboard.
+
+        Args:
+            region: The region identifier (e.g., 'eu', 'us').
+            realm: The realm slug.
+            guild: The guild slug.
+
+        Returns:
+            Sorted list of (main_name, class_name, alt_count) tuples,
+            ordered by alt_count descending then main_name ascending.
+            None if dashboard data is unavailable.
+        """
+
+    @abstractmethod
     async def search_character_names(
         self,
         prefix: str,

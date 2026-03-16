@@ -20,20 +20,28 @@ async def register_commands(
     try:
         url = f"https://discord.com/api/v10/applications/{app_id}/guilds/{guild_id}/commands"
 
-        payload = {
-            "name": "whois",
-            "description": "Get information about a player.",
-            "options": [
-                {
-                    "name": "player",
-                    "description": "The player to get information about.",
-                    "type": 3,
-                    "required": True,
-                    "autocomplete": True,
-                }
-            ],
-            "type": 1,
-        }
+        # Bulk overwrite — all guild commands must be listed here
+        payload = [
+            {
+                "name": "whois",
+                "description": "Get information about a player.",
+                "options": [
+                    {
+                        "name": "player",
+                        "description": "The player to get information about.",
+                        "type": 3,
+                        "required": True,
+                        "autocomplete": True,
+                    }
+                ],
+                "type": 1,
+            },
+            {
+                "name": "alts",
+                "description": "List all guild mains with their alt counts.",
+                "type": 1,
+            },
+        ]
 
         headers = {"Authorization": f"Bot {bot_token}"}
 
@@ -46,7 +54,7 @@ async def register_commands(
                 "Accept": "application/json",
             },
         ) as client:
-            response = await client.post(url, headers=headers, json=payload)
+            response = await client.put(url, headers=headers, json=payload)
             response.raise_for_status()
             logger.info("Discord commands registered successfully")
             logger.debug("Response: %s", response.json())
