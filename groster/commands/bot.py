@@ -121,9 +121,12 @@ def format_character_info(
     return response.strip()
 
 
-def _utf16_len(s: str) -> int:
-    """Return string length as counted by Discord (UTF-16 code units)."""
-    return len(s.encode("utf-16-le")) // 2
+def _utf8_len(s: str) -> int:
+    """Return string length in UTF-8 bytes.
+
+    Discord enforces the embed description limit in UTF-8 bytes.
+    """
+    return len(s.encode("utf-8"))
 
 
 def format_alts_embed(
@@ -137,8 +140,10 @@ def format_alts_embed(
     Returns:
         Embed dict with title, description, footer, and color.
     """
-    # Discord documents 4096 but the exact counting method is unspecified.
-    # 3900 leaves headroom for encoding differences (emoji surrogate pairs).
+    # Discord enforces the 4096-character embed description limit in UTF-8 bytes.
+    # Each class emoji (supplementary-plane, e.g. 💀) encodes to 4 UTF-8 bytes
+    # but only 1 Python char, so the utf8/py ratio for this guild is ~1.23.
+    # 3900 bytes leaves ~196 bytes of headroom for the suffix and any variation.
     max_description = 3900
     total_mains = len(alts_data)
     total_alts = sum(c for _, _, c in alts_data)
@@ -151,7 +156,10 @@ def format_alts_embed(
         line = f"{emoji} **{main_name}** \u2014 {alt_count} {label}\n"
         remaining = total_mains - i
         suffix = f"\n\u2026 and {remaining} more mains"
-        if len(description) + len(line) + len(suffix) > max_description:
+        if (
+            _utf8_len(description) + _utf8_len(line) + _utf8_len(suffix)
+            > max_description
+        ):
             description += suffix
             break
         description += line

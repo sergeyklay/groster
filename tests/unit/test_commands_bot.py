@@ -14,7 +14,7 @@ from groster.commands.bot import (
     _handle_alts,
     _handle_autocomplete,
     _handle_whois,
-    _utf16_len,
+    _utf8_len,
     format_alts_embed,
 )
 from groster.repository import InMemoryRosterRepository
@@ -290,18 +290,18 @@ def test_format_alts_embed_truncation_appends_remaining_count():
 
     embed = format_alts_embed(data)
 
-    assert len(embed["description"]) <= 3900
+    assert _utf8_len(embed["description"]) <= 3900
     assert "more mains" in embed["description"]
 
 
 def test_format_alts_embed_truncation_never_exceeds_discord_limit():
-    # Emoji-heavy data: each 💀 is 2 UTF-16 code units but 1 Python char.
-    # Even with the encoding overhead, the description must stay under 4096.
+    # 💀 (U+1F480) encodes to 4 UTF-8 bytes — worst case for limit testing.
+    # The guard uses UTF-8 byte counting so the result must stay under 4096.
     data = [(f"MainChar{i:04d}", "Death Knight", 5) for i in range(500)]
 
     embed = format_alts_embed(data)
 
-    assert _utf16_len(embed["description"]) <= 4096
+    assert _utf8_len(embed["description"]) <= 4096
 
 
 def test_format_alts_embed_truncation_remaining_count_equals_total_minus_shown():

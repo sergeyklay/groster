@@ -18,7 +18,7 @@ CLI + Discord bot that fetches WoW guild rosters via the Blizzard API and identi
 - `groster/commands/bot.py` reads env vars and creates a repository instance **at module level**. Importing it without `DISCORD_PUBLIC_KEY` set raises `ValueError` immediately. Tests must `os.environ.setdefault("DISCORD_PUBLIC_KEY", "0" * 64)` before importing from this module.
 - `uv run --frozen` is used everywhere — the lockfile is the source of truth for dependency resolution.
 - `register_commands()` in `discord.py` uses **bulk PUT overwrite**. Adding a new slash command requires listing it alongside all existing commands in the payload array — omitting one deletes it from Discord.
-- Discord documents embed description limit as 4096 characters but enforces a stricter internal limit. Use 3900 as the safe ceiling for any embed description content.
+- Discord enforces the embed description limit in **UTF-8 bytes**, not Unicode code points or UTF-16 units. Each class emoji (supplementary-plane, e.g. 💀) is 4 UTF-8 bytes but 1 Python char; the utf8/py ratio for this guild is ~1.23. Use `_utf8_len()` (UTF-8 byte counting) in the truncation guard; 3900 bytes leaves ~196 bytes of headroom below the 4096-byte limit.
 - `scripts/` is excluded from Ruff linting (in `pyproject.toml` `extend-exclude`). Throwaway scripts there won't block CI but also won't be checked.
 
 ## Boundaries
