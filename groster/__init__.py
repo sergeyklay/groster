@@ -1,7 +1,7 @@
-"""A tool to fetch and process World of Warcraft guild rosters."""
+"""CLI and Discord bot for WoW guild roster management."""
 
 __version__ = "0.6.0"
-__description__ = "A tool to fetch and process World of Warcraft guild rosters."
+__description__ = "CLI and Discord bot for WoW guild roster management."
 __license__ = "MIT"
 __author__ = "Serghei Iakovlev"
 __author_email__ = "oss@serghei.pl"
