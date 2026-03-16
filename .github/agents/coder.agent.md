@@ -8,6 +8,7 @@ tools:
    - edit
    - todo
    - search
+   - web
    - context7/*
 ---
 
