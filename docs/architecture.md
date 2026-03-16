@@ -156,7 +156,16 @@ Threshold: **0.8** (`ALT_SIMILARITY_THRESHOLD`). Characters above the threshold 
 
 ### Main Detection
 
-Within each group, the character with the earliest "Level 10" achievement timestamp (`LEVEL_10_ACHIEVEMENT_ID = 6`) is designated the main. When two characters share the same timestamp, the one with the lexicographically smallest name wins. Fallback (no timestamps): the lexicographically smallest name in the group.
+Within each group, `_find_main_in_group()` computes a weighted composite score for every character using four factors defined in `MAIN_SCORE_WEIGHTS`:
+
+| Factor               | Weight | Direction        |
+| -------------------- | ------ | ---------------- |
+| Level 10 timestamp   | 40     | Lower is better  |
+| Achievement points   | 25     | Higher is better |
+| Character ID         | 20     | Lower is better  |
+| Achievement count    | 15     | Higher is better |
+
+Each factor is normalized to 0.0–1.0 within the group, multiplied by its weight, and summed. The character with the highest total score is the main. Ties are broken by the lexicographically smallest name. When a factor is absent for a character (e.g., no Level 10 timestamp), that factor contributes 0.0 to the score — the remaining factors still participate.
 
 ### Output
 
@@ -209,7 +218,7 @@ Understanding these patterns is essential when diffing snapshots across time.
 ### Scenario: when a group leader leaves
 
 Consider a player — call them **Stoneback** — who has five alts in the guild.
-The system sees a group of six characters; the earliest-Level-10 character
+The system sees a group of six characters; the highest-scoring character
 (say, Stoneback) is designated the main (ties broken by name):
 
 ```
@@ -232,8 +241,8 @@ On the next `groster update` run:
    the same achievement fingerprints.
 3. The grouping algorithm clusters them together as before (Jaccard ≥ 0.8).
 4. A new main is selected from among the three remaining characters —
-   whichever has the earliest Level 10 timestamp, with ties broken by
-   lexicographically smallest name (say, Hammerfist).
+   whichever scores highest under the multi-factor model, with ties broken
+   by lexicographically smallest name (say, Hammerfist).
 
 The resulting output:
 
@@ -264,7 +273,7 @@ churn are categorised separately from potential algorithm regressions:
 | `main-left-guild`       | A group **leader** left; remaining alts were re-grouped under a new main.                                                                 |
 | `member-left-guild`     | One alt left the guild; the group leader and other alts remain unchanged.                                                                 |
 | `hidden-profile`        | The Blizzard API returns 0 achievements for at least one group member (profile hidden by the player). The system cannot fingerprint them. |
-| `main-selection-change` | The group membership is identical but the algorithm chose a different main (e.g., the Level 10 timestamp data changed).                   |
+| `main-selection-change` | The group membership is identical but the algorithm chose a different main (e.g., the scoring factors changed).                          |
 | `group-absorbed`        | Two previously separate groups were merged in the new snapshot (old main demoted to alt of a different main).                             |
 | `unknown`               | None of the above rules matched. Any entry here is a potential algorithm regression and requires investigation.                           |
 
