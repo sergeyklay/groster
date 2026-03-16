@@ -8,7 +8,7 @@ from groster.constants import (
     LEVEL_10_ACHIEVEMENT_ID,
     MAIN_SCORE_WEIGHTS,
 )
-from groster.http_client import BlizzardAPIClient
+from groster.http_client import BlizzardAPIClient, BlizzardAPIError
 from groster.utils import format_timestamp
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,18 @@ async def fetch_member_fingerprint(
     if not name or not realm:
         return None
 
-    ach_data = await client.get_character_achievements(realm, name)
+    try:
+        ach_data = await client.get_character_achievements(realm, name)
+    except BlizzardAPIError:
+        logger.warning("Failed to fetch achievements for %s", name)
+        return {
+            "id": char_id,
+            "name": name,
+            "fingerprint": (),
+            "timestamps": {},
+            "total_quantity": 0,
+            "total_points": 0,
+        }
 
     total_quantity = ach_data.get("total_quantity", 0)
     total_points = ach_data.get("total_points", 0)
@@ -178,11 +189,11 @@ async def fetch_roster_details(
             return None
 
         async with semaphore:
-            response = await client.get_character_profile(realm, name)
+            try:
+                response = await client.get_character_profile(realm, name)
+            except BlizzardAPIError:
+                return None
             await asyncio.sleep(0.01)
-
-        if not response:
-            return None
 
         raw_profiles[name] = response
 
@@ -345,7 +356,11 @@ async def fetch_playable_classes(client: BlizzardAPIClient) -> list[dict[str, An
             [{"id": 1, "name": "Warrior"}, ...]
     """
     logger.debug("Requesting playable classes from API")
-    classes_list = await client.get_playable_classes()
+    try:
+        classes_list = await client.get_playable_classes()
+    except BlizzardAPIError:
+        logger.warning("Failed to fetch playable classes")
+        return []
     return [{"id": c["id"], "name": c["name"]} for c in classes_list]
 
 
@@ -360,7 +375,11 @@ async def fetch_playable_races(client: BlizzardAPIClient) -> list[dict[str, Any]
             [{"id": 1, "name": "Human"}, ...]
     """
     logger.debug("Requesting playable races from API")
-    races_list = await client.get_playable_races()
+    try:
+        races_list = await client.get_playable_races()
+    except BlizzardAPIError:
+        logger.warning("Failed to fetch playable races")
+        return []
     return [{"id": r["id"], "name": r["name"]} for r in races_list]
 
 
@@ -386,7 +405,11 @@ async def fetch_member_pets_summary(
     if not all([name, realm, char_id]):
         return None, None
 
-    data = await client.get_character_pets(realm, name)
+    try:
+        data = await client.get_character_pets(realm, name)
+    except BlizzardAPIError:
+        return None, None
+
     summary = {
         "id": char_id,
         "name": name,
@@ -419,7 +442,10 @@ async def fetch_member_mounts_summary(
     if not all([name, realm, char_id]):
         return None, None
 
-    data = await client.get_character_mounts(realm, name)
+    try:
+        data = await client.get_character_mounts(realm, name)
+    except BlizzardAPIError:
+        return None, None
 
     summary = {
         "id": char_id,

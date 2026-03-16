@@ -4,7 +4,7 @@ import time
 import httpx
 import pytest
 
-from groster.http_client import BlizzardAPIClient, _validate_region
+from groster.http_client import BlizzardAPIClient, BlizzardAPIError, _validate_region
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -233,7 +233,7 @@ def test_request_retry_after_header_integer_used_as_delay(client, mocker):
     sleep_mock.assert_any_call(7)
 
 
-def test_request_max_retries_exceeded_returns_empty_dict(client, mocker):
+def test_request_max_retries_exceeded_raises_blizzard_api_error(client, mocker):
     client.max_retries = 2
     error_resp = httpx.Response(
         503,
@@ -246,9 +246,10 @@ def test_request_max_retries_exceeded_returns_empty_dict(client, mocker):
     )
     mocker.patch("groster.http_client.asyncio.sleep", return_value=None)
 
-    result = asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
+    with pytest.raises(BlizzardAPIError, match="failed after 2 retries") as exc_info:
+        asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
 
-    assert result == {}
+    assert exc_info.value.status_code == 503
 
 
 # ---------------------------------------------------------------------------
@@ -256,7 +257,7 @@ def test_request_max_retries_exceeded_returns_empty_dict(client, mocker):
 # ---------------------------------------------------------------------------
 
 
-def test_request_network_error_retries_then_returns_empty(client, mocker):
+def test_request_network_error_retries_then_raises(client, mocker):
     client.max_retries = 2
     req = httpx.Request("GET", "https://eu.api.blizzard.com/x")
     mocker.patch.object(
@@ -266,13 +267,13 @@ def test_request_network_error_retries_then_returns_empty(client, mocker):
     )
     mocker.patch("groster.http_client.asyncio.sleep", return_value=None)
 
-    result = asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
+    with pytest.raises(BlizzardAPIError, match="failed after 2 retries"):
+        asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
 
-    assert result == {}
     assert client.client.request.call_count == 2
 
 
-def test_request_http_status_error_breaks_immediately(client, mocker):
+def test_request_http_status_error_raises_immediately(client, mocker):
     client.max_retries = 3
     resp_403 = httpx.Response(
         403,
@@ -285,9 +286,29 @@ def test_request_http_status_error_breaks_immediately(client, mocker):
         return_value=resp_403,
     )
 
-    result = asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
+    with pytest.raises(BlizzardAPIError, match="failed with status 403") as exc_info:
+        asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
 
-    assert result == {}
+    assert exc_info.value.status_code == 403
+    assert client.client.request.call_count == 1
+
+
+def test_request_not_found_raises_blizzard_api_error(client, mocker):
+    resp_404 = httpx.Response(
+        404,
+        text="Not Found",
+        request=httpx.Request("GET", "https://eu.api.blizzard.com/x"),
+    )
+    mocker.patch.object(
+        client.client,
+        "request",
+        return_value=resp_404,
+    )
+
+    with pytest.raises(BlizzardAPIError, match="failed with status 404") as exc_info:
+        asyncio.run(client._request("GET", "https://eu.api.blizzard.com/x"))
+
+    assert exc_info.value.status_code == 404
     assert client.client.request.call_count == 1
 
 
