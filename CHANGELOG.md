@@ -19,14 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `_classify_fetch_results()` return type annotation corrected from 5-tuple to 6-tuple to match actual return value.
-- `_find_main_in_group()` explicitly wraps return value in `str()` for type safety.
 - `register_commands()` in `discord.py` now has an explicit `-> dict[str, Any]` return type.
+- Architecture docs updated to describe the deterministic main-selection tiebreaker.
 - Three `pd.Series.to_dict()` call sites in `CsvRosterRepository` wrapped with `cast(dict[int, str], ...)` to satisfy pandas-stubs.
 - Dev dependencies in `pyproject.toml` sorted alphabetically.
 
 ### Removed
 
 - Eight unnecessary `# type: ignore` comments in `models.py` (resolved by `pandas-stubs`).
+
+### Fixed
+
+- `_find_main_in_group()` non-deterministic main selection: when two characters shared the same Level 10 timestamp (or none had a timestamp), the result depended on Blizzard API response order. Now uses `(timestamp, name)` tuple comparison and alphabetical fallback for stable output across runs.
 
 ## [0.6.0] - 2026-03-16
 
