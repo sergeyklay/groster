@@ -20,17 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `_classify_fetch_results()` return type annotation corrected from 5-tuple to 6-tuple to match actual return value.
 - `register_commands()` in `discord.py` now has an explicit `-> dict[str, Any]` return type.
-- Architecture docs updated to describe the deterministic main-selection tiebreaker.
+- Architecture docs updated to describe the multi-factor main-selection scoring model.
 - Three `pd.Series.to_dict()` call sites in `CsvRosterRepository` wrapped with `cast(dict[int, str], ...)` to satisfy pandas-stubs.
-- Dev dependencies in `pyproject.toml` sorted alphabetically.
-
-### Removed
-
-- Eight unnecessary `# type: ignore` comments in `models.py` (resolved by `pandas-stubs`).
-
-### Fixed
-
-- `_find_main_in_group()` non-deterministic main selection: when two characters shared the same Level 10 timestamp (or none had a timestamp), the result depended on Blizzard API response order. Now uses `(timestamp, name)` tuple comparison and alphabetical fallback for stable output across runs.
+- `_find_main_in_group()` now uses a weighted multi-factor scoring model (`MAIN_SCORE_WEIGHTS`) combining Level 10 timestamp, character ID, achievement points, and achievement count instead of relying solely on the Level 10 timestamp. Groups where no character has a timestamp now receive a meaningful ranking rather than alphabetical fallback. Ties are broken by lexicographically smallest name for deterministic output.
 
 ## [0.6.0] - 2026-03-16
 
@@ -49,7 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `search_character_names()` method on `RosterRepository` for prefix-based character name lookup.
 - `build_dashboard()` and `get_alt_summary()` methods on `RosterRepository`.
 - `InMemoryRosterRepository` with async test support via `pytest-asyncio`.
-- Pull request template.
 - Agentic framework: agent modes, coding instructions, prompts, and workflow skills.
 
 ### Changed
