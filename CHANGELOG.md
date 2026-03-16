@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Architecture docs updated to describe the multi-factor main-selection scoring model.
 - Three `pd.Series.to_dict()` call sites in `CsvRosterRepository` wrapped with `cast(dict[int, str], ...)` to satisfy pandas-stubs.
 - `_find_main_in_group()` now uses a weighted multi-factor scoring model (`MAIN_SCORE_WEIGHTS`) combining Level 10 timestamp, character ID, achievement points, and achievement count instead of relying solely on the Level 10 timestamp. Groups where no character has a timestamp now receive a meaningful ranking rather than alphabetical fallback. Ties are broken by lexicographically smallest name for deterministic output.
+- `BlizzardAPIClient._request()` now raises `BlizzardAPIError` on retry exhaustion and non-retryable HTTP failures. Service helpers and `_get_roster_details()` handle that path explicitly instead of treating API errors as valid empty payloads.
+
+### Fixed
+
+- Silent `{}` returns from failed Blizzard API requests no longer mask HTTP errors or produce partial data without a visible failure path.
 
 ## [0.6.0] - 2026-03-16
 
