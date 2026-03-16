@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from groster.constants import LEVEL_10_ACHIEVEMENT_ID
+from groster.constants import LEVEL_10_ACHIEVEMENT_ID, MAIN_SCORE_WEIGHTS
 from groster.http_client import BlizzardAPIClient
 from groster.services import (
     _apply_hidden_profile_fallback,
@@ -10,6 +10,7 @@ from groster.services import (
     _build_fingerprint_cache,
     _classify_fetch_results,
     _find_main_in_group,
+    _score_main_candidate,
     assign_main_characters,
     build_profile_links,
     cluster_characters_by_fingerprint,
@@ -100,7 +101,15 @@ def test_armory_locale_unknown_region_returns_default():
 
 
 def test_find_main_in_group_single_character_returns_that_character():
-    group = [{"name": "Darq", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}}]
+    group = [
+        {
+            "name": "Darq",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000},
+        },
+    ]
 
     result = _find_main_in_group(group)
 
@@ -109,9 +118,27 @@ def test_find_main_in_group_single_character_returns_that_character():
 
 def test_find_main_in_group_multiple_characters_returns_earliest_level10():
     group = [
-        {"name": "Alt", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 9000}},
-        {"name": "Main", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 1000}},
-        {"name": "Alt2", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}},
+        {
+            "name": "Alt",
+            "id": 200,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 9000},
+        },
+        {
+            "name": "Main",
+            "id": 200,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 1000},
+        },
+        {
+            "name": "Alt2",
+            "id": 200,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000},
+        },
     ]
 
     result = _find_main_in_group(group)
@@ -119,56 +146,256 @@ def test_find_main_in_group_multiple_characters_returns_earliest_level10():
     assert result == "Main"
 
 
-def test_find_main_in_group_no_level10_timestamps_returns_alphabetically_first():
+def test_find_main_in_group_no_level10_timestamps_scores_remaining_factors():
     group = [
-        {"name": "Alpha", "timestamps": {}},
-        {"name": "Beta", "timestamps": {}},
+        {
+            "name": "Beta",
+            "id": 200,
+            "total_points": 5000,
+            "total_quantity": 100,
+            "timestamps": {},
+        },
+        {
+            "name": "Alpha",
+            "id": 300,
+            "total_points": 1000,
+            "total_quantity": 40,
+            "timestamps": {},
+        },
     ]
 
     result = _find_main_in_group(group)
 
-    assert result == "Alpha"
+    # Beta has lower ID (better) + higher points + higher quantity
+    assert result == "Beta"
 
 
 def test_find_main_in_group_equal_timestamps_returns_lexicographically_smallest_name():
     group = [
-        {"name": "Zeta", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}},
-        {"name": "Alpha", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}},
+        {
+            "name": "Zeta",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000},
+        },
+        {
+            "name": "Alpha",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000},
+        },
     ]
 
     assert _find_main_in_group(group) == "Alpha"
     assert _find_main_in_group(list(reversed(group))) == "Alpha"
 
 
-def test_find_main_in_group_no_timestamps_returns_smallest_name_any_order():
+def test_find_main_in_group_all_identical_returns_smallest_name():
     group = [
-        {"name": "Zeta", "timestamps": {}},
-        {"name": "Alpha", "timestamps": {}},
+        {
+            "name": "Zeta",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {},
+        },
+        {
+            "name": "Alpha",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {},
+        },
     ]
 
+    # Equal scores everywhere — tiebreak by name
     assert _find_main_in_group(group) == "Alpha"
 
 
-def test_find_main_in_group_mixed_timestamps_returns_earliest():
+def test_find_main_in_group_mixed_timestamps_returns_timestamped():
     group = [
-        {"name": "NoTimestamp", "timestamps": {}},
-        {"name": "HasTimestamp", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 2000}},
+        {
+            "name": "NoTimestamp",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {},
+        },
+        {
+            "name": "HasTimestamp",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 2000},
+        },
     ]
 
     result = _find_main_in_group(group)
 
+    # HasTimestamp gets 40 pts from timestamp factor; NoTimestamp gets 0
     assert result == "HasTimestamp"
 
 
 def test_find_main_in_group_none_timestamp_skipped():
     group = [
-        {"name": "NoneTs", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: None}},
-        {"name": "ValidTs", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 3000}},
+        {
+            "name": "NoneTs",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: None},
+        },
+        {
+            "name": "ValidTs",
+            "id": 100,
+            "total_points": 1000,
+            "total_quantity": 50,
+            "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 3000},
+        },
     ]
 
     result = _find_main_in_group(group)
 
+    # ValidTs gets 40 pts from timestamp; NoneTs gets 0
     assert result == "ValidTs"
+
+
+def test_find_main_in_group_no_timestamps_scores_by_remaining_factors():
+    group = [
+        {
+            "name": "Zebra",
+            "id": 100,
+            "total_points": 2000,
+            "total_quantity": 80,
+            "timestamps": {},
+        },
+        {
+            "name": "Ape",
+            "id": 500,
+            "total_points": 8000,
+            "total_quantity": 200,
+            "timestamps": {},
+        },
+    ]
+
+    result = _find_main_in_group(group)
+
+    # Ape wins: higher total_points (weight 25) + higher total_quantity (weight 15)
+    # outweighs Zebra's lower character_id advantage (weight 20)
+    assert result == "Ape"
+
+
+def test_find_main_in_group_missing_factor_degrades_gracefully():
+    group = [
+        {
+            "name": "Complete",
+            "id": 200,
+            "total_points": 5000,
+            "total_quantity": 100,
+            "timestamps": {},
+        },
+        {
+            "name": "Incomplete",
+            "id": 100,
+            "timestamps": {},
+        },
+    ]
+
+    result = _find_main_in_group(group)
+
+    # Should not crash — missing total_points/total_quantity default to 0
+    assert isinstance(result, str)
+    assert result in ("Complete", "Incomplete")
+
+
+def test_find_main_in_group_deterministic_regardless_of_order():
+    char_a = {
+        "name": "Charlie",
+        "id": 300,
+        "total_points": 4000,
+        "total_quantity": 90,
+        "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 8000},
+    }
+    char_b = {
+        "name": "Alice",
+        "id": 100,
+        "total_points": 6000,
+        "total_quantity": 120,
+        "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 2000},
+    }
+    char_c = {
+        "name": "Bob",
+        "id": 200,
+        "total_points": 5000,
+        "total_quantity": 100,
+        "timestamps": {},
+    }
+
+    result_forward = _find_main_in_group([char_a, char_b, char_c])
+    result_reversed = _find_main_in_group([char_c, char_b, char_a])
+    result_shuffled = _find_main_in_group([char_b, char_c, char_a])
+
+    assert result_forward == result_reversed == result_shuffled
+
+
+# ---------------------------------------------------------------------------
+# _score_main_candidate
+# ---------------------------------------------------------------------------
+
+
+def test_score_main_candidate_range_zero_returns_half_weights():
+    char = {
+        "name": "Solo",
+        "id": 100,
+        "total_points": 1000,
+        "total_quantity": 50,
+        "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000},
+    }
+    group_mins = dict.fromkeys(MAIN_SCORE_WEIGHTS, 0.0)
+    group_ranges = dict.fromkeys(MAIN_SCORE_WEIGHTS, 0.0)
+
+    score = _score_main_candidate(char, group_mins, group_ranges)
+
+    expected = sum(0.5 * w for w in MAIN_SCORE_WEIGHTS.values())
+    assert score == pytest.approx(expected)
+
+
+def test_score_main_candidate_inverted_factors_lower_is_better():
+    group_mins = {
+        "level_10_timestamp": 1000.0,
+        "character_id": 100.0,
+        "total_points": 500.0,
+        "total_quantity": 10.0,
+    }
+    group_ranges = {
+        "level_10_timestamp": 9000.0,
+        "character_id": 400.0,
+        "total_points": 4500.0,
+        "total_quantity": 90.0,
+    }
+
+    low_id_char = {
+        "name": "Low",
+        "id": 100,
+        "total_points": 500,
+        "total_quantity": 10,
+        "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 1000},
+    }
+    high_id_char = {
+        "name": "High",
+        "id": 500,
+        "total_points": 500,
+        "total_quantity": 10,
+        "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 1000},
+    }
+
+    low_score = _score_main_candidate(low_id_char, group_mins, group_ranges)
+    high_score = _score_main_candidate(high_id_char, group_mins, group_ranges)
+
+    # Lower character_id should score higher (inverted factor)
+    assert low_score > high_score
 
 
 # ---------------------------------------------------------------------------

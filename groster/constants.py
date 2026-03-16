@@ -32,6 +32,16 @@ FINGERPRINT_ACHIEVEMENT_IDS = {
     11176,  # Fabulous
 }
 
+# Weights for multi-factor main character scoring.
+# Each factor is normalized to 0.0–1.0 within the group, then multiplied
+# by its weight. The character with the highest total score is the main.
+MAIN_SCORE_WEIGHTS: dict[str, int] = {
+    "level_10_timestamp": 40,
+    "character_id": 20,
+    "total_points": 25,
+    "total_quantity": 15,
+}
+
 # Supported regions based on official Blizzard API documentation.
 SUPPORTED_REGIONS = {"us", "eu", "kr", "tw", "cn"}
 
