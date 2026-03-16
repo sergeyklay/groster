@@ -212,5 +212,7 @@ Steps to verify:
 2. If the tests fail, FIX the test code and RETRY until success.
 3. Run `make lint` to check for linting errors (G004, TID252, UP006, UP007, etc.).
 4. If lint fails, FIX the test code and RETRY until clean.
-5. Only when tests AND lint pass, respond "Done".
-6. NEVER respond "Done" until you have verified that the tests pass and there are no linting errors.
+5. Run `make typecheck` to verify there are no mypy type errors.
+6. If typecheck fails, FIX the test code and RETRY until clean.
+7. Only when tests, lint, AND typecheck pass, respond "Done".
+8. NEVER respond "Done" until you have verified that the tests pass and there are no linting or type errors.

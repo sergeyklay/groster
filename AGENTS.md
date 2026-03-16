@@ -6,7 +6,8 @@ CLI + Discord bot that fetches WoW guild rosters via the Blizzard API and identi
 
 - Install deps: `uv sync --locked --all-packages --all-groups` (NOT `pip install` or `uv pip install`)
 - Run tests: `make test` (NOT `pytest` — bare pytest skips coverage instrumentation)
-- Quality gate: `make format lint test` (run before every commit)
+- Quality gate: `make format lint typecheck test` (run before every commit)
+- Type check: `make typecheck` (runs mypy against `groster/`)
 - Python runtime: managed by `asdf` (version in `.tool-versions`). Run `asdf reshim python` after fresh installs or version changes.
 - Deploy: `docker compose down --remove-orphans && docker build --no-cache . && docker compose up -d` — always use `--no-cache` to avoid stale `COPY` layers.
 
