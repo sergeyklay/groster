@@ -6,6 +6,7 @@ from groster.constants import (
     ALT_SIMILARITY_THRESHOLD,
     FINGERPRINT_ACHIEVEMENT_IDS,
     LEVEL_10_ACHIEVEMENT_ID,
+    MAIN_SCORE_WEIGHTS,
 )
 from groster.http_client import BlizzardAPIClient
 from groster.utils import format_timestamp
@@ -444,28 +445,83 @@ def compute_jaccard_similarity(
     return len(fingerprint_a & fingerprint_b) / union_size
 
 
-def _find_main_in_group(group: list[dict]) -> str:
-    """Determine the main character by the earliest 'Level 10' timestamp.
+def _extract_raw_factor(char: dict, factor: str) -> float | None:
+    """Extract the raw numeric value for a scoring factor from a character dict."""
+    if factor == "level_10_timestamp":
+        val = char.get("timestamps", {}).get(LEVEL_10_ACHIEVEMENT_ID)
+        return float(val) if val is not None else None
+    if factor == "character_id":
+        val = char.get("id")
+        return float(val) if val is not None else None
+    return float(char.get(factor, 0))
 
-    When timestamps are equal, the lexicographically smallest character name
-    wins, ensuring deterministic output regardless of input ordering.
+
+def _score_main_candidate(
+    char: dict,
+    group_mins: dict[str, float],
+    group_ranges: dict[str, float],
+) -> float:
+    """Compute a weighted composite score for a main-character candidate.
+
+    Each factor is normalized to 0.0–1.0 within the group, then multiplied
+    by its weight from ``MAIN_SCORE_WEIGHTS``. Lower-is-better factors
+    (``level_10_timestamp``, ``character_id``) are inverted after
+    normalization.
     """
-    best_char = None
-    best_key: tuple[float, str] = (float("inf"), "")
+    score = 0.0
+    for factor, weight in MAIN_SCORE_WEIGHTS.items():
+        raw = _extract_raw_factor(char, factor)
+        if raw is None:
+            normalized = 0.0
+        elif group_ranges[factor] == 0.0:
+            normalized = 0.5
+        else:
+            normalized = (raw - group_mins[factor]) / group_ranges[factor]
+            if factor in ("level_10_timestamp", "character_id"):
+                normalized = 1.0 - normalized
+        score += normalized * weight
+    return score
 
-    for char in group:
-        timestamp = char.get("timestamps", {}).get(LEVEL_10_ACHIEVEMENT_ID)
-        if timestamp is not None:
-            key = (timestamp, char["name"])
-            if key < best_key:
-                best_key = key
-                best_char = str(char["name"])
 
-    if best_char is not None:
-        return best_char
+def _find_main_in_group(group: list[dict]) -> str:
+    """Determine the main character using weighted multi-factor scoring.
 
-    # No character has a Level 10 timestamp — fall back to alphabetical order
-    return str(min(char["name"] for char in group))
+    Factors (defined in ``MAIN_SCORE_WEIGHTS``):
+    - **level_10_timestamp** — earliest Level 10 achievement (weight 40).
+    - **total_points** — highest achievement points (weight 25).
+    - **character_id** — lowest Blizzard character ID (weight 20).
+    - **total_quantity** — highest achievement count (weight 15).
+
+    Each factor is normalized to 0.0–1.0 within the group. Ties are broken
+    by the lexicographically smallest character name, ensuring deterministic
+    output regardless of input ordering.
+    """
+    if len(group) == 1:
+        return str(group[0]["name"])
+
+    # Compute per-factor min and range across the group
+    group_mins: dict[str, float] = {}
+    group_ranges: dict[str, float] = {}
+
+    for factor in MAIN_SCORE_WEIGHTS:
+        values = [
+            v for char in group if (v := _extract_raw_factor(char, factor)) is not None
+        ]
+        if values:
+            min_val = min(values)
+            max_val = max(values)
+            group_mins[factor] = min_val
+            group_ranges[factor] = max_val - min_val
+        else:
+            group_mins[factor] = 0.0
+            group_ranges[factor] = 0.0
+
+    # Score each character and pick the winner
+    scored = sorted(
+        group,
+        key=lambda c: (-_score_main_candidate(c, group_mins, group_ranges), c["name"]),
+    )
+    return str(scored[0]["name"])
 
 
 def cluster_characters_by_fingerprint(
@@ -771,6 +827,10 @@ async def identify_alts(
                 "mounts": mount_summaries.get(name, {}).get("mounts", 0),
                 "fingerprint": fingerprints_data.get(name, {}).get("fingerprint", ()),
                 "timestamps": fingerprints_data.get(name, {}).get("timestamps", {}),
+                "total_points": fingerprints_data.get(name, {}).get("total_points", 0),
+                "total_quantity": fingerprints_data.get(name, {}).get(
+                    "total_quantity", 0
+                ),
             }
         )
 
