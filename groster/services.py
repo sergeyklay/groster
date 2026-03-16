@@ -445,16 +445,27 @@ def compute_jaccard_similarity(
 
 
 def _find_main_in_group(group: list[dict]) -> str:
-    """Determines the main character by the earliest 'Level 10' timestamp."""
-    earliest_char = None
-    min_timestamp = float("inf")
+    """Determine the main character by the earliest 'Level 10' timestamp.
+
+    When timestamps are equal, the lexicographically smallest character name
+    wins, ensuring deterministic output regardless of input ordering.
+    """
+    best_char = None
+    best_key: tuple[float, str] = (float("inf"), "")
 
     for char in group:
         timestamp = char.get("timestamps", {}).get(LEVEL_10_ACHIEVEMENT_ID)
-        if timestamp is not None and timestamp < min_timestamp:
-            min_timestamp = timestamp
-            earliest_char = char["name"]
-    return str(earliest_char or group[0]["name"])
+        if timestamp is not None:
+            key = (timestamp, char["name"])
+            if key < best_key:
+                best_key = key
+                best_char = str(char["name"])
+
+    if best_char is not None:
+        return best_char
+
+    # No character has a Level 10 timestamp — fall back to alphabetical order
+    return str(min(char["name"] for char in group))
 
 
 def cluster_characters_by_fingerprint(
