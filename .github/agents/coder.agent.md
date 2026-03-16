@@ -147,7 +147,7 @@ IF the task involves fixing a documented BUG:
        >
        > Create a regression test ensuring that [specific logic condition] works as expected.
        >
-       > STRICTLY follow your instructions and #file:../instructions/testing.instructions.md
+       > STRICTLY follow your instructions and .github/instructions/testing.instructions.md
        > ```
 
     b. **Scenario B: Fix is NOT Testable**
