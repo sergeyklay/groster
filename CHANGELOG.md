@@ -9,8 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Static type checking with mypy: configured in `pyproject.toml` with `disallow_untyped_defs`, `warn_return_any`, and other strict settings; runs via `make typecheck`.
+- `py.typed` PEP 561 marker file so downstream consumers can use groster's type annotations.
+- `pandas-stubs` dev dependency for accurate pandas type information.
+- Type checker step in CI pipeline (`.github/workflows/ci.yml`).
 - Cached-fingerprint fallback for characters with hidden Blizzard profiles: hidden characters retain their previous alt grouping when the API returns empty data.
 - `fingerprint_source` column in achievements summary CSV (`api` or `cache`).
+
+### Changed
+
+- `_classify_fetch_results()` return type annotation corrected from 5-tuple to 6-tuple to match actual return value.
+- `_find_main_in_group()` explicitly wraps return value in `str()` for type safety.
+- `register_commands()` in `discord.py` now has an explicit `-> dict[str, Any]` return type.
+- Three `pd.Series.to_dict()` call sites in `CsvRosterRepository` wrapped with `cast(dict[int, str], ...)` to satisfy pandas-stubs.
+- Dev dependencies in `pyproject.toml` sorted alphabetically.
+
+### Removed
+
+- Eight unnecessary `# type: ignore` comments in `models.py` (resolved by `pandas-stubs`).
 
 ## [0.6.0] - 2026-03-16
 

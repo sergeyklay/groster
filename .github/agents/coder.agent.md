@@ -172,6 +172,7 @@ You are PROHIBITED from responding "Done" until you have verified runtime execut
 1. **Static Analysis and Codestyle:**
    - `make format` (MUST pass — applies Ruff formatting and import sorting)
    - `make lint` (MUST pass — zero errors including G004, TID252, UP006, UP007)
+   - `make typecheck` (MUST pass — zero mypy errors)
 
 2. **Runtime Validation (For Logic/Data):**
    - IF you modified business logic or repository operations:

@@ -22,3 +22,5 @@ Task:
 - Detect whether you need to create a new PR or update an existing one based on context
 - When updating, verify the PR description still accurately reflects the changes
 - Use conventional commit messages when appropriate
+
+Strictly follow PR template.

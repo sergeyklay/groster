@@ -43,6 +43,14 @@ def __init__(self, items: list[dict[str, str]]) -> None:
     self.items = items
 ```
 
+## Static Type Checking
+
+- **mypy** is configured in `pyproject.toml` and runs via `make typecheck`.
+- All functions must have complete type annotations (`disallow_untyped_defs = true`).
+- Use `cast()` from `typing` when pandas stubs return overly broad types (e.g., `dict[Hashable, Any]` from `Series.to_dict()`).
+- Use `# type: ignore[code]` sparingly and always include the specific error code.
+- When `response.json()` returns untyped data from httpx, suppress with `# type: ignore[no-any-return]`.
+
 ## Code Style
 
 - **Line length**: 88 characters maximum (Ruff default)

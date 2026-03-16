@@ -13,22 +13,26 @@ Welcome to groster! This project is open source and we welcome contributions fro
 ### Development Environment Setup
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/sergeyklay/groster.git
    cd groster
    ```
 
 2. **Install uv** (if not already installed):
+
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
 3. **Install all dependencies**:
+
    ```bash
    uv sync --locked --all-packages --all-groups
    ```
 
 4. **Set up environment configuration**:
+
    ```bash
    cp .env.example .env
    # Edit .env with your local configuration
@@ -44,6 +48,7 @@ Welcome to groster! This project is open source and we welcome contributions fro
 ### Creating a New Feature
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/descriptive-feature-name
    ```
@@ -62,12 +67,13 @@ Welcome to groster! This project is open source and we welcome contributions fro
 
 5. **Verify quality**:
    ```bash
-   make format lint test
+   make format lint typecheck test
    ```
 
 ### Bug Fixes
 
 1. **Create a bug fix branch**:
+
    ```bash
    git checkout -b fix/descriptive-bug-name
    ```
@@ -85,13 +91,14 @@ Welcome to groster! This project is open source and we welcome contributions fro
 - **Type Hints**: Required for all functions and public APIs
 - **Test Coverage**: Minimum 90% overall, 95% for new code
 - **Documentation**: Google-style docstrings for all public APIs
+- **Type Checking**: Code must pass `make typecheck` (mypy)
 - **Formatting**: Code must pass `make format lint`
 
 ## Pull Request Process
 
 ### Before Submitting
 
-1. **Run quality checks**: `make format lint test`
+1. **Run quality checks**: `make format lint typecheck test`
 2. **Verify test coverage**: Ensure new code has appropriate test coverage
 3. **Update documentation**: Include docstrings and update relevant docs
 4. **Check dependencies**: Use `uv` for all dependency management
