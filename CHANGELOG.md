@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Cached-fingerprint fallback for characters with hidden Blizzard profiles: hidden characters retain their previous alt grouping when the API returns empty data.
+- `fingerprint_source` column in achievements summary CSV (`api` or `cache`).
+
 ## [0.6.0] - 2026-03-16
 
 ### Added

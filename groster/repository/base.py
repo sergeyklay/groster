@@ -254,7 +254,10 @@ class RosterRepository(ABC):
 
         Args:
             summary_data: List of dicts, each with 'id', 'name',
-                          'total_quantity', 'total_points'.
+                          'total_quantity', 'total_points', and optionally
+                          'fingerprint_source' (``"api"`` or ``"cache"``).
+                          Entries without ``fingerprint_source`` default to
+                          ``"api"``.
             region: The region identifier.
             realm: The realm slug.
             guild: The guild slug.
