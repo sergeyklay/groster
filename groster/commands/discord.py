@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 import httpx
 
@@ -13,7 +14,7 @@ async def register_commands(
     bot_token: str,
     max_retries: int = 5,
     timeout: int = 10,
-):
+) -> dict[str, Any]:
     """Register Discord commands."""
     logger.info("Registering Discord commands...")
 
@@ -59,7 +60,7 @@ async def register_commands(
             logger.info("Discord commands registered successfully")
             logger.debug("Response: %s", response.json())
 
-            return response.json()
+            return response.json()  # type: ignore[no-any-return]
     except httpx.HTTPError as e:
         logger.exception("Failed to register Discord commands")
         raise RuntimeError("Failed to register Discord commands") from e

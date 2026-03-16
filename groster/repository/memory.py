@@ -11,7 +11,7 @@ class InMemoryRosterRepository(RosterRepository):
     enabling fast, isolated unit tests without filesystem I/O.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._classes: list[dict[str, Any]] = []
         self._races: list[dict[str, Any]] = []
         self._ranks: dict[str, list[dict[str, Any]]] = {}

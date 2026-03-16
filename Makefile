@@ -49,6 +49,12 @@ lint:
 	uv run --frozen ruff check --target-version py312 ./
 	@echo
 
+.PHONY: typecheck
+typecheck:
+	@echo $(CS)Running type checker$(CE)
+	uv run --frozen mypy
+	@echo
+
 .PHONY: clean
 clean:
 	@echo $(CS)Remove build and tests artifacts and directories$(CE)

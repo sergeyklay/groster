@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import time
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -131,7 +131,7 @@ class BlizzardAPIClient:
             logger.exception("Failed to obtain access token")
             raise
 
-    async def _request(self, method: str, url: str, **kwargs) -> dict[str, Any]:
+    async def _request(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
         """Make a HTTP request to the Blizzard API."""
         token = await self._get_access_token()
         headers = kwargs.pop("headers", {})
@@ -161,7 +161,7 @@ class BlizzardAPIClient:
                     await asyncio.sleep(delay)
                     continue
                 response.raise_for_status()
-                return response.json()
+                return response.json()  # type: ignore[no-any-return]
             except httpx.RequestError as e:
                 req_url = e.request.url if getattr(e, "request", None) else url
                 logger.warning(
@@ -295,7 +295,7 @@ class BlizzardAPIClient:
         logger.debug("Fetching playable classes")
         data = await self._get_static_data("playable-class")
 
-        return data.get("classes", [])
+        return cast(list[PlayableClass], data.get("classes", []))
 
     async def get_playable_races(self) -> list[PlayableRace]:
         """Fetch all playable races from the game.
@@ -306,7 +306,7 @@ class BlizzardAPIClient:
         logger.debug("Fetching playable races")
         data = await self._get_static_data("playable-race")
 
-        return data.get("races", [])
+        return cast(list[PlayableRace], data.get("races", []))
 
     async def close(self) -> None:
         """Close the underlying HTTP client session."""

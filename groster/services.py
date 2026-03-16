@@ -454,7 +454,7 @@ def _find_main_in_group(group: list[dict]) -> str:
         if timestamp is not None and timestamp < min_timestamp:
             min_timestamp = timestamp
             earliest_char = char["name"]
-    return earliest_char or group[0]["name"]
+    return str(earliest_char or group[0]["name"])
 
 
 def cluster_characters_by_fingerprint(
@@ -516,17 +516,18 @@ def assign_main_characters(
 
 
 def _classify_fetch_results(
-    all_results: list,
+    all_results: list[Any],
 ) -> tuple[
-    dict[str, dict],
-    dict[str, dict],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
     dict[str, dict[str, Any]],
     dict[str, dict[str, Any]],
     list[dict[str, Any]],
 ]:
     """Classify raw fetch results into fingerprints, pets, and mounts."""
-    pet_summaries: dict[str, dict] = {}
-    mount_summaries: dict[str, dict] = {}
+    pet_summaries: dict[str, dict[str, Any]] = {}
+    mount_summaries: dict[str, dict[str, Any]] = {}
     fingerprints_data: dict[str, dict[str, Any]] = {}
     achievements_summaries: list[dict[str, Any]] = []
     all_raw_pets: dict[str, dict[str, Any]] = {}
@@ -610,7 +611,7 @@ async def identify_alts(
 
     # Blizzard caps API requests at 100 per second
     tasks_limit = 50
-    all_tasks = []
+    all_tasks: list[Any] = []
     for member in members_to_fetch:
         all_tasks.append(fetch_member_fingerprint(client, member))
         all_tasks.append(fetch_member_pets_summary(client, member))

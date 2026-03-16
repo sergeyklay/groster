@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -42,7 +42,10 @@ class CsvRosterRepository(RosterRepository):
                 logger.warning("Classes file is empty: %s", classes_file)
                 return None
 
-            return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+            return cast(
+                dict[int, str],
+                pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict(),
+            )
         except (pd.errors.EmptyDataError, FileNotFoundError, OSError) as e:
             logger.warning(
                 "Failed to read classes file, a new one will be created: %s", e
@@ -87,7 +90,10 @@ class CsvRosterRepository(RosterRepository):
                 logger.warning("Races file is empty: %s", races_file)
                 return None
 
-            return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+            return cast(
+                dict[int, str],
+                pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict(),
+            )
         except (pd.errors.EmptyDataError, FileNotFoundError, OSError) as e:
             logger.warning(
                 "Failed to read races file, a new one will be created: %s", e
@@ -136,7 +142,10 @@ class CsvRosterRepository(RosterRepository):
                 logger.warning("Ranks file is empty: %s", ranks_file)
                 return None
 
-            return pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict()
+            return cast(
+                dict[int, str],
+                pd.Series(df["name"].values, index=df["id"].astype(int)).to_dict(),
+            )
         except (pd.errors.EmptyDataError, FileNotFoundError, OSError) as e:
             logger.warning(
                 "Failed to read ranks file, a new one will be created: %s", e
@@ -543,7 +552,7 @@ class CsvRosterRepository(RosterRepository):
             df_alts = pd.read_csv(alts_file)
             df_achievements = pd.read_csv(
                 achievements_file,
-                usecols=[  # type: ignore
+                usecols=[
                     "id",
                     "name",
                     "total_quantity",
