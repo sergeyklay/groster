@@ -14,6 +14,7 @@ from groster.commands.bot import (
     _handle_alts,
     _handle_autocomplete,
     _handle_whois,
+    _utf16_len,
     format_alts_embed,
 )
 from groster.repository import InMemoryRosterRepository
@@ -291,6 +292,27 @@ def test_format_alts_embed_truncation_appends_remaining_count():
 
     assert len(embed["description"]) <= 4096
     assert "more mains" in embed["description"]
+
+
+def test_format_alts_embed_truncation_utf16_length_does_not_exceed_discord_limit():
+    # 💀 (U+1F480) is a supplementary-plane emoji: Python len() = 1, Discord UTF-16 = 2.
+    # 500 Death Knight entries guarantee truncation and exercise the UTF-16 guard.
+    data = [(f"MainChar{i:04d}", "Death Knight", 5) for i in range(500)]
+
+    embed = format_alts_embed(data)
+
+    assert _utf16_len(embed["description"]) <= 4096
+
+
+def test_format_alts_embed_truncation_remaining_count_equals_total_minus_shown():
+    data = [(f"MainChar{i:04d}", "Death Knight", 5) for i in range(500)]
+
+    embed = format_alts_embed(data)
+    before, _, after = embed["description"].partition("\n\u2026 and ")
+    lines_shown = before.count("\n")
+    remaining_count = int(after.split()[0])
+
+    assert lines_shown + remaining_count == len(data)
 
 
 def test_format_alts_embed_empty_list_returns_empty_description():

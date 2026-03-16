@@ -121,6 +121,11 @@ def format_character_info(
     return response.strip()
 
 
+def _utf16_len(s: str) -> int:
+    """Return string length as counted by Discord (UTF-16 code units)."""
+    return len(s.encode("utf-16-le")) // 2
+
+
 def format_alts_embed(
     alts_data: list[tuple[str, str, int]],
 ) -> dict[str, Any]:
@@ -142,9 +147,12 @@ def format_alts_embed(
         emoji = get_class_emoji(class_name)
         label = "alt" if alt_count == 1 else "alts"
         line = f"{emoji} **{main_name}** \u2014 {alt_count} {label}\n"
-        remaining = total_mains - i - 1
+        remaining = total_mains - i
         suffix = f"\n\u2026 and {remaining} more mains"
-        if len(description) + len(line) + len(suffix) > max_description:
+        if (
+            _utf16_len(description) + _utf16_len(line) + _utf16_len(suffix)
+            > max_description
+        ):
             description += suffix
             break
         description += line
