@@ -352,6 +352,20 @@ async def fetch_member_mounts_summary(
     return summary, data
 
 
+def compute_jaccard_similarity(
+    fingerprint_a: set[tuple[int, int]],
+    fingerprint_b: set[tuple[int, int]],
+) -> float:
+    """Compute Jaccard similarity between two achievement fingerprints.
+
+    Returns 0.0 when both sets are empty.
+    """
+    union_size = len(fingerprint_a | fingerprint_b)
+    if union_size == 0:
+        return 0.0
+    return len(fingerprint_a & fingerprint_b) / union_size
+
+
 def _find_main_in_group(group: list[dict]) -> str:
     """Determines the main character by the earliest 'Level 10' timestamp."""
     earliest_char = None
@@ -365,7 +379,121 @@ def _find_main_in_group(group: list[dict]) -> str:
     return earliest_char or group[0]["name"]
 
 
-async def identify_alts(  # noqa: C901
+def cluster_characters_by_fingerprint(
+    characters: list[dict],
+    threshold: float = ALT_SIMILARITY_THRESHOLD,
+) -> list[list[dict]]:
+    """Group characters by fingerprint similarity using greedy clustering.
+
+    Characters with fewer than 3 fingerprint entries are not compared and
+    are placed in their own singleton group. Ordering of the input list
+    affects grouping results (greedy algorithm).
+    """
+    groups: list[list[dict]] = []
+    unmatched_chars = list(characters)
+
+    while unmatched_chars:
+        base_char = unmatched_chars.pop(0)
+        base_fp = set(base_char["fingerprint"])
+
+        current_group = [base_char]
+        remaining_chars = []
+
+        for char_to_compare in unmatched_chars:
+            compare_fp = set(char_to_compare["fingerprint"])
+
+            # Skip comparison if either fingerprint is too small to be reliable
+            if len(base_fp) < 3 or len(compare_fp) < 3:
+                remaining_chars.append(char_to_compare)
+                continue
+
+            similarity = compute_jaccard_similarity(base_fp, compare_fp)
+
+            if similarity >= threshold:
+                current_group.append(char_to_compare)
+            else:
+                remaining_chars.append(char_to_compare)
+
+        groups.append(current_group)
+        unmatched_chars = remaining_chars
+
+    return groups
+
+
+def assign_main_characters(
+    groups: list[list[dict]],
+) -> dict[str, str]:
+    """Select the main character in each group and return a name-to-main mapping.
+
+    Delegates per-group main detection to _find_main_in_group().
+    """
+    main_character_map: dict[str, str] = {}
+    for group_list in groups:
+        if not group_list:
+            continue
+        main_name = _find_main_in_group(group_list)
+        for char in group_list:
+            main_character_map[char["name"]] = main_name
+    return main_character_map
+
+
+def _classify_fetch_results(
+    all_results: list,
+) -> tuple[
+    dict[str, dict],
+    dict[str, dict],
+    dict[str, dict[str, Any]],
+    dict[str, dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    """Classify raw fetch results into fingerprints, pets, and mounts."""
+    pet_summaries: dict[str, dict] = {}
+    mount_summaries: dict[str, dict] = {}
+    fingerprints_data: dict[str, dict[str, Any]] = {}
+    achievements_summaries: list[dict[str, Any]] = []
+    all_raw_pets: dict[str, dict[str, Any]] = {}
+    all_raw_mounts: dict[str, dict[str, Any]] = {}
+
+    for res in all_results:
+        if res is None:
+            continue
+
+        if isinstance(res, dict) and "fingerprint" in res:
+            fingerprints_data[res["name"]] = res
+            achievements_summaries.append(
+                {
+                    "id": res["id"],
+                    "name": res["name"],
+                    "total_quantity": res.get("total_quantity", 0),
+                    "total_points": res.get("total_points", 0),
+                }
+            )
+            continue
+
+        if isinstance(res, tuple) and len(res) == 2:
+            summary, raw_data = res
+            if summary is None or raw_data is None:
+                continue
+
+            name = summary["name"]
+            if "pets" in summary:
+                pet_summaries[name] = summary
+                all_raw_pets[name] = raw_data
+            elif "mounts" in summary:
+                mount_summaries[name] = summary
+                all_raw_mounts[name] = raw_data
+
+    return (
+        fingerprints_data,
+        pet_summaries,
+        mount_summaries,
+        all_raw_pets,
+        all_raw_mounts,
+        achievements_summaries,
+    )
+
+
+async def identify_alts(
     client: BlizzardAPIClient,
     roster_data: dict[str, Any],
 ) -> tuple[
@@ -398,42 +526,14 @@ async def identify_alts(  # noqa: C901
         if i + tasks_limit < len(all_tasks):
             await asyncio.sleep(1)
 
-    pet_summaries = {}
-    mount_summaries = {}
-    fingerprints_data = {}
-    achievements_summaries: list[dict[str, Any]] = []
-
-    all_raw_pets: dict[str, dict[str, Any]] = {}
-    all_raw_mounts: dict[str, dict[str, Any]] = {}
-
-    for res in all_results:
-        if res is None:
-            continue
-
-        if isinstance(res, dict) and "fingerprint" in res:
-            fingerprints_data[res["name"]] = res
-            achievements_summaries.append(
-                {
-                    "id": res["id"],
-                    "name": res["name"],
-                    "total_quantity": res.get("total_quantity", 0),
-                    "total_points": res.get("total_points", 0),
-                }
-            )
-            continue
-
-        if isinstance(res, tuple) and len(res) == 2:
-            summary, raw_data = res
-            if summary is None or raw_data is None:
-                continue
-
-            name = summary["name"]
-            if "pets" in summary:
-                pet_summaries[name] = summary
-                all_raw_pets[name] = raw_data
-            elif "mounts" in summary:
-                mount_summaries[name] = summary
-                all_raw_mounts[name] = raw_data
+    (
+        fingerprints_data,
+        pet_summaries,
+        mount_summaries,
+        all_raw_pets,
+        all_raw_mounts,
+        achievements_summaries,
+    ) = _classify_fetch_results(all_results)
 
     logger.info(
         "Found %d pet summaries for %d characters", len(pet_summaries), len(members)
@@ -470,52 +570,10 @@ async def identify_alts(  # noqa: C901
 
     # Group characters by clustering based on fingerprints and stats
     logger.info("Grouping %d characters...", len(all_char_data))
-    groups = []
-    unmatched_chars = list(all_char_data)
-
-    while unmatched_chars:
-        base_char = unmatched_chars.pop(0)
-        base_fp = set(base_char["fingerprint"])
-
-        current_group = [base_char]
-        remaining_chars = []
-
-        for char_to_compare in unmatched_chars:
-            compare_fp = set(char_to_compare["fingerprint"])
-
-            # Skip comparison if either fingerprint is too small to be reliable
-            if len(base_fp) < 3 or len(compare_fp) < 3:
-                remaining_chars.append(char_to_compare)
-                continue
-
-            # Calculate Jaccard Similarity
-            intersection_size = len(base_fp.intersection(compare_fp))
-            union_size = len(base_fp.union(compare_fp))
-
-            # Avoid division by zero, though union_size should be > 0 here
-            if union_size == 0:
-                similarity = 1.0
-            else:
-                similarity = intersection_size / union_size
-
-            # If similarity is high, group them
-            if similarity >= ALT_SIMILARITY_THRESHOLD:
-                current_group.append(char_to_compare)
-            else:
-                remaining_chars.append(char_to_compare)
-
-        groups.append(current_group)
-        unmatched_chars = remaining_chars
+    groups = cluster_characters_by_fingerprint(all_char_data)
 
     logger.info("Finding main characters in %d groups...", len(groups))
-
-    main_character_map = {}
-    for group_list in groups:
-        if not group_list:
-            continue
-        main_name = _find_main_in_group(group_list)
-        for char in group_list:
-            main_character_map[char["name"]] = main_name
+    main_character_map = assign_main_characters(groups)
 
     logger.info("Creating alts data for %d characters...", len(all_char_data))
 

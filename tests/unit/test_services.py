@@ -7,7 +7,10 @@ from groster.http_client import BlizzardAPIClient
 from groster.services import (
     _armory_locale,
     _find_main_in_group,
+    assign_main_characters,
     build_profile_links,
+    cluster_characters_by_fingerprint,
+    compute_jaccard_similarity,
     fetch_member_fingerprint,
     fetch_member_mounts_summary,
     fetch_member_pets_summary,
@@ -464,6 +467,141 @@ def test_fetch_roster_details_member_missing_realm_skipped(mock_client):
     processed, _ = asyncio.run(fetch_roster_details(mock_client, roster))
 
     assert processed == []
+
+
+# ---------------------------------------------------------------------------
+# compute_jaccard_similarity
+# ---------------------------------------------------------------------------
+
+
+def test_compute_jaccard_similarity_identical_sets_returns_one():
+    fp = {(9670, 100), (10693, 200), (10691, 300)}
+
+    result = compute_jaccard_similarity(fp, fp.copy())
+
+    assert result == 1.0
+
+
+def test_compute_jaccard_similarity_disjoint_sets_returns_zero():
+    fp_a = {(9670, 100), (10693, 200), (10691, 300)}
+    fp_b = {(10689, 400), (10687, 500), (10685, 600)}
+
+    result = compute_jaccard_similarity(fp_a, fp_b)
+
+    assert result == 0.0
+
+
+def test_compute_jaccard_similarity_partial_overlap_returns_expected():
+    fp_a = {(9670, 100), (10693, 200), (10691, 300)}
+    fp_b = {(9670, 100), (10693, 200), (10689, 400)}
+
+    result = compute_jaccard_similarity(fp_a, fp_b)
+
+    # 2 shared out of 4 unique → 0.5
+    assert result == pytest.approx(0.5)
+
+
+def test_compute_jaccard_similarity_both_empty_returns_zero():
+    result = compute_jaccard_similarity(set(), set())
+
+    assert result == 0.0
+
+
+# ---------------------------------------------------------------------------
+# cluster_characters_by_fingerprint
+# ---------------------------------------------------------------------------
+
+
+def _make_char_data(name, fingerprint_tuples, timestamps=None):
+    """Build a character dict matching the shape used in identify_alts."""
+    return {
+        "id": hash(name),
+        "name": name,
+        "realm": "terokkar",
+        "pets": 0,
+        "mounts": 0,
+        "fingerprint": tuple(sorted(fingerprint_tuples)),
+        "timestamps": timestamps or {},
+    }
+
+
+def test_cluster_characters_identical_fingerprints_single_group():
+    shared_fp = {(9670, 100), (10693, 200), (10691, 300)}
+    char_a = _make_char_data("CharA", shared_fp)
+    char_b = _make_char_data("CharB", shared_fp)
+
+    groups = cluster_characters_by_fingerprint([char_a, char_b])
+
+    assert len(groups) == 1
+    assert len(groups[0]) == 2
+
+
+def test_cluster_characters_disjoint_fingerprints_separate_groups():
+    char_a = _make_char_data("CharA", {(9670, 100), (10693, 200), (10691, 300)})
+    char_b = _make_char_data("CharB", {(10689, 400), (10687, 500), (10685, 600)})
+
+    groups = cluster_characters_by_fingerprint([char_a, char_b])
+
+    assert len(groups) == 2
+    assert len(groups[0]) == 1
+    assert len(groups[1]) == 1
+
+
+def test_cluster_characters_small_fingerprint_isolated():
+    small = _make_char_data("Small", {(9670, 100), (10693, 200)})
+    normal = _make_char_data("Normal", {(9670, 100), (10693, 200), (10691, 300)})
+
+    groups = cluster_characters_by_fingerprint([small, normal])
+
+    assert len(groups) == 2
+
+
+def test_cluster_characters_empty_list_returns_empty():
+    groups = cluster_characters_by_fingerprint([])
+
+    assert groups == []
+
+
+# ---------------------------------------------------------------------------
+# assign_main_characters
+# ---------------------------------------------------------------------------
+
+
+def test_assign_main_characters_single_group_returns_earliest_level10():
+    group = [
+        _make_char_data("New", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 9000}),
+        _make_char_data("Old", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 1000}),
+    ]
+
+    result = assign_main_characters([group])
+
+    assert result["New"] == "Old"
+    assert result["Old"] == "Old"
+
+
+def test_assign_main_characters_multiple_groups_independent():
+    group_a = [
+        _make_char_data("A1", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 2000}),
+        _make_char_data("A2", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 5000}),
+    ]
+    group_b = [
+        _make_char_data("B1", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 3000}),
+        _make_char_data("B2", {(9670, 100)}, {LEVEL_10_ACHIEVEMENT_ID: 1000}),
+    ]
+
+    result = assign_main_characters([group_a, group_b])
+
+    assert len(result) == 4
+    assert result["A1"] == "A1"
+    assert result["A2"] == "A1"
+    assert result["B1"] == "B2"
+    assert result["B2"] == "B2"
+
+
+def test_assign_main_characters_empty_groups_returns_empty():
+    result = assign_main_characters([])
+
+    assert result == {}
 
 
 # ---------------------------------------------------------------------------
