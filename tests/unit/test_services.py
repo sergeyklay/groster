@@ -11,6 +11,7 @@ from groster.services import (
     build_profile_links,
     cluster_characters_by_fingerprint,
     compute_jaccard_similarity,
+    diff_roster_members,
     fetch_member_fingerprint,
     fetch_member_mounts_summary,
     fetch_member_pets_summary,
@@ -617,11 +618,12 @@ def _fp_achievements(ids):
 def test_identify_alts_empty_roster_returns_empty(mock_client):
     result = asyncio.run(identify_alts(mock_client, {"members": []}))
 
-    alts, pets, mounts, ach_summaries = result
+    alts, pets, mounts, ach_summaries, fp_cache = result
     assert alts == []
     assert pets == {}
     assert mounts == {}
     assert ach_summaries == []
+    assert fp_cache == {}
 
 
 def test_identify_alts_identical_fingerprints_grouped_together(mock_client):
@@ -635,7 +637,7 @@ def test_identify_alts_identical_fingerprints_grouped_together(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    alts, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
+    alts, _, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
 
     mains = {a["main"] for a in alts}
     assert len(mains) == 1
@@ -654,7 +656,7 @@ def test_identify_alts_disjoint_fingerprints_separate_groups(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    alts, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
+    alts, _, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
 
     mains = {a["main"] for a in alts}
     assert len(mains) == 2
@@ -673,7 +675,7 @@ def test_identify_alts_small_fingerprint_not_grouped(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    alts, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
+    alts, _, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
 
     mains = {a["main"] for a in alts}
     assert len(mains) == 2
@@ -689,7 +691,7 @@ def test_identify_alts_single_member_not_marked_as_alt(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    alts, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
+    alts, _, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
 
     assert len(alts) == 1
     assert alts[0]["alt"] is False
@@ -708,7 +710,7 @@ def test_identify_alts_main_detection_uses_earliest_level10(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    alts, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
+    alts, _, _, _, _ = asyncio.run(identify_alts(mock_client, roster))
 
     for a in alts:
         assert a["main"] == "OldChar"
@@ -724,8 +726,239 @@ def test_identify_alts_achievements_summaries_populated(mock_client):
     mock_client.get_character_pets.return_value = {"pets": []}
     mock_client.get_character_mounts.return_value = {"mounts": []}
 
-    _, _, _, ach_summaries = asyncio.run(identify_alts(mock_client, roster))
+    _, _, _, ach_summaries, _ = asyncio.run(identify_alts(mock_client, roster))
 
     assert len(ach_summaries) == 1
     assert ach_summaries[0]["name"] == "Darq"
     assert ach_summaries[0]["total_quantity"] > 0
+
+
+# ---------------------------------------------------------------------------
+# diff_roster_members
+# ---------------------------------------------------------------------------
+
+
+def _make_roster_record(char_id, name, rank=5, level=80):
+    """Build a saved roster record matching the schema in roster.csv."""
+    return {
+        "id": char_id,
+        "name": name,
+        "realm": "terokkar",
+        "level": level,
+        "class_id": 1,
+        "race_id": 2,
+        "rank": rank,
+        "ilvl": 200,
+        "last_login": "2026-01-01 00:00:00",
+    }
+
+
+def test_diff_roster_members_no_previous_returns_all_as_to_fetch():
+    members = [_make_member("Alpha", char_id=1), _make_member("Beta", char_id=2)]
+
+    to_fetch, cached = diff_roster_members(members, [])
+
+    assert len(to_fetch) == 2
+    assert cached == {}
+
+
+def test_diff_roster_members_all_unchanged_returns_empty_fetch_list():
+    members = [_make_member("Alpha", char_id=1), _make_member("Beta", char_id=2)]
+    prev = [
+        _make_roster_record(1, "Alpha", rank=5, level=80),
+        _make_roster_record(2, "Beta", rank=5, level=80),
+    ]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert to_fetch == []
+    assert set(cached) == {"Alpha", "Beta"}
+
+
+def test_diff_roster_members_rank_change_moves_member_to_fetch_list():
+    members = [_make_member("Alpha", char_id=1)]
+    members[0]["rank"] = 3  # changed from 5
+    prev = [_make_roster_record(1, "Alpha", rank=5, level=80)]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert len(to_fetch) == 1
+    assert cached == {}
+
+
+def test_diff_roster_members_level_change_moves_member_to_fetch_list():
+    members = [_make_member("Alpha", char_id=1)]
+    members[0]["character"]["level"] = 81  # changed from 80
+    prev = [_make_roster_record(1, "Alpha", rank=5, level=80)]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert len(to_fetch) == 1
+    assert cached == {}
+
+
+def test_diff_roster_members_new_member_added_to_fetch_list():
+    members = [_make_member("Alpha", char_id=1), _make_member("New", char_id=99)]
+    prev = [_make_roster_record(1, "Alpha", rank=5, level=80)]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert len(to_fetch) == 1
+    assert to_fetch[0]["character"]["name"] == "New"
+    assert "Alpha" in cached
+
+
+def test_diff_roster_members_removed_member_not_in_output():
+    members = [_make_member("Alpha", char_id=1)]
+    prev = [
+        _make_roster_record(1, "Alpha", rank=5, level=80),
+        _make_roster_record(99, "Gone", rank=5, level=80),
+    ]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    all_names = [m["character"]["name"] for m in to_fetch] + list(cached)
+    assert "Gone" not in all_names
+
+
+def test_diff_roster_members_missing_char_id_goes_to_fetch_list():
+    members = [{"character": {"name": "NoId"}, "rank": 5}]
+    prev = [_make_roster_record(1, "Other", rank=5, level=80)]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert len(to_fetch) == 1
+    assert cached == {}
+
+
+def test_diff_roster_members_missing_char_name_goes_to_fetch_list():
+    members = [{"character": {"id": 99}, "rank": 5}]
+    prev = [_make_roster_record(1, "Other", rank=5, level=80)]
+
+    to_fetch, cached = diff_roster_members(members, prev)
+
+    assert len(to_fetch) == 1
+    assert cached == {}
+
+
+# ---------------------------------------------------------------------------
+# fetch_roster_details — incremental path
+# ---------------------------------------------------------------------------
+
+
+def test_fetch_roster_details_cached_records_skips_api_for_cached(mock_client):
+    cached_member = _make_roster_record(1, "CachedChar")
+    fresh_member = _make_member("FreshChar", char_id=2)
+    roster = {"members": [_make_member("CachedChar", char_id=1), fresh_member]}
+
+    mock_client.get_character_profile.return_value = {
+        "name": "FreshChar",
+        "id": 2,
+        "last_login_timestamp": 0,
+        "equipped_item_level": 300,
+    }
+
+    result, _ = asyncio.run(
+        fetch_roster_details(
+            mock_client,
+            roster,
+            cached_records={"CachedChar": cached_member},
+        )
+    )
+
+    # Only FreshChar should trigger an API call
+    assert mock_client.get_character_profile.call_count == 1
+    names = {r["name"] for r in result}
+    assert "CachedChar" in names
+    assert "FreshChar" in names
+
+
+def test_fetch_roster_details_no_cached_records_fetches_all(mock_client):
+    roster = {"members": [_make_member("A", char_id=1), _make_member("B", char_id=2)]}
+
+    mock_client.get_character_profile.side_effect = [
+        {"name": "A", "id": 1, "last_login_timestamp": 0, "equipped_item_level": 200},
+        {"name": "B", "id": 2, "last_login_timestamp": 0, "equipped_item_level": 200},
+    ]
+
+    result, _ = asyncio.run(fetch_roster_details(mock_client, roster))
+
+    assert mock_client.get_character_profile.call_count == 2
+    assert len(result) == 2
+
+
+# ---------------------------------------------------------------------------
+# identify_alts — incremental path
+# ---------------------------------------------------------------------------
+
+
+def test_identify_alts_cached_fingerprints_skips_api_for_cached(mock_client):
+    cached_fp = {
+        "id": 1,
+        "name": "Cached",
+        "fingerprint": ((9670, 100), (10693, 200), (10691, 300)),
+        "timestamps": {9670: 100, 10693: 200, 10691: 300, 6: 1000},
+        "total_quantity": 50,
+        "total_points": 500,
+    }
+    members = [_make_member("Cached", char_id=1), _make_member("Fresh", char_id=2)]
+    roster = {"members": members}
+
+    mock_client.get_character_achievements.return_value = _make_achievements(
+        {9670: 100, 10693: 200, 10691: 300}
+    )
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    alts, _, _, ach_summaries, fp_cache = asyncio.run(
+        identify_alts(mock_client, roster, cached_fingerprints={"Cached": cached_fp})
+    )
+
+    # Only 1 member should trigger achievement API call (Fresh, not Cached)
+    assert mock_client.get_character_achievements.call_count == 1
+    assert len(alts) == 2
+    # fp_cache should only contain the freshly fetched member
+    assert "Fresh" in fp_cache
+    assert "Cached" not in fp_cache
+
+
+def test_identify_alts_returns_five_tuple(mock_client):
+    members = [_make_member("Solo", char_id=1)]
+    roster = {"members": members}
+
+    mock_client.get_character_achievements.return_value = _make_achievements(
+        {9670: 100}
+    )
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    result = asyncio.run(identify_alts(mock_client, roster))
+
+    assert len(result) == 5
+
+
+def test_identify_alts_cached_summaries_in_achievements_summaries(mock_client):
+    cached_fp = {
+        "id": 1,
+        "name": "Cached",
+        "fingerprint": ((9670, 100),),
+        "timestamps": {9670: 100, 6: 1000},
+        "total_quantity": 42,
+        "total_points": 420,
+    }
+    members = [_make_member("Cached", char_id=1), _make_member("Fresh", char_id=2)]
+    roster = {"members": members}
+
+    mock_client.get_character_achievements.return_value = _make_achievements(
+        {9670: 200}
+    )
+    mock_client.get_character_pets.return_value = {"pets": []}
+    mock_client.get_character_mounts.return_value = {"mounts": []}
+
+    _, _, _, ach_summaries, _ = asyncio.run(
+        identify_alts(mock_client, roster, cached_fingerprints={"Cached": cached_fp})
+    )
+
+    names = {s["name"] for s in ach_summaries}
+    assert "Cached" in names
+    assert "Fresh" in names
