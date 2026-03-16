@@ -1,0 +1,25 @@
+name: "Copilot Setup Steps"
+
+# Allow Copilot to set up the environment for this repository.
+on:
+    workflow_dispatch:
+
+jobs:
+    copilot-setup-steps:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+
+            - name: Install uv + Python 3.12
+              uses: astral-sh/setup-uv@v7
+              with:
+                  python-version: "3.12"
+                  enable-cache: true
+                  cache-dependency-glob: |
+                      pyproject.toml
+                      uv.lock
+
+            - name: Install dependencies
+              run: uv sync --locked --all-groups --all-packages
