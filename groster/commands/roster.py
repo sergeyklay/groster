@@ -181,6 +181,20 @@ async def update_roster(
         else:
             cached_fingerprints = {}
 
+        # Load cached fingerprints for ALL members (fallback for hidden profiles)
+        all_member_names = [
+            m.get("character", {}).get("name")
+            for m in roster_data.get("members", [])
+            if m.get("character", {}).get("name")
+        ]
+        all_cached_fingerprints = await repo.get_member_fingerprints(
+            region, realm, all_member_names
+        )
+        logger.info(
+            "Loaded cached fingerprints for %d members",
+            len(all_cached_fingerprints),
+        )
+
         (
             alts_data,
             all_raw_pets,
@@ -191,6 +205,7 @@ async def update_roster(
             client,
             roster_data,
             cached_fingerprints=cached_fingerprints or None,
+            all_cached_fingerprints=all_cached_fingerprints or None,
         )
 
         if not alts_data:

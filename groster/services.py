@@ -544,6 +544,7 @@ def _classify_fetch_results(
                     "name": res["name"],
                     "total_quantity": res.get("total_quantity", 0),
                     "total_points": res.get("total_points", 0),
+                    "fingerprint_source": "api",
                 }
             )
             continue
@@ -571,11 +572,90 @@ def _classify_fetch_results(
     )
 
 
+def _apply_hidden_profile_fallback(
+    fingerprints_data: dict[str, dict[str, Any]],
+    achievements_summaries: list[dict[str, Any]],
+    all_cached_fingerprints: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Substitute cached fingerprints for characters with hidden Blizzard profiles.
+
+    Modifies fingerprints_data in-place. Returns a new achievements_summaries
+    list with fallback entries replacing the empty API entries.
+    """
+    fallback_count = 0
+    for name, cached in all_cached_fingerprints.items():
+        fresh = fingerprints_data.get(name, {})
+        if fresh.get("total_quantity", 0) == 0 and cached.get("total_quantity", 0) > 0:
+            fingerprints_data[name] = cached
+            achievements_summaries = [
+                s for s in achievements_summaries if s.get("name") != name
+            ]
+            achievements_summaries.append(
+                {
+                    "id": cached.get("id"),
+                    "name": name,
+                    "total_quantity": cached.get("total_quantity", 0),
+                    "total_points": cached.get("total_points", 0),
+                    "fingerprint_source": "cache",
+                }
+            )
+            fallback_count += 1
+            logger.info("Using cached fingerprint for %s (profile hidden)", name)
+    if fallback_count > 0:
+        logger.info(
+            "Restored cached fingerprints for %d hidden-profile characters",
+            fallback_count,
+        )
+    return achievements_summaries
+
+
+def _build_fingerprint_cache(
+    fingerprints_data: dict[str, dict[str, Any]],
+    achievements_summaries: list[dict[str, Any]],
+    members_to_fetch: list[dict[str, Any]],
+    cached_fingerprints: dict[str, dict[str, Any]] | None,
+    all_cached_fingerprints: dict[str, dict[str, Any]] | None,
+) -> tuple[dict[str, dict[str, Any]], list[dict[str, Any]]]:
+    """Build the fingerprint cache and merge incremental/fallback entries.
+
+    Returns (fingerprint_cache, updated achievements_summaries).
+    """
+    if cached_fingerprints is not None:
+        freshly_fetched_names = {
+            m.get("character", {}).get("name") for m in members_to_fetch
+        }
+        fingerprint_cache = {
+            name: data
+            for name, data in fingerprints_data.items()
+            if name in freshly_fetched_names
+        }
+        for name, cached in cached_fingerprints.items():
+            fingerprints_data[name] = cached
+            achievements_summaries.append(
+                {
+                    "id": cached.get("id"),
+                    "name": name,
+                    "total_quantity": cached.get("total_quantity", 0),
+                    "total_points": cached.get("total_points", 0),
+                    "fingerprint_source": "api",
+                }
+            )
+        if all_cached_fingerprints is not None:
+            for name in all_cached_fingerprints:
+                if name not in fingerprint_cache and name in fingerprints_data:
+                    fingerprint_cache[name] = fingerprints_data[name]
+    else:
+        fingerprint_cache = dict(fingerprints_data)
+
+    return fingerprint_cache, achievements_summaries
+
+
 async def identify_alts(
     client: BlizzardAPIClient,
     roster_data: dict[str, Any],
     *,
     cached_fingerprints: dict[str, dict[str, Any]] | None = None,
+    all_cached_fingerprints: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     dict[str, dict[str, Any]],
@@ -646,29 +726,20 @@ async def identify_alts(
         len(members),
     )
 
-    # Build fingerprint_cache from freshly-fetched entries only
-    if cached_fingerprints is not None:
-        freshly_fetched_names = {
-            m.get("character", {}).get("name") for m in members_to_fetch
-        }
-        fingerprint_cache = {
-            name: data
-            for name, data in fingerprints_data.items()
-            if name in freshly_fetched_names
-        }
-        # Merge cached fingerprints into the working data
-        for name, cached in cached_fingerprints.items():
-            fingerprints_data[name] = cached
-            achievements_summaries.append(
-                {
-                    "id": cached.get("id"),
-                    "name": name,
-                    "total_quantity": cached.get("total_quantity", 0),
-                    "total_points": cached.get("total_points", 0),
-                }
-            )
-    else:
-        fingerprint_cache = dict(fingerprints_data)
+    # Fallback: substitute cached fingerprints for hidden-profile characters
+    if all_cached_fingerprints is not None:
+        achievements_summaries = _apply_hidden_profile_fallback(
+            fingerprints_data, achievements_summaries, all_cached_fingerprints
+        )
+
+    # Build fingerprint_cache and merge incremental/fallback entries
+    fingerprint_cache, achievements_summaries = _build_fingerprint_cache(
+        fingerprints_data,
+        achievements_summaries,
+        members_to_fetch,
+        cached_fingerprints,
+        all_cached_fingerprints,
+    )
 
     logger.info("Building character data for grouping")
 

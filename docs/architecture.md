@@ -167,6 +167,37 @@ Each character gets a row in the alts CSV:
 | 123 | Thrall   | False | Thrall |
 | 456 | Grommash | True  | Thrall |
 
+### Hidden Profile Fallback
+
+Some players hide their Blizzard profile, causing the API to return `total_quantity=0` and an empty achievements list. Without any fingerprint data, these characters fall out of their alt group and become singletons.
+
+The system addresses this by loading all previously cached `achievements.json` files for current guild members before fingerprinting. After fetching fresh data from the API, each character is checked:
+
+- If the API returned `total_quantity == 0` **and** the cache has `total_quantity > 0`, the cached fingerprint is substituted.
+- If the API returned non-empty data, the fresh data is always used, regardless of what the cache contains.
+
+```mermaid
+sequenceDiagram
+    participant CMD as roster.py
+    participant REPO as RosterRepository
+    participant SVC as identify_alts()
+    participant API as Blizzard API
+
+    CMD->>REPO: get_member_fingerprints(ALL members)
+    REPO-->>CMD: all_cached_fingerprints
+    CMD->>SVC: identify_alts(..., all_cached_fingerprints)
+    SVC->>API: fetch achievements per member
+    API-->>SVC: results (some empty for hidden profiles)
+    Note over SVC: For each member where API total_quantity == 0<br/>and cache total_quantity > 0: substitute cache
+    SVC->>SVC: cluster_characters_by_fingerprint()
+    SVC-->>CMD: alts_data, fingerprint_cache
+    CMD->>REPO: save_character_achievements (cache stays alive)
+```
+
+Each achievements summary entry includes a `fingerprint_source` field: `"api"` for fresh data, or `"cache"` for data restored from a previous run. This column appears in the achievements CSV and can be used by downstream consumers to annotate stale data.
+
+**Limitation:** Characters whose profile was hidden before the system ever fingerprinted them have no cache to fall back on. They remain ungrouped singletons until their profile becomes visible.
+
 ## Guild Membership Changes and Alt Groupings
 
 The alt-detection algorithm is stateless: it only sees the characters currently
@@ -289,6 +320,7 @@ data/
 ├── eu-terokkar-darq-side-of-the-moon-dashboard.csv
 └── eu/terokkar/<character>/
     ├── profile.json
+    ├── achievements.json
     ├── pets.json
     └── mounts.json
 ```
@@ -337,7 +369,7 @@ The `data/` directory is gitignored. It exists only after a successful `groster 
 ## Known Limitations
 
 - **CSV storage**: adequate for guild-sized data (hundreds of characters). No indexing, no concurrent write safety, full file scan on every `/whois` query.
-- **Full refresh only**: every `update` run re-fetches the entire roster. No incremental diffing.
+- **Incremental refresh**: fingerprint data is cached per character and reused for hidden profiles. However, members whose profile was hidden before the system ever ran have no cached data and remain ungrouped singletons.
 - **Single region per run**: the CLI processes one guild at a time.
 - **O(n^2) grouping**: pairwise Jaccard comparison. Acceptable for n < 1000.
 - **Fragile fingerprint set**: if Blizzard removes or changes the Fashionista achievements, detection degrades silently. The chosen IDs are documented in `constants.py`.

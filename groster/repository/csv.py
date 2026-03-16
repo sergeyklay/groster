@@ -499,7 +499,11 @@ class CsvRosterRepository(RosterRepository):
         try:
             logger.info("Creating achievements summary file: %s", achievements_file)
             df = pd.DataFrame(summary_data)
-            df = df[["id", "name", "total_quantity", "total_points"]]
+            if "fingerprint_source" not in df.columns:
+                df["fingerprint_source"] = "api"
+            df = df[
+                ["id", "name", "total_quantity", "total_points", "fingerprint_source"]
+            ]
             df.to_csv(achievements_file, index=False, encoding="utf-8")
             logger.info(
                 "Achievements summary file successfully created: %s",
