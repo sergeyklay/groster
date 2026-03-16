@@ -119,7 +119,7 @@ def test_find_main_in_group_multiple_characters_returns_earliest_level10():
     assert result == "Main"
 
 
-def test_find_main_in_group_no_level10_timestamps_returns_first_character():
+def test_find_main_in_group_no_level10_timestamps_returns_alphabetically_first():
     group = [
         {"name": "Alpha", "timestamps": {}},
         {"name": "Beta", "timestamps": {}},
@@ -128,6 +128,25 @@ def test_find_main_in_group_no_level10_timestamps_returns_first_character():
     result = _find_main_in_group(group)
 
     assert result == "Alpha"
+
+
+def test_find_main_in_group_equal_timestamps_returns_lexicographically_smallest_name():
+    group = [
+        {"name": "Zeta", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}},
+        {"name": "Alpha", "timestamps": {LEVEL_10_ACHIEVEMENT_ID: 5000}},
+    ]
+
+    assert _find_main_in_group(group) == "Alpha"
+    assert _find_main_in_group(list(reversed(group))) == "Alpha"
+
+
+def test_find_main_in_group_no_timestamps_returns_smallest_name_any_order():
+    group = [
+        {"name": "Zeta", "timestamps": {}},
+        {"name": "Alpha", "timestamps": {}},
+    ]
+
+    assert _find_main_in_group(group) == "Alpha"
 
 
 def test_find_main_in_group_mixed_timestamps_returns_earliest():
