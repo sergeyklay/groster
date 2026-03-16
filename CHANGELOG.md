@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `/alts` slash command that displays every guild main with their alt count in an ephemeral Discord embed, sorted by alt count descending.
+- `format_alts_embed()` helper that builds a Discord embed dict with automatic truncation at the 4096-character description limit.
+- `get_alts_per_main()` method on `RosterRepository` for per-main alt count aggregation from the dashboard.
 - Discord autocomplete for the `/whois` command — typing a partial name shows matching character suggestions.
 - Fuzzy "Did you mean?" suggestions when `/whois` finds no exact match, powered by `difflib.get_close_matches()`.
 - `search_character_names()` method on `RosterRepository` for prefix-based character name lookup.
@@ -19,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `register_commands()` switched from single POST to bulk PUT (`PUT .../commands`) so all guild slash commands are registered atomically.
 - `/whois` command handler extracted into `_handle_whois()` helper to reduce `interactions_handler()` complexity.
 - `_format_no_character_message()` accepts optional `suggestions` parameter for fuzzy match results.
 - Dashboard generation and alt summary logic moved behind `RosterRepository`; `summary_report()` accepts a repository instance instead of reading CSVs directly.

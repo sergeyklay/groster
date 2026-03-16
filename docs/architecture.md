@@ -1,14 +1,47 @@
 # Architecture
 
-groster fetches a WoW guild roster from the Blizzard Battle.net API, identifies which characters belong to the same player through achievement fingerprinting, and exposes the results via CSV files and a Discord `/whois` command.
+groster fetches a WoW guild roster from the Blizzard Battle.net API, identifies which characters belong to the same player through achievement fingerprinting, and exposes the results via CSV files and Discord slash commands (`/whois`, `/alts`).
 
-## System Context
+## System context
 
 ```mermaid
 ---
-title: System Context
+title: System context
 ---
 flowchart TB
+    officer(["Guild Officer
+    Discord user"])
+    admin(["Server Admin
+    runs CLI"])
+
+    groster["groster
+    CLI + Discord bot
+    alt detection · roster queries"]
+
+    discord(["Discord
+    Interactions API"])
+    blizzard(["Blizzard
+    Battle.net API"])
+
+    admin -- "groster update
+    groster register" --> groster
+    officer -- "/whois · /alts" --> discord
+    discord -- "POST /api/interactions
+    Ed25519 verified" --> groster
+    groster -- "OAuth 2.0 · HTTPS
+    roster · profiles · achievements" --> blizzard
+    groster -- "PUT commands
+    interaction responses" --> discord
+```
+
+## Container view
+
+```mermaid
+---
+title: Container view
+---
+flowchart TB
+    discord(["Discord Interactions API"])
     blizzard(["Blizzard Battle.net API"])
 
     subgraph system [" groster "]
@@ -17,7 +50,8 @@ flowchart TB
         cli["CLI
         update · register"]
         bot["Bot
-        serve · aiohttp :5000"]
+        serve · aiohttp :5000
+        /whois · /alts"]
         svc["Services
         fingerprinting · alt grouping · links"]
         http["HTTP Client
@@ -30,23 +64,23 @@ flowchart TB
 
         cli & bot --> svc
         svc --> http
-        svc --> repo
+        svc & bot --> repo
         repo --> data
     end
 
-    discord(["Discord Interactions API"])
-
-    http -. "HTTPS · OAuth 2.0
-    roster · profiles · achievements" .-> blizzard
-    discord -. "POST /api/interactions
-    Ed25519 verified" .-> bot
+    http -- "HTTPS · OAuth 2.0
+    roster · profiles · achievements" --> blizzard
+    discord -- "POST /api/interactions
+    Ed25519 verified" --> bot
+    cli -- "PUT /commands
+    bulk overwrite" --> discord
 ```
 
 Three commands share the same service and repository layers:
 
 - **`groster update`** — batch CLI that fetches the full roster, computes alt groups, writes CSVs.
-- **`groster serve`** — long-running aiohttp server that answers Discord `/whois` by reading the CSVs.
-- **`groster register`** — one-shot call to register slash commands with the Discord API.
+- **`groster serve`** — long-running aiohttp server that answers Discord `/whois` and `/alts` by reading the CSVs.
+- **`groster register`** — one-shot call to bulk-register all slash commands with the Discord API.
 
 ## Module Map
 
@@ -65,7 +99,7 @@ groster/
 │   ├── bot.py            aiohttp handler for Discord interactions
 │   └── discord.py        Slash command registration
 └── repository/
-    ├── base.py           RosterRepository ABC (17 abstract async methods)
+    ├── base.py           RosterRepository ABC (18 abstract async methods)
     ├── csv.py            CsvRosterRepository — pandas-backed file I/O
     └── memory.py         InMemoryRosterRepository — dict-backed, for testing
 ```
@@ -157,8 +191,9 @@ Each character gets a row in the alts CSV:
 ```
 RosterRepository (ABC)
 ─────────────────────
-17 abstract async methods: get/save for classes, races, ranks, roster,
-profiles, links, alts, achievements, dashboard lookup, character name search.
+18 abstract async methods: get/save for classes, races, ranks, roster,
+profiles, links, alts, achievements, dashboard lookup, per-main alt counts,
+and character name search.
 
 CsvRosterRepository                    InMemoryRosterRepository
 ──────────────────────                 ────────────────────────
@@ -198,6 +233,7 @@ The `data/` directory is gitignored. It exists only after a successful `groster 
 2. Parse JSON body. Respond to Discord PING (type 1) with PONG.
 3. For autocomplete (type 4): call `repo.search_character_names()` with the current input prefix, return up to 25 matching names as choices (type 8 response).
 4. For `/whois <player>` (type 2): call `repo.get_character_info_by_name()`, format response with class emojis and main/alt tree, return as interaction response (type 4). If no exact match is found, fall back to fuzzy search via `difflib.get_close_matches()` and suggest up to 3 similar names.
+5. For `/alts` (type 2): call `repo.get_alts_per_main()`, build a Discord embed listing every main with their alt count (sorted by count descending), and return as an ephemeral interaction response (type 4, flags 64). The embed description is truncated at 4096 characters with a `… and N more mains` suffix when the guild is large.
 
 **Configuration**: all via environment variables. The `_create_app()` factory reads env vars and wires the verify key, repository, and guild coordinates into `app[]` state.
 

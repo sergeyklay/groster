@@ -3,22 +3,23 @@
 [![CI](https://github.com/sergeyklay/groster/actions/workflows/ci.yml/badge.svg)](https://github.com/sergeyklay/groster/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/sergeyklay/groster/graph/badge.svg?token=t2SlaQow9Z)](https://codecov.io/gh/sergeyklay/groster)
 
-A tool for fetching and processing a World of Warcraft guild roster via the official Blizzard API. Its primary feature is to identify and group alternate characters (_alts_) with their main characters based on shared account-wide data.
+CLI and Discord bot for World of Warcraft guild management. Fetches guild rosters via the Blizzard API, identifies alternate characters through achievement fingerprinting, and exposes the results through interactive Discord slash commands (`/whois`, `/alts`) and local CSV reports.
 
 ## Problem Statement
 
-The standard guild roster from the Blizzard presents a flat list of characters without indicating which ones belong to the same player. Manually tracking mains and alts is tedious and error-prone, making it difficult to understand the true size and composition of a guild's player base.
+The Blizzard guild roster is a flat list of characters with no indication of which ones belong to the same player. Manually tracking mains and alts is tedious and error-prone, making it hard to understand the true size, composition, and activity of a guild.
 
-This tool automates the process by programmatically analyzing character data to uncover these player-character relationships, providing a clear and accurate overview of the guild roster.
+groster automates this by analyzing account-wide achievement timestamps to group characters by player, then delivers the results where guild officers need them — directly in Discord.
 
 ## Technology Stack
 
 - Language: Python 3.12+
-- Data Processing: [pandas](https://pandas.pydata.org) - Data processing, analysis and manipulation
-- HTTP Requests: [httpx](https://www.python-httpx.org) - For all interactions with the Blizzard Battle.net REST API
-- Configuration: [python-dotenv](https://pypi.org/project/python-dotenv/) - For managing API credentials securely
-- Linting: [ruff](https://docs.astral.sh/ruff/) - As an all-in-one tool for code linting and formatting, ensuring high code quality
-- Dependency Management: [uv](https://docs.astral.sh/uv/) - The project's required tool for Python dependency management.
+- Data Processing: [pandas](https://pandas.pydata.org) — DataFrame merges for dashboard generation and CSV I/O
+- HTTP Client: [httpx](https://www.python-httpx.org) — async Blizzard Battle.net API integration with OAuth 2.0
+- Discord Bot: [aiohttp](https://docs.aiohttp.org) — lightweight webhook server with Ed25519 signature verification
+- Configuration: [python-dotenv](https://pypi.org/project/python-dotenv/) — secure API credential management
+- Linting: [ruff](https://docs.astral.sh/ruff/) — formatting, linting, and import sorting in one tool
+- Dependency Management: [uv](https://docs.astral.sh/uv/) — fast, lockfile-based dependency resolution
 
 ## Documentation
 

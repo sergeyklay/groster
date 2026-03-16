@@ -1,6 +1,6 @@
 # Running groster locally with a Discord bot
 
-This guide walks you through the full process of running groster on your local machine, exposing it to the internet with Cloudflare Tunnel, and connecting it to Discord so your guild can use the `/whois` command. By the end, you'll have a working Discord bot that looks up WoW characters and shows their main/alt relationships.
+This guide walks you through the full process of running groster on your local machine, exposing it to the internet with Cloudflare Tunnel, and connecting it to Discord so your guild can use the `/whois` and `/alts` commands. By the end, you'll have a working Discord bot that looks up WoW characters, shows their main/alt relationships, and gives officers a guild-wide alt overview.
 
 > **Prefer Docker?** If you want to run groster in a container instead of installing Python locally, see the [Docker guide](docker.md). The rest of this guide covers the local development setup.
 
@@ -184,29 +184,31 @@ Once saved, Discord confirms the endpoint is valid. Your bot is now connected.
 
 ## Step 7: register the slash command
 
-The bot needs to register its `/whois` slash command with Discord. Run this once (or whenever you change the command definition):
+The bot needs to register its slash commands with Discord. Run this once (or whenever command definitions change):
 
 ```bash
 uv run --frozen groster register
 ```
 
-This sends a request to the Discord API to create the `/whois` command in your server. After registration, the command appears in the Discord command picker within a few minutes. Guild-scoped commands can take up to an hour to propagate.
+This sends a bulk overwrite request to the Discord API to register `/whois` and `/alts` in your server. After registration, the commands appear in the Discord command picker within a few minutes. Guild-scoped commands can take up to an hour to propagate.
 
 ## Step 8: test the bot in Discord
 
-Open Discord, navigate to a channel in your server, and type:
+Open Discord, navigate to a channel in your server, and try both commands:
 
 ```
 /whois CharacterName
 ```
 
-As you type the character name, Discord shows autocomplete suggestions from your guild roster. Select one, or finish typing manually.
+As you type the character name, Discord shows autocomplete suggestions from your guild roster. Select one, or finish typing manually. The bot responds with the character's information: class, realm, item level, last login date, and a list of alts if any were detected. If the character isn't found, the bot suggests similar names (fuzzy matching) and shows when the roster was last updated.
 
-Replace `CharacterName` with an actual character name from your guild roster. The bot responds with the character's information: class, realm, item level, last login date, and a list of alts if any were detected.
+```
+/alts
+```
 
-If the character isn't found, the bot suggests similar names (fuzzy matching) and shows when the roster was last updated.
+This returns an ephemeral embed (visible only to you) listing every main character with their alt count, sorted by alt count descending. The footer shows total mains, alts, and characters.
 
-A note on testing: don't try to open the tunnel URL in a browser or send a `GET` request to it. The `/api/interactions` endpoint only accepts `POST` requests with Discord's specific payload format. A browser visit returns an error; that's expected. The way to test is through the `/whois` command inside Discord.
+A note on testing: don't try to open the tunnel URL in a browser or send a `GET` request to it. The `/api/interactions` endpoint only accepts `POST` requests with Discord's specific payload format. A browser visit returns an error; that's expected. The way to test is through the slash commands inside Discord.
 
 ## Common commands reference
 
