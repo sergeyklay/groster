@@ -41,12 +41,12 @@ def create_character_info(row: pd.Series) -> dict[str, Any]:
     return {
         "name": str(name),
         "realm": str(realm),
-        "level": int(level) if pd.notna(level) else 0,  # type: ignore
-        "class": str(char_class) if pd.notna(char_class) else "Unknown",  # type: ignore
-        "race": str(race) if pd.notna(race) else "Unknown",  # type: ignore
-        "rank": str(rank) if pd.notna(rank) else "Unknown",  # type: ignore
-        "ilvl": int(ilvl) if pd.notna(ilvl) else 0,  # type: ignore
-        "last_login": str(last_login) if pd.notna(last_login) else "N/A",  # type: ignore
-        "is_alt": bool(is_alt) if pd.notna(is_alt) else False,  # type: ignore
-        "main": str(main) if pd.notna(main) else str(name),  # type: ignore
+        "level": int(level) if pd.notna(level) else 0,
+        "class": str(char_class) if pd.notna(char_class) else "Unknown",
+        "race": str(race) if pd.notna(race) else "Unknown",
+        "rank": str(rank) if pd.notna(rank) else "Unknown",
+        "ilvl": int(ilvl) if pd.notna(ilvl) else 0,
+        "last_login": str(last_login) if pd.notna(last_login) else "N/A",
+        "is_alt": bool(is_alt) if pd.notna(is_alt) else False,
+        "main": str(main) if pd.notna(main) else str(name),
     }

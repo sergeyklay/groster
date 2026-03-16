@@ -32,7 +32,7 @@ BANNER = r"""
 class RichGroup(click.Group):
     """Custom Click group that displays a banner before the help text."""
 
-    def format_help(self, ctx, formatter):
+    def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         """Writes the help into the formatter if it exists.
 
         This method is called by Click when the help text is requested.
@@ -149,7 +149,7 @@ def update(
     show_default="env: GROSTER_PORT or 5000",
     help="Port for the bot server.",
 )
-def serve(host: str, port: int):
+def serve(host: str, port: int) -> None:
     """Run the Discord bot server."""
     logger.info("Starting server on %s:%d...", host, port)
     try:
@@ -177,7 +177,7 @@ def serve(host: str, port: int):
     required=os.getenv("DISCORD_BOT_TOKEN") is None,
     help="The token of the Discord bot.",
 )
-def register(app_id: str, guild_id: str, bot_token: str):
+def register(app_id: str, guild_id: str, bot_token: str) -> None:
     """Register Discord commands."""
     logger.info("Registering Discord commands...")
     try:
