@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Incremental roster updates: `groster update` now diffs the current guild roster against the previous run and only re-fetches achievement, pet, and mount data for new or changed members, reducing Blizzard API calls by ~75% on typical runs. Member profiles (ilvl, last login) are always refreshed to keep Discord data current.
+- `--force` flag on the `update` command to bypass the incremental cache and perform a full refresh.
+- `diff_roster_members()` pure function for comparing current Blizzard roster members against previously saved records.
+- `get_roster_details()`, `save_character_achievements()`, and `get_member_fingerprints()` methods on `RosterRepository` for incremental state persistence.
+- Per-character `achievements.json` cache files under `data/{region}/{realm}/{charname}/` for fingerprint reuse across runs.
 - `/alts` slash command that displays every guild main with their alt count in an ephemeral Discord embed, sorted by alt count descending.
 - `format_alts_embed()` helper that builds a Discord embed dict with automatic truncation at the 4096-character description limit.
 - `get_alts_per_main()` method on `RosterRepository` for per-main alt count aggregation from the dashboard.
@@ -22,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `identify_alts()` returns a 5-tuple (was 4-tuple) — the new fifth element is `fingerprint_cache` containing only freshly fetched fingerprint data for persistence.
+- `fetch_roster_details()` accepts an optional `cached_records` keyword argument to skip API calls for unchanged members.
+- `_get_roster_details()` in `commands/roster.py` returns `(roster_data, cached_profile_records)` to thread incremental state through the orchestration layer.
 - `register_commands()` switched from single POST to bulk PUT (`PUT .../commands`) so all guild slash commands are registered atomically.
 - `/whois` command handler extracted into `_handle_whois()` helper to reduce `interactions_handler()` complexity.
 - `_format_no_character_message()` accepts optional `suggestions` parameter for fuzzy match results.
