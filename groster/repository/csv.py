@@ -549,6 +549,38 @@ class CsvRosterRepository(RosterRepository):
             logger.exception("Failed to read alts data for summary")
             return None
 
+    async def get_alts_per_main(
+        self, region: str, realm: str, guild: str
+    ) -> list[tuple[str, str, int]] | None:
+        """Return per-main alt counts from the dashboard."""
+        dashboard_file = data_path(self.base_path, region, realm, guild, "dashboard")
+        if not dashboard_file.exists():
+            logger.debug("Dashboard file does not exist: %s", dashboard_file)
+            return None
+
+        try:
+            df = pd.read_csv(dashboard_file)
+            mains_df = df[df["Alt?"] == False][["Name", "Class"]]  # noqa: E712
+            mains_df = mains_df.rename(columns={"Name": "Main"})
+
+            alts_df = df[df["Alt?"] == True]  # noqa: E712
+            grouped = alts_df.groupby("Main").size().reset_index(name="alt_count")
+
+            result = mains_df.merge(grouped, on="Main", how="left").fillna(0)
+            result["alt_count"] = result["alt_count"].astype(int)
+            result = result.sort_values(["alt_count", "Main"], ascending=[False, True])
+            return [
+                (r["Main"], r["Class"], r["alt_count"]) for _, r in result.iterrows()
+            ]
+        except (
+            FileNotFoundError,
+            pd.errors.EmptyDataError,
+            pd.errors.ParserError,
+            KeyError,
+        ):
+            logger.exception("Failed to read dashboard data for alts per main")
+            return None
+
     async def search_character_names(
         self,
         prefix: str,

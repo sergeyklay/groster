@@ -121,6 +121,105 @@ def format_character_info(
     return response.strip()
 
 
+def format_alts_embed(
+    alts_data: list[tuple[str, str, int]],
+) -> dict[str, Any]:
+    """Build a Discord embed dict for the /alts response.
+
+    Args:
+        alts_data: List of (main_name, class_name, alt_count) tuples.
+
+    Returns:
+        Embed dict with title, description, footer, and color.
+    """
+    max_description = 4096
+    total_mains = len(alts_data)
+    total_alts = sum(c for _, _, c in alts_data)
+    total_characters = total_mains + total_alts
+
+    description = ""
+    for i, (main_name, class_name, alt_count) in enumerate(alts_data):
+        emoji = get_class_emoji(class_name)
+        label = "alt" if alt_count == 1 else "alts"
+        line = f"{emoji} **{main_name}** \u2014 {alt_count} {label}\n"
+        remaining = total_mains - i - 1
+        suffix = f"\n\u2026 and {remaining} more mains"
+        if len(description) + len(line) + len(suffix) > max_description:
+            description += suffix
+            break
+        description += line
+
+    footer_text = (
+        f"{total_mains} mains \u00b7 {total_alts} alts"
+        f" \u00b7 {total_characters} total characters"
+    )
+
+    return {
+        "title": "Guild Alt Summary",
+        "description": description,
+        "color": 0x00AAFF,
+        "footer": {"text": footer_text},
+    }
+
+
+async def _handle_alts(
+    repo: RosterRepository,
+    region: str,
+    realm: str,
+    guild: str,
+) -> web.Response:
+    """Handle the /alts slash command.
+
+    Args:
+        repo: Repository instance for data lookup.
+        region: Bot region.
+        realm: Bot realm.
+        guild: Bot guild.
+
+    Returns:
+        aiohttp JSON response with type 4 containing alt summary embed.
+    """
+    try:
+        alts_data = await repo.get_alts_per_main(region, realm, guild)
+
+        if alts_data is None:
+            return web.json_response(
+                {
+                    "type": 4,
+                    "data": {
+                        "content": (
+                            "Guild roster data is not available yet. "
+                            "Please ask the server administrator "
+                            "to run a roster update."
+                        ),
+                        "flags": 64,
+                    },
+                }
+            )
+
+        embed = format_alts_embed(alts_data)
+        return web.json_response(
+            {
+                "type": 4,
+                "data": {
+                    "embeds": [embed],
+                    "flags": 64,
+                },
+            }
+        )
+    except Exception:
+        logger.exception("Error retrieving alt summary")
+        return web.json_response(
+            {
+                "type": 4,
+                "data": {
+                    "content": ("An error occurred while retrieving the alt summary."),
+                    "flags": 64,
+                },
+            }
+        )
+
+
 async def _handle_autocomplete(
     data: dict[str, Any],
     repo: RosterRepository,
@@ -291,6 +390,13 @@ async def interactions_handler(request: web.Request):
                 request.app["bot_realm"],
                 request.app["bot_guild"],
                 user_id,
+            )
+        if command_name == "alts":
+            return await _handle_alts(
+                request.app["repo"],
+                request.app["bot_region"],
+                request.app["bot_realm"],
+                request.app["bot_guild"],
             )
 
     # Autocomplete

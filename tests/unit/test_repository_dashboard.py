@@ -427,3 +427,89 @@ async def test_search_character_names_no_match_returns_empty_list(
     result = await in_memory_repo.search_character_names("zzz", REGION, REALM, GUILD)
 
     assert result == []
+
+
+# ── get_alts_per_main ────────────────────────────────────────────────────────
+
+
+async def test_get_alts_per_main_seeded_returns_sorted_tuples(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Alice"),
+            {**_make_dashboard_row("Altone"), "Alt?": True, "Main": "Alice"},
+            {**_make_dashboard_row("Alttwo"), "Alt?": True, "Main": "Alice"},
+            {**_make_dashboard_row("Bob"), "Class": "Mage"},
+            {
+                **_make_dashboard_row("Bobalt"),
+                "Alt?": True,
+                "Main": "Bob",
+                "Class": "Mage",
+            },
+            _make_dashboard_row("Charlie"),
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.get_alts_per_main(REGION, REALM, GUILD)
+
+    assert result == [
+        ("Alice", "Warrior", 2),
+        ("Bob", "Mage", 1),
+        ("Charlie", "Warrior", 0),
+    ]
+
+
+async def test_get_alts_per_main_no_dashboard_returns_none(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    result = await in_memory_repo.get_alts_per_main(REGION, REALM, GUILD)
+
+    assert result is None
+
+
+async def test_get_alts_per_main_no_alts_all_zero(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Alice"),
+            _make_dashboard_row("Bob"),
+            _make_dashboard_row("Charlie"),
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.get_alts_per_main(REGION, REALM, GUILD)
+
+    assert result is not None
+    assert all(count == 0 for _, _, count in result)
+    assert [name for name, _, _ in result] == ["Alice", "Bob", "Charlie"]
+
+
+async def test_get_alts_per_main_same_count_sorts_by_name_ascending(
+    in_memory_repo: InMemoryRosterRepository,
+):
+    in_memory_repo.seed_dashboard(
+        [
+            _make_dashboard_row("Zara"),
+            {**_make_dashboard_row("ZaraAlt"), "Alt?": True, "Main": "Zara"},
+            _make_dashboard_row("Alpha"),
+            {**_make_dashboard_row("AlphaAlt"), "Alt?": True, "Main": "Alpha"},
+        ],
+        REGION,
+        REALM,
+        GUILD,
+    )
+
+    result = await in_memory_repo.get_alts_per_main(REGION, REALM, GUILD)
+
+    assert result == [
+        ("Alpha", "Warrior", 1),
+        ("Zara", "Warrior", 1),
+    ]
