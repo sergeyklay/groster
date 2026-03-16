@@ -8,7 +8,7 @@ packages = ["groster"]
 [project]
 name = "groster"
 version = "0.6.0"
-description = "A tool to fetch and process World of Warcraft guild rosters, identifying player info via the Blizzard API."
+description = "CLI and Discord bot for WoW guild roster management — alt detection via achievement fingerprinting."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12, <4"
