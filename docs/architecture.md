@@ -156,7 +156,7 @@ Threshold: **0.8** (`ALT_SIMILARITY_THRESHOLD`). Characters above the threshold 
 
 ### Main Detection
 
-Within each group, the character with the earliest "Level 10" achievement timestamp (`LEVEL_10_ACHIEVEMENT_ID = 6`) is designated the main. Fallback: first character in the group.
+Within each group, the character with the earliest "Level 10" achievement timestamp (`LEVEL_10_ACHIEVEMENT_ID = 6`) is designated the main. When two characters share the same timestamp, the one with the lexicographically smallest name wins. Fallback (no timestamps): the lexicographically smallest name in the group.
 
 ### Output
 
@@ -210,7 +210,7 @@ Understanding these patterns is essential when diffing snapshots across time.
 
 Consider a player — call them **Stoneback** — who has five alts in the guild.
 The system sees a group of six characters; the earliest-Level-10 character
-(say, Stoneback) is designated the main:
+(say, Stoneback) is designated the main (ties broken by name):
 
 ```
 Stoneback  (main)
@@ -232,7 +232,8 @@ On the next `groster update` run:
    the same achievement fingerprints.
 3. The grouping algorithm clusters them together as before (Jaccard ≥ 0.8).
 4. A new main is selected from among the three remaining characters —
-   whichever has the earliest Level 10 timestamp (say, Hammerfist).
+   whichever has the earliest Level 10 timestamp, with ties broken by
+   lexicographically smallest name (say, Hammerfist).
 
 The resulting output:
 
@@ -257,15 +258,15 @@ The `scripts/diff_alts.py` regression tool classifies every changed
 assignment between two alts CSV snapshots. Changes caused by membership
 churn are categorised separately from potential algorithm regressions:
 
-| Category | What it means |
-|---|---|
-| `standalone-left` | A solo character (no alts) left the guild. No alt-detection aspect. |
-| `main-left-guild` | A group **leader** left; remaining alts were re-grouped under a new main. |
-| `member-left-guild` | One alt left the guild; the group leader and other alts remain unchanged. |
-| `hidden-profile` | The Blizzard API returns 0 achievements for at least one group member (profile hidden by the player). The system cannot fingerprint them. |
-| `main-selection-change` | The group membership is identical but the algorithm chose a different main (e.g., the Level 10 timestamp data changed). |
-| `group-absorbed` | Two previously separate groups were merged in the new snapshot (old main demoted to alt of a different main). |
-| `unknown` | None of the above rules matched. Any entry here is a potential algorithm regression and requires investigation. |
+| Category                | What it means                                                                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `standalone-left`       | A solo character (no alts) left the guild. No alt-detection aspect.                                                                       |
+| `main-left-guild`       | A group **leader** left; remaining alts were re-grouped under a new main.                                                                 |
+| `member-left-guild`     | One alt left the guild; the group leader and other alts remain unchanged.                                                                 |
+| `hidden-profile`        | The Blizzard API returns 0 achievements for at least one group member (profile hidden by the player). The system cannot fingerprint them. |
+| `main-selection-change` | The group membership is identical but the algorithm chose a different main (e.g., the Level 10 timestamp data changed).                   |
+| `group-absorbed`        | Two previously separate groups were merged in the new snapshot (old main demoted to alt of a different main).                             |
+| `unknown`               | None of the above rules matched. Any entry here is a potential algorithm regression and requires investigation.                           |
 
 The goal is an empty `unknown` bucket after every algorithm change. Run
 `make diff-alts` to verify against the v0.4.0 baseline.
