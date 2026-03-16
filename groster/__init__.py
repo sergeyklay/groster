@@ -1,6 +1,6 @@
 """CLI and Discord bot for WoW guild roster management."""
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 __description__ = "CLI and Discord bot for WoW guild roster management."
 __license__ = "MIT"
 __author__ = "Serghei Iakovlev"
