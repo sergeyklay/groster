@@ -35,7 +35,7 @@ classifiers = [
 # Keep these dependencies in sorted alphabetical order
 dependencies = [
     "aiohttp[speedups]>=3.13.5",
-    "click>=8.3.0",
+    "click>=8.3.3",
     "httpx>=0.28.1",
     "pandas>=2.3.3",
     "pynacl>=1.6.0",
