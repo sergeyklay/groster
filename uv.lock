@@ -920,7 +920,7 @@ testing = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", extras = ["speedups"], specifier = ">=3.14.0" },
+    { name = "aiohttp", extras = ["speedups"], specifier = ">=3.14.1" },
     { name = "click", specifier = ">=8.4.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pandas", specifier = ">=3.0.3" },
