@@ -60,7 +60,7 @@ dev = [
     "mypy>=2.3.0",
     "pandas-stubs>=3.0.5.260730",
     "pre-commit>=4.6.2",
-    "ruff>=0.15.22",
+    "ruff>=0.16.2",
 ]
 testing = [
     "coverage[toml]>=7.15.4",
@@ -156,7 +156,11 @@ no_implicit_optional = true
 warn_redundant_casts = true
 
 [tool.ruff.lint]
-extend-select = [
+# This is the complete rule set, not an addition to Ruff's defaults.
+# Ruff 0.16 grew its default selection from 59 to 413 rules, so
+# `extend-select` would silently pull in rules this project never chose.
+# Keep using `select` so the policy below stays the single source of truth.
+select = [
     "I",      # All imports
     "E",      # All errors
     "W",      # All warnings
