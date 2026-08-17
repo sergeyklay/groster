@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/isakov/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/3236?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Gnomelia Gearheart",
+                "id": 3236
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 20,
+                "health": 151,
+                "power": 12,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/105003?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 105003
+            },
+            "id": 274672761
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

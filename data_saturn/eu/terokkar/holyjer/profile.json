@@ -1,0 +1,118 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer?namespace=profile-eu"
+        }
+    },
+    "id": 189060208,
+    "name": "Holyjer",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/30?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Lightforged Draenei",
+        "id": 30
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Paladin",
+        "id": 2
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/70?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Retribution",
+        "id": 70
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1389?namespace=dynamic-eu"
+        },
+        "name": "Darkspear",
+        "id": 1389,
+        "slug": "darkspear"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 18,
+    "experience": 14410,
+    "achievement_points": 16870,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773598775000,
+    "average_item_level": 10,
+    "equipped_item_level": 10,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/holyjer/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Holyjer"
+}

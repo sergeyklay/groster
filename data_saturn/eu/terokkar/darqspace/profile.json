@@ -1,0 +1,141 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace?namespace=profile-eu"
+        }
+    },
+    "id": 174079976,
+    "name": "Darqspace",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/1?namespace=static-11.1.5_60179-eu"
+        },
+        "name": "Human",
+        "id": 1
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-11.1.5_60179-eu"
+        },
+        "name": "Hunter",
+        "id": 3
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/253?namespace=static-11.1.5_60179-eu"
+        },
+        "name": "Beast Mastery",
+        "id": 253
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+        },
+        "name": "Terokkar",
+        "id": 1415,
+        "slug": "terokkar"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 70,
+    "experience": 20552,
+    "achievement_points": 20695,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/character-media?namespace=profile-eu"
+    },
+    "hunter_pets": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/hunter-pets?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1746003024000,
+    "average_item_level": 509,
+    "equipped_item_level": 508,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/357?namespace=static-11.1.5_60179-eu"
+        },
+        "name": "the Darkener",
+        "id": 357,
+        "display_string": "{name} the Darkener"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/2?namespace=static-11.1.5_60179-eu"
+            },
+            "name": "Venthyr",
+            "id": 2
+        },
+        "renown_level": 80,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/darqspace/soulbinds?namespace=profile-eu"
+        }
+    },
+    "name_search": "Darqspace"
+}

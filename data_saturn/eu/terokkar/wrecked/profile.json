@@ -1,0 +1,125 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked?namespace=profile-eu"
+        }
+    },
+    "id": 187699345,
+    "name": "Wrecked",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/1?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Human",
+        "id": 1
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Warrior",
+        "id": 1
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/72?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Fury",
+        "id": 72
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1087?namespace=dynamic-eu"
+        },
+        "name": "Executus",
+        "id": 1087,
+        "slug": "executus"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 7065,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1755421916000,
+    "average_item_level": 376,
+    "equipped_item_level": 0,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/493?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Lionguard",
+        "id": 493,
+        "display_string": "Lionguard {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/executus/wrecked/professions?namespace=profile-eu"
+    },
+    "name_search": "Wrecked"
+}

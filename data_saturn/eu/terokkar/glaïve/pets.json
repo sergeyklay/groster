@@ -1,0 +1,1557 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/burning-legion/gla%C3%AFve/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1321?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Azure Crane Chick",
+                "id": 1321
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 20,
+                "health": 150,
+                "power": 11,
+                "speed": 9
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/51413?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 51413
+            },
+            "id": 17895226
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2072?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Ageless Bronze Drake",
+                "id": 2072
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 155,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/78261?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 78261
+            },
+            "id": 189225605
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/464?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Grey Moth",
+                "id": 464
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 140,
+                "power": 8,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/42343?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 42343
+            },
+            "id": 15114208
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/379?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Squirrel",
+                "id": 379
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 15,
+                "health": 140,
+                "power": 8,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/134?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 134
+            },
+            "id": 15114209
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/387?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Snake",
+                "id": 387
+            },
+            "level": 3,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 15,
+                "health": 235,
+                "power": 29,
+                "speed": 38
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/2957?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 2957
+            },
+            "id": 15114210
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/67?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Hawk Owl",
+                "id": 67
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 151,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6299?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 6299
+            },
+            "id": 17555753
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1320?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Lil' Bling",
+                "id": 1320
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 152,
+                "power": 10,
+                "speed": 13
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/49289?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 49289
+            },
+            "id": 18168769
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/70?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Brown Prairie Dog",
+                "id": 70
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 12,
+                "health": 153,
+                "power": 9,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/1072?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 1072
+            },
+            "id": 18913540
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/385?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Mouse",
+                "id": 385
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 142,
+                "power": 8,
+                "speed": 9
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/4959?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 4959
+            },
+            "id": 15114205
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/175?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Phoenix Hatchling",
+                "id": 175
+            },
+            "level": 25,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 1319,
+                "power": 276,
+                "speed": 325
+            },
+            "is_active": true,
+            "is_favorite": true,
+            "active_slot": 0,
+            "name": "Scorch",
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/23574?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 23574
+            },
+            "id": 18919251
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/138?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Blue Moth",
+                "id": 138
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 154,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/19987?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 19987
+            },
+            "id": 181316223
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/140?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Yellow Moth",
+                "id": 140
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 4,
+                "health": 148,
+                "power": 13,
+                "speed": 9
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/19985?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 19985
+            },
+            "id": 181316224
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/55?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Undercity Cockroach",
+                "id": 55
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 154,
+                "power": 9,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/2177?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 2177
+            },
+            "id": 181326890
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/68?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Great Horned Owl",
+                "id": 68
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 6,
+                "health": 160,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/4615?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 4615
+            },
+            "id": 17555754
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/306?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Winterspring Cub",
+                "id": 306
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 144,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/37712?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 37712
+            },
+            "id": 181524230
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1804?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Risen Saber Kitten",
+                "id": 1804
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 149,
+                "power": 12,
+                "speed": 12
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/66157?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 66157
+            },
+            "id": 182154047
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/3302?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Pilot",
+                "id": 3302
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 153,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/106637?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 106637
+            },
+            "id": 186725543
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/847?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Fishy",
+                "id": 847
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 22,
+                "health": 153,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "name": "Klaus",
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/42721?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 42721
+            },
+            "id": 15492847
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/49?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Hyacinth Macaw",
+                "id": 49
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 162,
+                "power": 10,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6192?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 6192
+            },
+            "id": 19352948
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/55?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Undercity Cockroach",
+                "id": 55
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 19,
+                "health": 156,
+                "power": 8,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/2177?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 2177
+            },
+            "id": 181316221
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2072?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Ageless Bronze Drake",
+                "id": 2072
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 155,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/78261?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 78261
+            },
+            "id": 196760807
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/270?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Dark Phoenix Hatchling",
+                "id": 270
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 9,
+                "health": 161,
+                "power": 11,
+                "speed": 10
+            },
+            "is_active": true,
+            "is_favorite": true,
+            "active_slot": 1,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/37136?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 37136
+            },
+            "id": 17648919
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/250?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Perky Pug",
+                "id": 250
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 8,
+                "health": 145,
+                "power": 12,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/31174?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 31174
+            },
+            "id": 17657271
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/139?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Red Moth",
+                "id": 139
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 145,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/19986?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 19986
+            },
+            "id": 181316222
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/244?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Core Hound Pup",
+                "id": 244
+            },
+            "level": 4,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 344,
+                "power": 51,
+                "speed": 34
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/30462?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 30462
+            },
+            "id": 15114207
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/468?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Creepy Crawly",
+                "id": 468
+            },
+            "level": 2,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 184,
+                "power": 19,
+                "speed": 16
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/46940?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 46940
+            },
+            "id": 20128450
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1564?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Doom Bloom",
+                "id": 1564
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 17,
+                "health": 158,
+                "power": 12,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/60732?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 60732
+            },
+            "id": 90810119
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/47?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Cockatiel",
+                "id": 47
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 151,
+                "power": 10,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6191?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 6191
+            },
+            "id": 181288147
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/332?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Horde Balloon",
+                "id": 332
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 151,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/38342?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 38342
+            },
+            "id": 181298674
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1716?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Fledgling Warden Owl",
+                "id": 1716
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 14,
+                "health": 152,
+                "power": 13,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/65087?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 65087
+            },
+            "id": 189228052
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2072?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Ageless Bronze Drake",
+                "id": 2072
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 155,
+                "power": 11,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/78261?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 78261
+            },
+            "id": 199244943
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/138?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Blue Moth",
+                "id": 138
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 154,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/19987?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 19987
+            },
+            "id": 15114206
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/253?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Frigid Frostling",
+                "id": 253
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 155,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/31722?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 31722
+            },
+            "id": 15924241
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1335?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Ominous Flame",
+                "id": 1335
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 8,
+                "health": 152,
+                "power": 12,
+                "speed": 12
+            },
+            "is_active": true,
+            "is_favorite": true,
+            "active_slot": 2,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/51272?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 51272
+            },
+            "id": 17885332
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/51?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Senegal",
+                "id": 51
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 151,
+                "power": 10,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6190?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 6190
+            },
+            "id": 18951458
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/167?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Tiny Sporebat",
+                "id": 167
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 16,
+                "health": 171,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/22855?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 22855
+            },
+            "id": 19323799
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/51?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Senegal",
+                "id": 51
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 154,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6190?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 6190
+            },
+            "id": 181288148
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/3177?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Drakks",
+                "id": 3177
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 160,
+                "power": 12,
+                "speed": 9
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/102304?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 102304
+            },
+            "id": 183769429
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1365?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Treasure Goblin",
+                "id": 1365
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 9,
+                "health": 158,
+                "power": 10,
+                "speed": 12
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/51994?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 51994
+            },
+            "id": 181579431
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/236?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Obsidian Hatchling",
+                "id": 236
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 16,
+                "health": 157,
+                "power": 10,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/29809?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 29809
+            },
+            "id": 21875718
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/389?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Tiny Harvester",
+                "id": 389
+            },
+            "level": 4,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 270,
+                "power": 30,
+                "speed": 40
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/41886?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 41886
+            },
+            "id": 15114204
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1343?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Bonkers",
+                "id": 1343
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 4,
+                "health": 152,
+                "power": 13,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/51475?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 51475
+            },
+            "id": 18015714
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/44?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Siamese Cat",
+                "id": 44
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 142,
+                "power": 10,
+                "speed": 13
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/5585?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 5585
+            },
+            "id": 18111329
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1416?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Teroclaw Hatchling",
+                "id": 1416
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 17,
+                "health": 158,
+                "power": 12,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/58722?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 58722
+            },
+            "id": 90904634
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2188?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Poda",
+                "id": 2188
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 8,
+                "health": 148,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/86136?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 86136
+            },
+            "id": 181784729
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/306?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Winterspring Cub",
+                "id": 306
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 144,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/37712?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 37712
+            },
+            "id": 15114203
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/205?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Dun Morogh Cub",
+                "id": 205
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 153,
+                "power": 11,
+                "speed": 10
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/28489?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 28489
+            },
+            "id": 19297691
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/675?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Stormwind Rat",
+                "id": 675
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 151,
+                "power": 10,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/2176?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 2176
+            },
+            "id": 19323835
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/646?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Chicken",
+                "id": 646
+            },
+            "level": 4,
+            "quality": {
+                "type": "COMMON",
+                "name": "Common"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 285,
+                "power": 37,
+                "speed": 39
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/304?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 304
+            },
+            "id": 15114212
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/419?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Small Frog",
+                "id": 419
+            },
+            "level": 2,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 189,
+                "power": 16,
+                "speed": 18
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/901?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 901
+            },
+            "id": 15114211
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/192?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Mr. Chilly",
+                "id": 192
+            },
+            "level": 3,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 9,
+                "health": 260,
+                "power": 29,
+                "speed": 32
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/26452?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 26452
+            },
+            "id": 15114202
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1451?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Molten Corgi",
+                "id": 1451
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 15,
+                "health": 152,
+                "power": 10,
+                "speed": 13
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/58570?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 58570
+            },
+            "id": 65896501
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1540?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Brilliant Spore",
+                "id": 1540
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 8,
+                "health": 148,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/61547?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 61547
+            },
+            "id": 91483242
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1802?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Fetid Waveling",
+                "id": 1802
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 12,
+                "health": 158,
+                "power": 11,
+                "speed": 11
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/66155?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 66155
+            },
+            "id": 182144639
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2798?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Plagueborn Slime",
+                "id": 2798
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 156,
+                "power": 11,
+                "speed": 9
+            },
+            "is_favorite": true,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/99018?namespace=static-11.1.5_60179-eu"
+                },
+                "id": 99018
+            },
+            "id": 183792715
+        }
+    ],
+    "unlocked_battle_pet_slots": 3
+}

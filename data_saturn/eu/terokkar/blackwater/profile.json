@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater?namespace=profile-eu"
+        }
+    },
+    "id": 188643209,
+    "name": "Blackwater",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/1?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Human",
+        "id": 1
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Warrior",
+        "id": 1
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/73?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Protection",
+        "id": 73
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1389?namespace=dynamic-eu"
+        },
+        "name": "Darkspear",
+        "id": 1389,
+        "slug": "darkspear"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 11750,
+    "achievement_points": 15530,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773602105000,
+    "average_item_level": 128,
+    "equipped_item_level": 128,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/493?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Lionguard",
+        "id": 493,
+        "display_string": "Lionguard {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/blackwater/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Blackwater"
+}

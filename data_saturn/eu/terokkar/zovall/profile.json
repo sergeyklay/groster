@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall?namespace=profile-eu"
+        }
+    },
+    "id": 217070499,
+    "name": "Zovall",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/34?namespace=static-11.2.5_63286-eu"
+        },
+        "name": "Dark Iron Dwarf",
+        "id": 34
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/9?namespace=static-11.2.5_63286-eu"
+        },
+        "name": "Warlock",
+        "id": 9
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/267?namespace=static-11.2.5_63286-eu"
+        },
+        "name": "Destruction",
+        "id": 267
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1301?namespace=dynamic-eu"
+        },
+        "name": "Outland",
+        "id": 1301,
+        "slug": "outland"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 10880,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1760801950000,
+    "average_item_level": 678,
+    "equipped_item_level": 678,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/378?namespace=static-11.2.5_63286-eu"
+        },
+        "name": "Inquisitor",
+        "id": 378,
+        "display_string": "Inquisitor {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/outland/zovall/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Zovall"
+}

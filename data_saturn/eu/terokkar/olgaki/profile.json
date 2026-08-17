@@ -1,0 +1,118 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki?namespace=profile-eu"
+        }
+    },
+    "id": 188730475,
+    "name": "Olgaki",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/10?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Blood Elf",
+        "id": 10
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/12?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Demon Hunter",
+        "id": 12
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/577?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Havoc",
+        "id": 577
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1389?namespace=dynamic-eu"
+        },
+        "name": "Darkspear",
+        "id": 1389,
+        "slug": "darkspear"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 32605,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1768219330000,
+    "average_item_level": 655,
+    "equipped_item_level": 655,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/olgaki/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Olgaki"
+}

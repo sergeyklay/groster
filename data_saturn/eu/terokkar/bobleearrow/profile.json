@@ -1,0 +1,147 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow?namespace=profile-eu"
+        }
+    },
+    "id": 179396122,
+    "name": "Bobleearrow",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Hunter",
+        "id": 3
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/254?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Marksmanship",
+        "id": 254
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1389?namespace=dynamic-eu"
+        },
+        "name": "Darkspear",
+        "id": 1389,
+        "slug": "darkspear"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 90,
+    "experience": 0,
+    "achievement_points": 7525,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/character-media?namespace=profile-eu"
+    },
+    "hunter_pets": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/hunter-pets?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773608570000,
+    "average_item_level": 217,
+    "equipped_item_level": 217,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/152?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Veteran of the Alliance",
+        "id": 152,
+        "display_string": "{name}, Veteran of the Alliance"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/1?namespace=static-12.0.1_65617-eu"
+            },
+            "name": "Kyrian",
+            "id": 1
+        },
+        "renown_level": 80,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/soulbinds?namespace=profile-eu"
+        }
+    },
+    "is_remix": false,
+    "houses": [
+        {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/bobleearrow/house/house-1?namespace=profile-eu"
+        }
+    ],
+    "name_search": "Bobleearrow"
+}

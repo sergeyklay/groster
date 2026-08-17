@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula?namespace=profile-eu"
+        }
+    },
+    "id": 186057991,
+    "name": "Nocticula",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/12?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Demon Hunter",
+        "id": 12
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/577?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Havoc",
+        "id": 577
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+        },
+        "name": "Terokkar",
+        "id": 1415,
+        "slug": "terokkar"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 90,
+    "experience": 0,
+    "achievement_points": 19425,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773609692000,
+    "average_item_level": 221,
+    "equipped_item_level": 221,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/303?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Lady of War",
+        "id": 303,
+        "display_string": "{name}, Lady of War"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/nocticula/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Nocticula"
+}

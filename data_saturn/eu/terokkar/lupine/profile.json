@@ -1,0 +1,138 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine?namespace=profile-eu"
+        }
+    },
+    "id": 177719478,
+    "name": "Lupine",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/12?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Demon Hunter",
+        "id": 12
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/581?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Vengeance",
+        "id": 581
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1314?namespace=dynamic-eu"
+        },
+        "name": "Saurfang",
+        "id": 1314,
+        "slug": "saurfang"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 11220,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1753388481000,
+    "average_item_level": 610,
+    "equipped_item_level": 609,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/52?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Chef",
+        "id": 52,
+        "display_string": "Chef {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/1?namespace=static-11.1.7_61131-eu"
+            },
+            "name": "Kyrian",
+            "id": 1
+        },
+        "renown_level": 80,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/lupine/soulbinds?namespace=profile-eu"
+        }
+    },
+    "name_search": "Lupine"
+}

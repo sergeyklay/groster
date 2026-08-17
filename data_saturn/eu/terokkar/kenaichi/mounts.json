@@ -1,0 +1,89 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/kenaichi/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/133?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Tawny Wind Rider",
+                "id": 133
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/135?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Green Wind Rider",
+                "id": 135
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/284?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Traveler's Tundra Mammoth",
+                "id": 284
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1563?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Highland Drake",
+                "id": 1563
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1590?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Windborne Velocidrake",
+                "id": 1590
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/2492?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Spring Butterfly",
+                "id": 2492
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/2853?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Comfy Silvermoon Flying Quilt",
+                "id": 2853
+            },
+            "is_useable": true
+        }
+    ]
+}

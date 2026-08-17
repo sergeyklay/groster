@@ -1,0 +1,131 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko?namespace=profile-eu"
+        }
+    },
+    "id": 182494185,
+    "name": "Kenko",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/2?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Orc",
+        "id": 2
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/1?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Warrior",
+        "id": 1
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/72?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Fury",
+        "id": 72
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1389?namespace=dynamic-eu"
+        },
+        "name": "Darkspear",
+        "id": 1389,
+        "slug": "darkspear"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 21855,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772818840000,
+    "average_item_level": 114,
+    "equipped_item_level": 112,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/140?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "the Kingslayer",
+        "id": 140,
+        "display_string": "{name} the Kingslayer"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "houses": [
+        {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/kenko/house/house-2?namespace=profile-eu"
+        }
+    ],
+    "name_search": "Kenko"
+}

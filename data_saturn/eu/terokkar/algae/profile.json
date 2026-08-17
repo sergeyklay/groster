@@ -1,0 +1,117 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae?namespace=profile-eu"
+        }
+    },
+    "id": 187835888,
+    "name": "Algae",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/32?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Kul Tiran",
+        "id": 32
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Druid",
+        "id": 11
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/104?namespace=static-11.2.0_62213-eu"
+        },
+        "name": "Guardian",
+        "id": 104
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+        },
+        "name": "Terokkar",
+        "id": 1415,
+        "slug": "terokkar"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 17,
+    "experience": 955,
+    "achievement_points": 9815,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1757546800000,
+    "average_item_level": 20,
+    "equipped_item_level": 20,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/algae/professions?namespace=profile-eu"
+    },
+    "name_search": "Algae"
+}

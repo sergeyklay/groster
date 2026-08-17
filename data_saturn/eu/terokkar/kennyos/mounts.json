@@ -1,0 +1,89 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/norgannon/kennyos/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/139?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Swift Purple Gryphon",
+                "id": 139
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/269?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Armored Brown Bear",
+                "id": 269
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/280?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Traveler's Tundra Mammoth",
+                "id": 280
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1563?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Highland Drake",
+                "id": 1563
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1588?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Winding Slitherdrake",
+                "id": 1588
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1590?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Windborne Velocidrake",
+                "id": 1590
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1591?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Cliffside Wylderdrake",
+                "id": 1591
+            },
+            "is_useable": true
+        }
+    ]
+}

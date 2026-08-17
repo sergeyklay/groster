@@ -1,0 +1,120 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf?namespace=profile-eu"
+        }
+    },
+    "id": 186101145,
+    "name": "Blackdwarf",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/34?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Dark Iron Dwarf",
+        "id": 34
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Hunter",
+        "id": 3
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/254?namespace=static-11.0.2_55938-eu"
+        },
+        "name": "Marksmanship",
+        "id": 254
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1314?namespace=dynamic-eu"
+        },
+        "name": "Saurfang",
+        "id": 1314,
+        "slug": "saurfang"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 32,
+    "experience": 2150,
+    "achievement_points": 17305,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/character-media?namespace=profile-eu"
+    },
+    "hunter_pets": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/hunter-pets?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1727738134000,
+    "average_item_level": 102,
+    "equipped_item_level": 102,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/blackdwarf/professions?namespace=profile-eu"
+    },
+    "name_search": "Blackdwarf"
+}

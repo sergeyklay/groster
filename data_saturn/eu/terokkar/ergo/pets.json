@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/executus/ergo/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2798?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Plagueborn Slime",
+                "id": 2798
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 156,
+                "power": 11,
+                "speed": 9
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/99018?namespace=static-10.2.7_54366-eu"
+                },
+                "id": 99018
+            },
+            "id": 194967141
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

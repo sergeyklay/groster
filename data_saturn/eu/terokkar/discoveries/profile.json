@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries?namespace=profile-eu"
+        }
+    },
+    "id": 184450819,
+    "name": "Discoveries",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Priest",
+        "id": 5
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/258?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Shadow",
+        "id": 258
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+        },
+        "name": "Terokkar",
+        "id": 1415,
+        "slug": "terokkar"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 22470,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1770555808000,
+    "average_item_level": 91,
+    "equipped_item_level": 88,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/55?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "of the Emerald Dream",
+        "id": 55,
+        "display_string": "{name} of the Emerald Dream"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/discoveries/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Discoveries"
+}

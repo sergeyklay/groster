@@ -1,0 +1,49 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/kathilin/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/17?namespace=static-11.2.5_63286-eu"
+                },
+                "name": "Felsteed",
+                "id": 17
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/83?namespace=static-11.2.5_63286-eu"
+                },
+                "name": "Dreadsteed",
+                "id": 83
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/142?namespace=static-11.2.5_63286-eu"
+                },
+                "name": "Swift Purple Wind Rider",
+                "id": 142
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.2.5_63286-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        }
+    ]
+}

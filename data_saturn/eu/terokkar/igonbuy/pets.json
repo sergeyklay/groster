@@ -1,0 +1,166 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/igonbuy/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/287?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Tiny Flamefly",
+                "id": 287
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 151,
+                "power": 10,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/28435?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 28435
+            },
+            "id": 64864790
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/89?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Worg Pup",
+                "id": 89
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 6,
+                "health": 160,
+                "power": 10,
+                "speed": 10
+            },
+            "id": 64864791
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/3236?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Gnomelia Gearheart",
+                "id": 3236
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 20,
+                "health": 151,
+                "power": 12,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/105003?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 105003
+            },
+            "id": 317473840
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4830?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Rhay'Dahr",
+                "id": 4830
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 152,
+                "power": 11,
+                "speed": 12
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/129679?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 129679
+            },
+            "id": 333849575
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4812?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Doomfeathers",
+                "id": 4812
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 157,
+                "power": 11,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/129133?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 129133
+            },
+            "id": 333925020
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4811?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Hopeflutter",
+                "id": 4811
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 149,
+                "power": 11,
+                "speed": 13
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/129131?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 129131
+            },
+            "id": 333925021
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

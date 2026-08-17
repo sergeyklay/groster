@@ -1,0 +1,118 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw?namespace=profile-eu"
+        }
+    },
+    "id": 185928704,
+    "name": "Lemixclaw",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/28?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Highmountain Tauren",
+        "id": 28
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Druid",
+        "id": 11
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/102?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Balance",
+        "id": 102
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/508?namespace=dynamic-eu"
+        },
+        "name": "Emerald Dream",
+        "id": 508,
+        "slug": "emerald-dream"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 284,
+    "achievement_points": 30215,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772999677000,
+    "average_item_level": 119,
+    "equipped_item_level": 111,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/emerald-dream/lemixclaw/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Lemixclaw"
+}

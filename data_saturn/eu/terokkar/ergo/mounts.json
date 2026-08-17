@@ -1,0 +1,80 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/executus/ergo/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/39?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Red Mechanostrider",
+                "id": 39
+            },
+            "is_useable": false
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/141?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Swift Yellow Wind Rider",
+                "id": 141
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/221?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Acherus Deathcharger",
+                "id": 221
+            },
+            "is_useable": false
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/309?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "White Kodo",
+                "id": 309
+            },
+            "is_favorite": true,
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/547?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Hearthsteed",
+                "id": 547
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1168?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Fiery Hearthsteed",
+                "id": 1168
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1513?namespace=static-10.2.7_54366-eu"
+                },
+                "name": "Sarge's Tale",
+                "id": 1513
+            },
+            "is_useable": true
+        }
+    ]
+}

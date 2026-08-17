@@ -1,0 +1,138 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick?namespace=profile-eu"
+        }
+    },
+    "id": 172764876,
+    "name": "Killerkick",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/1?namespace=static-11.0.7_57788-eu"
+        },
+        "name": "Human",
+        "id": 1
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/10?namespace=static-11.0.7_57788-eu"
+        },
+        "name": "Monk",
+        "id": 10
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/269?namespace=static-11.0.7_57788-eu"
+        },
+        "name": "Windwalker",
+        "id": 269
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1314?namespace=dynamic-eu"
+        },
+        "name": "Saurfang",
+        "id": 1314,
+        "slug": "saurfang"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 60,
+    "experience": 55664,
+    "achievement_points": 21165,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1735492622000,
+    "average_item_level": 327,
+    "equipped_item_level": 291,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/329?namespace=static-11.0.7_57788-eu"
+        },
+        "name": "Grandmaster",
+        "id": 329,
+        "display_string": "Grandmaster {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/2?namespace=static-11.0.7_57788-eu"
+            },
+            "name": "Venthyr",
+            "id": 2
+        },
+        "renown_level": 34,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/killerkick/soulbinds?namespace=profile-eu"
+        }
+    },
+    "name_search": "Killerkick"
+}

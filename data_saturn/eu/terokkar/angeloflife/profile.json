@@ -1,0 +1,139 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife?namespace=profile-eu"
+        }
+    },
+    "id": 174662713,
+    "name": "Angeloflife",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/29?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Void Elf",
+        "id": 29
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/5?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Priest",
+        "id": 5
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/258?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "Shadow",
+        "id": 258
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/551?namespace=dynamic-eu"
+        },
+        "name": "Terenas",
+        "id": 551,
+        "slug": "terenas"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 30975,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1767578840000,
+    "average_item_level": 677,
+    "equipped_item_level": 677,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/339?namespace=static-11.2.7_64397-eu"
+        },
+        "name": "High Priest",
+        "id": 339,
+        "display_string": "High Priest {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/1?namespace=static-11.2.7_64397-eu"
+            },
+            "name": "Kyrian",
+            "id": 1
+        },
+        "renown_level": 78,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terenas/angeloflife/soulbinds?namespace=profile-eu"
+        }
+    },
+    "is_remix": false,
+    "name_search": "Angeloflife"
+}

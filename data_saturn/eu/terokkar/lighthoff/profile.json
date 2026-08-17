@@ -1,0 +1,123 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff?namespace=profile-eu"
+        }
+    },
+    "id": 184650441,
+    "name": "Lighthoff",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/6?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Tauren",
+        "id": 6
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/2?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Paladin",
+        "id": 2
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/70?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Retribution",
+        "id": 70
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/556?namespace=dynamic-eu"
+        },
+        "name": "Shattered Hand",
+        "id": 556,
+        "slug": "shattered-hand"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 2992,
+    "achievement_points": 24540,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773583651000,
+    "average_item_level": 140,
+    "equipped_item_level": 140,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/collections?namespace=profile-eu"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "houses": [
+        {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/lighthoff/house/house-2?namespace=profile-eu"
+        }
+    ],
+    "name_search": "Lighthoff"
+}

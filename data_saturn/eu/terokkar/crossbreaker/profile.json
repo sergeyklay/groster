@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker?namespace=profile-eu"
+        }
+    },
+    "id": 173031788,
+    "name": "Crossbreaker",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/22?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Worgen",
+        "id": 22
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/6?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Death Knight",
+        "id": 6
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/251?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Frost",
+        "id": 251
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1314?namespace=dynamic-eu"
+        },
+        "name": "Saurfang",
+        "id": 1314,
+        "slug": "saurfang"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 56,
+    "experience": 15444,
+    "achievement_points": 2525,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772174932000,
+    "average_item_level": 47,
+    "equipped_item_level": 47,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/140?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "the Kingslayer",
+        "id": 140,
+        "display_string": "{name} the Kingslayer"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/saurfang/crossbreaker/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Crossbreaker"
+}

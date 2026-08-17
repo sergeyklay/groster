@@ -1,0 +1,139 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha?namespace=profile-eu"
+        }
+    },
+    "id": 137892595,
+    "name": "Demonalpha",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/12?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Demon Hunter",
+        "id": 12
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/1480?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Devourer",
+        "id": 1480
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/633?namespace=dynamic-eu"
+        },
+        "name": "Kor'gall",
+        "id": 633,
+        "slug": "korgall"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 21815,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1771526277000,
+    "average_item_level": 134,
+    "equipped_item_level": 134,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/111?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Bloodsail Admiral",
+        "id": 111,
+        "display_string": "Bloodsail Admiral {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/1?namespace=static-12.0.1_65617-eu"
+            },
+            "name": "Kyrian",
+            "id": 1
+        },
+        "renown_level": 50,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/korgall/demonalpha/soulbinds?namespace=profile-eu"
+        }
+    },
+    "is_remix": false,
+    "name_search": "Demonalpha"
+}

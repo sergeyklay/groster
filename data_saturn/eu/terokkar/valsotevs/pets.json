@@ -1,0 +1,37 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/darkspear/valsotevs/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2525?namespace=static-11.1.7_61131-eu"
+                },
+                "name": "Redridge Tarantula",
+                "id": 2525
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 149,
+                "power": 11,
+                "speed": 13
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/89609?namespace=static-11.1.7_61131-eu"
+                },
+                "id": 89609
+            },
+            "id": 334083001
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

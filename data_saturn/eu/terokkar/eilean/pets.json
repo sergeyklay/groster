@@ -1,0 +1,200 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/eilean/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/3175?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Murkastrasza",
+                "id": 3175
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 154,
+                "power": 12,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/102298?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 102298
+            },
+            "id": 268724781
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/1323?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Ashleaf Spriteling",
+                "id": 1323
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 11,
+                "health": 147,
+                "power": 10,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/40908?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 40908
+            },
+            "id": 283091596
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2878?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Renny",
+                "id": 2878
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 7,
+                "health": 154,
+                "power": 12,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/93746?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 93746
+            },
+            "id": 282671243
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2580?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Wayward Spirit",
+                "id": 2580
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 14,
+                "health": 147,
+                "power": 12,
+                "speed": 13
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/90715?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 90715
+            },
+            "id": 283015994
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/41?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Cornish Rex Cat",
+                "id": 41
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 4,
+                "health": 142,
+                "power": 13,
+                "speed": 10
+            },
+            "name": "Lucy",
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/5586?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 5586
+            },
+            "id": 262169912
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2581?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Comet",
+                "id": 2581
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 11,
+                "health": 156,
+                "power": 12,
+                "speed": 10
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/90830?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 90830
+            },
+            "id": 282969511
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/2909?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Cloudfeather Fledgling",
+                "id": 2909
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 148,
+                "power": 11,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/99900?namespace=static-11.2.0_62213-eu"
+                },
+                "id": 99900
+            },
+            "id": 282703144
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

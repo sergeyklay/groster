@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps?namespace=profile-eu"
+        }
+    },
+    "id": 182363502,
+    "name": "Skorps",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/7?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Gnome",
+        "id": 7
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Mage",
+        "id": 8
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/64?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Frost",
+        "id": 64
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/556?namespace=dynamic-eu"
+        },
+        "name": "Shattered Hand",
+        "id": 556,
+        "slug": "shattered-hand"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 77,
+    "experience": 70964,
+    "achievement_points": 11670,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772227723000,
+    "average_item_level": 82,
+    "equipped_item_level": 80,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/97?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Champion of the Frozen Wastes",
+        "id": 97,
+        "display_string": "{name}, Champion of the Frozen Wastes"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/shattered-hand/skorps/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Skorps"
+}

@@ -1,0 +1,145 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/chumlord/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4881?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Nether Siphoner",
+                "id": 4881
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 22,
+                "health": 153,
+                "power": 10,
+                "speed": 10
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/142186?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 142186
+            },
+            "id": 341983275
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4977?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Emberwing Hatchling",
+                "id": 4977
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 0,
+                "health": 100,
+                "power": 0,
+                "speed": 0
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/141694?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 141694
+            },
+            "id": 342376101
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4946?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Linda the Lucky",
+                "id": 4946
+            },
+            "level": 1,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 155,
+                "power": 11,
+                "speed": 12
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/139306?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 139306
+            },
+            "id": 342383791
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4947?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Assistant Botanist Leafy",
+                "id": 4947
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 18,
+                "health": 148,
+                "power": 11,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/139420?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 139420
+            },
+            "id": 342389793
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/4974?namespace=static-12.0.1_65617-eu"
+                },
+                "name": "Dali",
+                "id": 4974
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 151,
+                "power": 10,
+                "speed": 10
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/140475?namespace=static-12.0.1_65617-eu"
+                },
+                "id": 140475
+            },
+            "id": 342416655
+        }
+    ],
+    "unlocked_battle_pet_slots": 0
+}

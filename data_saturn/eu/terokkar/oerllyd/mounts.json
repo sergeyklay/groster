@@ -1,0 +1,49 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/oerllyd/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/129?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Golden Gryphon",
+                "id": 129
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1563?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Highland Drake",
+                "id": 1563
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1590?namespace=static-11.1.5_60179-eu"
+                },
+                "name": "Windborne Velocidrake",
+                "id": 1590
+            },
+            "is_useable": true
+        }
+    ]
+}

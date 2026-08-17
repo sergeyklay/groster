@@ -1,0 +1,131 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm?namespace=profile-eu"
+        }
+    },
+    "id": 188858755,
+    "name": "Grimstorm",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/34?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Dark Iron Dwarf",
+        "id": 34
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/7?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Shaman",
+        "id": 7
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/262?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Elemental",
+        "id": 262
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/630?namespace=dynamic-eu"
+        },
+        "name": "Bloodfeather",
+        "id": 630,
+        "slug": "bloodfeather"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 90,
+    "experience": 0,
+    "achievement_points": 7050,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773616876000,
+    "average_item_level": 227,
+    "equipped_item_level": 227,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/43?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Elder",
+        "id": 43,
+        "display_string": "Elder {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "houses": [
+        {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/bloodfeather/grimstorm/house/house-1?namespace=profile-eu"
+        }
+    ],
+    "name_search": "Grimstorm"
+}

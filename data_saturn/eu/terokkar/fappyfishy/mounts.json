@@ -1,0 +1,29 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/outland/fappyfishy/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/133?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Tawny Wind Rider",
+                "id": 133
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        }
+    ]
+}

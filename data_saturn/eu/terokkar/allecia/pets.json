@@ -1,0 +1,284 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/sylvanas/allecia/collections/pets?namespace=profile-eu"
+        }
+    },
+    "pets": [
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/68?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Great Horned Owl",
+                "id": 68
+            },
+            "level": 5,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 355,
+                "power": 51,
+                "speed": 51
+            },
+            "is_active": true,
+            "active_slot": 1,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/4615?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 4615
+            },
+            "id": 324483021
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/507?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Crested Owl",
+                "id": 507
+            },
+            "level": 1,
+            "quality": {
+                "type": "UNCOMMON",
+                "name": "Uncommon"
+            },
+            "stats": {
+                "breed_id": 12,
+                "health": 150,
+                "power": 11,
+                "speed": 10
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6300?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 6300
+            },
+            "id": 324504751
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/447?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Fawn",
+                "id": 447
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 15,
+                "health": 140,
+                "power": 8,
+                "speed": 11
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/654?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 654
+            },
+            "id": 324504794
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/478?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Forest Moth",
+                "id": 478
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 21,
+                "health": 145,
+                "power": 8,
+                "speed": 8
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/36957?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 36957
+            },
+            "id": 324505049
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/378?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Rabbit",
+                "id": 378
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 12,
+                "health": 145,
+                "power": 7,
+                "speed": 9
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/4626?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 4626
+            },
+            "id": 324505465
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/479?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Elfin Rabbit",
+                "id": 479
+            },
+            "level": 4,
+            "quality": {
+                "type": "RARE",
+                "name": "Rare"
+            },
+            "stats": {
+                "breed_id": 3,
+                "health": 321,
+                "power": 36,
+                "speed": 52
+            },
+            "is_active": true,
+            "active_slot": 0,
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/6302?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 6302
+            },
+            "id": 324506307
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/452?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Red-Tailed Chipmunk",
+                "id": 452
+            },
+            "level": 2,
+            "quality": {
+                "type": "COMMON",
+                "name": "Common"
+            },
+            "stats": {
+                "breed_id": 5,
+                "health": 188,
+                "power": 18,
+                "speed": 22
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/36620?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 36620
+            },
+            "id": 324508685
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/478?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Forest Moth",
+                "id": 478
+            },
+            "level": 2,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 12,
+                "health": 194,
+                "power": 17,
+                "speed": 16
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/36944?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 36944
+            },
+            "id": 324509745
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/478?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Forest Moth",
+                "id": 478
+            },
+            "level": 1,
+            "quality": {
+                "type": "POOR",
+                "name": "Poor"
+            },
+            "stats": {
+                "breed_id": 22,
+                "health": 147,
+                "power": 8,
+                "speed": 8
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/36956?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 36956
+            },
+            "id": 324510096
+        },
+        {
+            "species": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/pet/419?namespace=static-11.1.0_59095-eu"
+                },
+                "name": "Small Frog",
+                "id": 419
+            },
+            "level": 1,
+            "quality": {
+                "type": "COMMON",
+                "name": "Common"
+            },
+            "stats": {
+                "breed_id": 13,
+                "health": 150,
+                "power": 9,
+                "speed": 9
+            },
+            "creature_display": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/media/creature-display/901?namespace=static-11.1.0_59095-eu"
+                },
+                "id": 901
+            },
+            "id": 324533387
+        }
+    ],
+    "unlocked_battle_pet_slots": 3
+}

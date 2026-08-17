@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra?namespace=profile-eu"
+        }
+    },
+    "id": 188494220,
+    "name": "Lyssra",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/3?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Dwarf",
+        "id": 3
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/6?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Death Knight",
+        "id": 6
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/252?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Unholy",
+        "id": 252
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1392?namespace=dynamic-eu"
+        },
+        "name": "Burning Steppes",
+        "id": 1392,
+        "slug": "burning-steppes"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 88,
+    "experience": 454062,
+    "achievement_points": 3495,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773517355000,
+    "average_item_level": 184,
+    "equipped_item_level": 184,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/341?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "the Dreamer",
+        "id": 341,
+        "display_string": "{name} the Dreamer"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/burning-steppes/lyssra/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Lyssra"
+}

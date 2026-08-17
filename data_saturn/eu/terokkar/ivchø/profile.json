@@ -1,0 +1,125 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8?namespace=profile-eu"
+        }
+    },
+    "id": 184935345,
+    "name": "Ivchø",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/12?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Demon Hunter",
+        "id": 12
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/581?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Vengeance",
+        "id": 581
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/505?namespace=dynamic-eu"
+        },
+        "name": "Doomhammer",
+        "id": 505,
+        "slug": "doomhammer"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 6615,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1754166937000,
+    "average_item_level": 636,
+    "equipped_item_level": 636,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/138?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "the Light of Dawn",
+        "id": 138,
+        "display_string": "{name} the Light of Dawn"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/doomhammer/ivch%C3%B8/professions?namespace=profile-eu"
+    },
+    "name_search": "Ivchø"
+}

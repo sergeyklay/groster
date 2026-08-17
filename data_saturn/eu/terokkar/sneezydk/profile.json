@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk?namespace=profile-eu"
+        }
+    },
+    "id": 183079028,
+    "name": "Sneezydk",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/36?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Mag'har Orc",
+        "id": 36
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/6?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Death Knight",
+        "id": 6
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/252?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Unholy",
+        "id": 252
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1306?namespace=dynamic-eu"
+        },
+        "name": "Tarren Mill",
+        "id": 1306,
+        "slug": "tarren-mill"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 9895,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772130138000,
+    "average_item_level": 166,
+    "equipped_item_level": 166,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/640?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Star Savior",
+        "id": 640,
+        "display_string": "Star Savior {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/sneezydk/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Sneezydk"
+}

@@ -1,0 +1,125 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr?namespace=profile-eu"
+        }
+    },
+    "id": 188312875,
+    "name": "Deathwishgr",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/27?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Nightborne",
+        "id": 27
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/8?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Mage",
+        "id": 8
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/62?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Arcane",
+        "id": 62
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/625?namespace=dynamic-eu"
+        },
+        "name": "Twisting Nether",
+        "id": 625,
+        "slug": "twisting-nether"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 80,
+    "experience": 0,
+    "achievement_points": 31825,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1752870964000,
+    "average_item_level": 651,
+    "equipped_item_level": 651,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/150?namespace=static-11.1.7_61131-eu"
+        },
+        "name": "Professor",
+        "id": 150,
+        "display_string": "Professor {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/twisting-nether/deathwishgr/professions?namespace=profile-eu"
+    },
+    "name_search": "Deathwishgr"
+}

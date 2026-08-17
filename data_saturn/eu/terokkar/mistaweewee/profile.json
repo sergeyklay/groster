@@ -1,0 +1,129 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee?namespace=profile-eu"
+        }
+    },
+    "id": 177727943,
+    "name": "Mistaweewee",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/3?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Hunter",
+        "id": 3
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/253?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Beast Mastery",
+        "id": 253
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1306?namespace=dynamic-eu"
+        },
+        "name": "Tarren Mill",
+        "id": 1306,
+        "slug": "tarren-mill"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 75,
+    "experience": 39572,
+    "achievement_points": 17000,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/character-media?namespace=profile-eu"
+    },
+    "hunter_pets": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/hunter-pets?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1772755921000,
+    "average_item_level": 81,
+    "equipped_item_level": 81,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/194?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Savior of Azeroth",
+        "id": 194,
+        "display_string": "{name}, Savior of Azeroth"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/tarren-mill/mistaweewee/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Mistaweewee"
+}

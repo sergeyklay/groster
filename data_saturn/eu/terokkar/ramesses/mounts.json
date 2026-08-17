@@ -1,0 +1,119 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/ramesses/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/17?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Felsteed",
+                "id": 17
+            },
+            "is_useable": false
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/41?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Warhorse",
+                "id": 41
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/83?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Dreadsteed",
+                "id": 83
+            },
+            "is_useable": false
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/84?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Charger",
+                "id": 84
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/129?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Golden Gryphon",
+                "id": 129
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/139?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Swift Purple Gryphon",
+                "id": 139
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1048?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Dark Iron Core Hound",
+                "id": 1048
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1563?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Highland Drake",
+                "id": 1563
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1596?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Amalgam of Rage",
+                "id": 1596
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1773?namespace=static-11.0.7_57788-eu"
+                },
+                "name": "Harbor Gryphon",
+                "id": 1773
+            },
+            "is_useable": true
+        }
+    ]
+}

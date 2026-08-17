@@ -1,0 +1,151 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/terokkar/eilean/collections/mounts?namespace=profile-eu"
+        }
+    },
+    "mounts": [
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/26?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Striped Frostsaber",
+                "id": 26
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/131?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Snowy Gryphon",
+                "id": 131
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/139?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Swift Purple Gryphon",
+                "id": 139
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/250?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Twilight Drake",
+                "id": 250
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/314?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Black Skeletal Horse",
+                "id": 314
+            },
+            "is_useable": false
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/561?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Thundering Onyx Cloud Serpent",
+                "id": 561
+            },
+            "is_favorite": true,
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1009?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Starcursed Voidstrider",
+                "id": 1009
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1302?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Dreamlight Runestag",
+                "id": 1302
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1556?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Tangled Dreamweaver",
+                "id": 1556
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1563?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Highland Drake",
+                "id": 1563
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1589?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Renewed Proto-Drake",
+                "id": 1589
+            },
+            "is_favorite": true,
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/1773?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Harbor Gryphon",
+                "id": 1773
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/2580?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Wailing Banshee's Charger",
+                "id": 2580
+            },
+            "is_useable": true
+        },
+        {
+            "mount": {
+                "key": {
+                    "href": "https://eu.api.blizzard.com/data/wow/mount/2628?namespace=static-11.2.0_62213-eu"
+                },
+                "name": "Cinder-Plumed Highland Gryphon",
+                "id": 2628
+            },
+            "is_useable": true
+        }
+    ]
+}

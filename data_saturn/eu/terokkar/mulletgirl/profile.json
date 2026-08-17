@@ -1,0 +1,126 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl?namespace=profile-eu"
+        }
+    },
+    "id": 210839504,
+    "name": "Mulletgirl",
+    "gender": {
+        "type": "FEMALE",
+        "name": "Female"
+    },
+    "faction": {
+        "type": "HORDE",
+        "name": "Horde"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/70?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Dracthyr",
+        "id": 70
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/13?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Evoker",
+        "id": 13
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/1467?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Devastation",
+        "id": 1467
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1305?namespace=dynamic-eu"
+        },
+        "name": "Kazzak",
+        "id": 1305,
+        "slug": "kazzak"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "HORDE",
+            "name": "Horde"
+        }
+    },
+    "level": 85,
+    "experience": 205254,
+    "achievement_points": 16470,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1773158542000,
+    "average_item_level": 146,
+    "equipped_item_level": 137,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/581?namespace=static-12.0.1_65617-eu"
+        },
+        "name": "Classic Enthusiast",
+        "id": 581,
+        "display_string": "Classic Enthusiast {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/kazzak/mulletgirl/professions?namespace=profile-eu"
+    },
+    "is_remix": false,
+    "name_search": "Mulletgirl"
+}

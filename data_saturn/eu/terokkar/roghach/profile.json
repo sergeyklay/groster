@@ -1,0 +1,139 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach?namespace=profile-eu"
+        }
+    },
+    "id": 187244611,
+    "name": "Roghach",
+    "gender": {
+        "type": "MALE",
+        "name": "Male"
+    },
+    "faction": {
+        "type": "ALLIANCE",
+        "name": "Alliance"
+    },
+    "race": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-race/4?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Night Elf",
+        "id": 4
+    },
+    "character_class": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-class/11?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Druid",
+        "id": 11
+    },
+    "active_spec": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/102?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Balance",
+        "id": 102
+    },
+    "realm": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/realm/1117?namespace=dynamic-eu"
+        },
+        "name": "Steamwheedle Cartel",
+        "id": 1117,
+        "slug": "steamwheedle-cartel"
+    },
+    "guild": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/guild/terokkar/darq-side-of-the-moon?namespace=profile-eu"
+        },
+        "name": "Darq Side Of The Moon",
+        "id": 65457692,
+        "realm": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/1415?namespace=dynamic-eu"
+            },
+            "name": "Terokkar",
+            "id": 1415,
+            "slug": "terokkar"
+        },
+        "faction": {
+            "type": "ALLIANCE",
+            "name": "Alliance"
+        }
+    },
+    "level": 71,
+    "experience": 60334,
+    "achievement_points": 23045,
+    "achievements": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/achievements?namespace=profile-eu"
+    },
+    "titles": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/titles?namespace=profile-eu"
+    },
+    "pvp_summary": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/pvp-summary?namespace=profile-eu"
+    },
+    "encounters": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/encounters?namespace=profile-eu"
+    },
+    "media": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/character-media?namespace=profile-eu"
+    },
+    "last_login_timestamp": 1769533552000,
+    "average_item_level": 67,
+    "equipped_item_level": 67,
+    "specializations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/specializations?namespace=profile-eu"
+    },
+    "statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/statistics?namespace=profile-eu"
+    },
+    "mythic_keystone_profile": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/mythic-keystone-profile?namespace=profile-eu"
+    },
+    "equipment": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/equipment?namespace=profile-eu"
+    },
+    "appearance": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/appearance?namespace=profile-eu"
+    },
+    "collections": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/collections?namespace=profile-eu"
+    },
+    "active_title": {
+        "key": {
+            "href": "https://eu.api.blizzard.com/data/wow/title/327?namespace=static-12.0.0_65028-eu"
+        },
+        "name": "Archdruid",
+        "id": 327,
+        "display_string": "Archdruid {name}"
+    },
+    "reputations": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/reputations?namespace=profile-eu"
+    },
+    "quests": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/quests?namespace=profile-eu"
+    },
+    "achievements_statistics": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/achievements/statistics?namespace=profile-eu"
+    },
+    "professions": {
+        "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/professions?namespace=profile-eu"
+    },
+    "covenant_progress": {
+        "chosen_covenant": {
+            "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/covenant/4?namespace=static-12.0.0_65028-eu"
+            },
+            "name": "Necrolord",
+            "id": 4
+        },
+        "renown_level": 60,
+        "soulbinds": {
+            "href": "https://eu.api.blizzard.com/profile/wow/character/steamwheedle-cartel/roghach/soulbinds?namespace=profile-eu"
+        }
+    },
+    "is_remix": false,
+    "name_search": "Roghach"
+}
