@@ -41,11 +41,6 @@ Guidelines for code reviews with Copilot.
 
 Flag when changes require documentation updates:
 
-**AGENTS.md** — Update when:
-- New architectural patterns or layer boundaries introduced
-- Critical files added/removed/renamed
-- Core philosophy or conventions change
-
 **docs/** — Update when:
 - User-facing features added or behavior changed
 - Configuration options modified
