@@ -55,7 +55,7 @@ groster = "groster.cli:cli"
 
 [dependency-groups]
 dev = [
-    "chardet>=7.6.0",
+    "chardet>=7.7.0",
     "jupyter>=1.1.1",
     "mypy>=2.4.0",
     "pandas-stubs>=3.0.5.260914",
